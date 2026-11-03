@@ -1,0 +1,52 @@
+# Liftbook plan
+
+Work top to bottom. An item is done only when CI builds, all tests pass, and its
+screenshot looks correct.
+
+## Phase 0 — Scaffold
+- [ ] Empty app builds and tests pass on CI
+- [ ] Tab bar: Workout, History, Exercises, Progress, Profile
+- [ ] Original app icon and accent color
+- [ ] Screenshot harness working
+
+## Phase 1 — Core logging
+- [ ] Bundled exercise library (~200 exercises in JSON: name, primary/secondary muscles, equipment, type), descriptions written from scratch
+- [ ] Search and filter exercises by muscle and equipment
+- [ ] Create, edit, delete custom exercises
+- [ ] Exercise types: weight & reps, bodyweight, assisted, duration, distance
+- [ ] Routines: create, edit, reorder exercises, organize in folders
+- [ ] Start an empty workout or start from a routine
+- [ ] Live workout screen: add sets with reps, weight, RPE; check off sets
+- [ ] Set types: warm-up, normal, drop set, failure
+- [ ] Show previous performance next to each set
+- [ ] Rest timer per exercise with adjustable default, sound, and local notification
+- [ ] Supersets
+- [ ] Notes per workout and per exercise
+- [ ] Finish workout summary (duration, volume, sets, new PRs) and save to history
+- [ ] Resume an in-progress workout after the app is relaunched; discard option
+- [ ] kg / lb setting
+
+## Phase 2 — History & progress
+- [ ] History list and calendar view
+- [ ] Workout detail, edit past workouts, repeat a past workout
+- [ ] Personal records: heaviest weight, best estimated 1RM, best set volume, most reps
+- [ ] Per-exercise charts: estimated 1RM, max weight, volume over time
+- [ ] Weekly sets and volume per muscle group chart
+- [ ] Workout streaks and weekly goal
+- [ ] Body measurements (weight, body fat, custom) with charts
+- [ ] Progress photos stored locally
+
+## Phase 3 — Advanced
+- [ ] Plate calculator with configurable bar and plates
+- [ ] Warm-up set calculator
+- [ ] Exercise substitution suggestions by muscle group
+- [ ] Progression suggestions (e.g. add weight after hitting the rep target)
+- [ ] Export all data to CSV and JSON; import from CSV
+- [ ] Dark mode polish, Dynamic Type, VoiceOver labels
+
+## Phase 4 — Optional (may not work when sideloaded through LiveContainer)
+- [ ] Apple Health workout export (HealthKit)
+- [ ] Live Activity for the rest timer
+- [ ] Home screen widget for streak and last workout
+
+Out of scope: social feed, followers, cloud sync, accounts.

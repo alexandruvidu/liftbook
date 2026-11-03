@@ -1,0 +1,80 @@
+name: Liftbook
+
+options:
+  bundleIdPrefix: io.github.alexandruvidu
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    # Unsigned builds only: the IPA is sideloaded with SideStore/LiveContainer.
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGNING_REQUIRED: NO
+    CODE_SIGN_IDENTITY: ""
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+    GENERATE_INFOPLIST_FILE: YES
+
+targets:
+  Liftbook:
+    type: application
+    platform: iOS
+    sources:
+      - path: Liftbook
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.alexandruvidu.liftbook
+        PRODUCT_NAME: Liftbook
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_CFBundleDisplayName: Liftbook
+        INFOPLIST_KEY_LSRequiresIPhoneOS: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+
+  LiftbookTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: LiftbookTests
+    dependencies:
+      - target: Liftbook
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.alexandruvidu.liftbook.tests
+        BUNDLE_LOADER: "$(TEST_HOST)"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/Liftbook.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Liftbook"
+
+  LiftbookUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: LiftbookUITests
+    dependencies:
+      - target: Liftbook
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.alexandruvidu.liftbook.uitests
+        TEST_TARGET_NAME: Liftbook
+
+schemes:
+  Liftbook:
+    build:
+      targets:
+        Liftbook: all
+        LiftbookTests: [test]
+        LiftbookUITests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - LiftbookTests
+        - LiftbookUITests
+    archive:
+      config: Release
