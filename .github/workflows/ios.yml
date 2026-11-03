@@ -69,6 +69,12 @@ jobs:
             -resultBundlePath "$RESULT_BUNDLE" \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Check screenshots were written
+        run: |
+          COUNT=$(find "$SCREENSHOT_DIR" -name '*.png' | wc -l | tr -d ' ')
+          echo "Found $COUNT screenshot(s):"; ls "$SCREENSHOT_DIR"
+          [ "$COUNT" -gt 0 ] || { echo "::error::UI tests produced no screenshots"; exit 1; }
+
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v6

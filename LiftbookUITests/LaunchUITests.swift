@@ -8,6 +8,6 @@ final class LaunchUITests: XCTestCase {
         app.launch()
 
         XCTAssertTrue(app.navigationBars["Workout"].waitForExistence(timeout: 15))
-        snap("launch")
+        XCTAssertTrue(app.tabBars.buttons["Workout"].isSelected)
     }
 }

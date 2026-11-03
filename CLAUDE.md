@@ -27,6 +27,16 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   - `LiftbookTests/` — unit tests (Swift Testing)
   - `LiftbookUITests/` — UI tests; use `snap("<name>")` from `Snapshot.swift`
 
+## Screenshots
+- `snap("<name>")` attaches a screenshot to the test result and, on CI, writes
+  `screenshots/<name>.png` (via `TEST_RUNNER_SCREENSHOT_DIR`). CI fails if no
+  screenshots are produced; they are uploaded as the `screenshots` artifact.
+- Name screenshots `<feature>-<light|dark>` (kebab-case), e.g.
+  `exercise-list-dark`.
+- Force an appearance by launching with
+  `app.launchArguments += ["-uiTestAppearance", "dark"]` (or `"light"`).
+- Review every new screenshot in both appearances before ticking an item.
+
 ## Workflow for every PLAN.md item
 1. Take the first unchecked item in `PLAN.md`; implement it in small, focused
    changes.
