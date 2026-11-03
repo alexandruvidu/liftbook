@@ -5,7 +5,7 @@ screenshot looks correct.
 
 ## Phase 0 — Scaffold
 - [x] Empty app builds and tests pass on CI
-- [ ] Tab bar: Workout, History, Exercises, Progress, Profile
+- [x] Tab bar: Workout, History, Exercises, Progress, Profile
 - [ ] Original app icon and accent color
 - [ ] Screenshot harness working
 
