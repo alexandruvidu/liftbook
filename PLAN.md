@@ -4,7 +4,7 @@ Work top to bottom. An item is done only when CI builds, all tests pass, and its
 screenshot looks correct.
 
 ## Phase 0 — Scaffold
-- [ ] Empty app builds and tests pass on CI
+- [x] Empty app builds and tests pass on CI
 - [ ] Tab bar: Workout, History, Exercises, Progress, Profile
 - [ ] Original app icon and accent color
 - [ ] Screenshot harness working
