@@ -7,7 +7,7 @@ screenshot looks correct.
 - [x] Empty app builds and tests pass on CI
 - [x] Tab bar: Workout, History, Exercises, Progress, Profile
 - [x] Original app icon and accent color
-- [ ] Screenshot harness working
+- [x] Screenshot harness working
 
 ## Phase 1 — Core logging
 - [ ] Bundled exercise library (~200 exercises in JSON: name, primary/secondary muscles, equipment, type), descriptions written from scratch
