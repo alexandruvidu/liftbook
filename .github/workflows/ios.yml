@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Select latest stable Xcode
         run: |
@@ -66,12 +66,11 @@ jobs:
             -scheme Liftbook \
             -destination "id=$SIM_UDID" \
             -resultBundlePath "$RESULT_BUNDLE" \
-            -quiet \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: screenshots
           path: screenshots/
@@ -79,7 +78,7 @@ jobs:
 
       - name: Upload test results
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: xcresult
           path: build/TestResults.xcresult
@@ -106,7 +105,7 @@ jobs:
           ls -lh Liftbook.ipa
 
       - name: Upload IPA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ipa
           path: Liftbook.ipa
