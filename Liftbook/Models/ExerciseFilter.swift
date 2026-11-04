@@ -7,8 +7,14 @@ struct ExerciseFilter: Equatable, Sendable {
     var muscle: Muscle?
     var equipment: Equipment?
 
-    var isActive: Bool {
-        !Self.tokens(in: query).isEmpty || muscle != nil || equipment != nil
+    /// Whether a muscle or equipment filter is set (search text has its own clear button).
+    var hasMenuFilters: Bool {
+        muscle != nil || equipment != nil
+    }
+
+    mutating func clearMenuFilters() {
+        muscle = nil
+        equipment = nil
     }
 
     func matches(_ exercise: LibraryExercise) -> Bool {

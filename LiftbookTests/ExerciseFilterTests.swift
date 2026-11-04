@@ -10,12 +10,20 @@ struct ExerciseFilterTests {
 
     @Test func emptyFilterReturnsEverything() {
         let filter = ExerciseFilter()
-        #expect(!filter.isActive)
+        #expect(!filter.hasMenuFilters)
         #expect(filter.apply(to: all).count == all.count)
     }
 
-    @Test func whitespaceOnlyQueryIsInactive() {
-        #expect(!ExerciseFilter(query: "   ").isActive)
+    @Test func whitespaceOnlyQueryMatchesEverything() {
+        #expect(ExerciseFilter(query: "   ").apply(to: all).count == all.count)
+    }
+
+    @Test func clearMenuFiltersKeepsQuery() {
+        var filter = ExerciseFilter(query: "curl", muscle: .biceps, equipment: .cable)
+        #expect(filter.hasMenuFilters)
+        filter.clearMenuFilters()
+        #expect(!filter.hasMenuFilters)
+        #expect(filter.query == "curl")
     }
 
     @Test func searchIsCaseInsensitive() {
@@ -63,7 +71,7 @@ struct ExerciseFilterTests {
 
     @Test func filtersCombine() {
         let filter = ExerciseFilter(query: "raise", muscle: .calves, equipment: .machine)
-        #expect(filter.isActive)
+        #expect(filter.hasMenuFilters)
         let results = ids(filter)
         #expect(results == ["leg-press-calf-raise", "seated-calf-raise", "standing-calf-raise"])
     }

@@ -9,9 +9,7 @@ final class ExerciseSearchUITests: XCTestCase {
 
     private func openExercises(appearance: String) -> XCUIApplication {
         continueAfterFailure = false
-        let app = XCUIApplication()
-        app.launchArguments += ["-uiTestAppearance", appearance]
-        app.launch()
+        let app = XCUIApplication.launchLiftbook(appearance: appearance)
         app.tabBars.buttons["Exercises"].tap()
         XCTAssertTrue(app.buttons["exercise.row.ab-wheel-rollout"].waitForExistence(timeout: 10))
         return app

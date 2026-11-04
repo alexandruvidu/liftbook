@@ -5,8 +5,8 @@ final class CustomExerciseUITests: XCTestCase {
     func testCreateEditDeleteLight() { createEditDelete(appearance: "light") }
     func testCreateEditDeleteDark() { createEditDelete(appearance: "dark") }
 
-    private var customRows: XCUIElementQuery {
-        XCUIApplication().buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'exercise.row.custom-'"))
+    private func customRows(in app: XCUIApplication) -> XCUIElementQuery {
+        app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'exercise.row.custom-'"))
     }
 
     private func createEditDelete(appearance: String) {
@@ -38,7 +38,7 @@ final class CustomExerciseUITests: XCTestCase {
         XCTAssertTrue(search.waitForExistence(timeout: 5))
         search.tap()
         search.typeText("sandbag")
-        let row = customRows.firstMatch
+        let row = customRows(in: app).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
         snap("custom-exercise-list-\(appearance)")
 
@@ -61,7 +61,7 @@ final class CustomExerciseUITests: XCTestCase {
         confirmDelete(in: app)
 
         XCTAssertTrue(app.buttons["exercises.clearFilters"].waitForExistence(timeout: 10))
-        XCTAssertEqual(customRows.count, 0)
+        XCTAssertEqual(customRows(in: app).count, 0)
     }
 
     /// Taps the destructive button in the confirmation dialog.

@@ -5,8 +5,7 @@ final class AppIconUITests: XCTestCase {
     /// Installs and launches the app, then goes to the home screen to capture its icon.
     func testAppIconOnHomeScreen() {
         continueAfterFailure = false
-        let app = XCUIApplication()
-        app.launch()
+        let app = XCUIApplication.launchLiftbook()
         XCTAssertTrue(app.navigationBars["Workout"].waitForExistence(timeout: 15))
 
         XCUIDevice.shared.press(.home)

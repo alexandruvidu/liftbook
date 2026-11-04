@@ -32,6 +32,20 @@ struct ExerciseFilterBar: View {
                         FilterChip(title: filter.equipment?.displayName ?? "Equipment", isActive: filter.equipment != nil)
                     }
                     .accessibilityIdentifier("exercises.filter.equipment")
+
+                    if filter.hasMenuFilters {
+                        Button {
+                            filter.clearMenuFilters()
+                        } label: {
+                            Label("Clear", systemImage: "xmark")
+                                .font(.subheadline.weight(.medium))
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 7)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.tint)
+                        .accessibilityIdentifier("exercises.filter.clear")
+                    }
                 }
                 .padding(.horizontal, 20)
             }

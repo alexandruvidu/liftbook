@@ -20,9 +20,7 @@ final class TabBarUITests: XCTestCase {
 
     private func visitAllTabs(appearance: String) {
         continueAfterFailure = false
-        let app = XCUIApplication()
-        app.launchArguments += ["-uiTestAppearance", appearance]
-        app.launch()
+        let app = XCUIApplication.launchLiftbook(appearance: appearance)
 
         for tab in Self.tabs {
             let button = app.tabBars.buttons[tab.title]

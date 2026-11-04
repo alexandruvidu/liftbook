@@ -35,6 +35,11 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   `exercise-list-dark`.
 - Force an appearance by launching with
   `app.launchArguments += ["-uiTestAppearance", "dark"]` (or `"light"`).
+- Launch the app in UI tests with `XCUIApplication.launchLiftbook(appearance:)`
+  (`LiftbookUITests/AppLauncher.swift`): it forces the appearance and uses a
+  fresh in-memory SwiftData store, so tests never share data.
+- UI tests run in parallel on two simulator clones; keep screenshot names
+  unique and tests independent of each other.
 - Review every new screenshot in both appearances before ticking an item.
 
 ## Workflow for every PLAN.md item

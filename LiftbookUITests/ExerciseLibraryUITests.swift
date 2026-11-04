@@ -12,9 +12,7 @@ final class ExerciseLibraryUITests: XCTestCase {
 
     private func browseLibrary(appearance: String) {
         continueAfterFailure = false
-        let app = XCUIApplication()
-        app.launchArguments += ["-uiTestAppearance", appearance]
-        app.launch()
+        let app = XCUIApplication.launchLiftbook(appearance: appearance)
 
         app.tabBars.buttons["Exercises"].tap()
         XCTAssertTrue(app.navigationBars["Exercises"].waitForExistence(timeout: 10))
