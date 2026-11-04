@@ -70,6 +70,8 @@ private struct ExerciseDetailList: View {
                     LabeledContent("Source", value: "Created by you")
                 }
             }
+
+            SetFieldsSection(type: exercise.type)
         }
         .listStyle(.insetGrouped)
     }

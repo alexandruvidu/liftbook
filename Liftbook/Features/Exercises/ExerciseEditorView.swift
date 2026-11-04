@@ -42,7 +42,7 @@ struct ExerciseEditorView: View {
                     }
                 }
 
-                Section("Tracking") {
+                Section {
                     Picker("Logged as", selection: $draft.type) {
                         ForEach(ExerciseType.allCases) { Text($0.displayName).tag($0) }
                     }
@@ -51,6 +51,10 @@ struct ExerciseEditorView: View {
                         ForEach(Equipment.allCases) { Text($0.displayName).tag($0) }
                     }
                     .accessibilityIdentifier("editor.equipment")
+                } header: {
+                    Text("Tracking")
+                } footer: {
+                    Text(draft.type.explanation)
                 }
 
                 Section {
