@@ -60,4 +60,6 @@ Open each new or changed PNG with the Read tool and check for:
 If something looks wrong, fix it, push, and repeat the loop. An item is done
 only when CI is green **and** its screenshot looks right.
 
-The `ipa` artifact holds the unsigned `Liftbook.ipa` for sideloading.
+The `ipa` artifact holds the unsigned `Liftbook.ipa`. Pushes to `main` also
+publish it to the `latest-build` release:
+https://github.com/alexandruvidu/liftbook/releases/download/latest-build/Liftbook.ipa

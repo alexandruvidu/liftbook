@@ -16,6 +16,8 @@ jobs:
     # Xcode 27 image (macOS 27). See actions/runner-images README.
     runs-on: xcode-27
     timeout-minutes: 60
+    permissions:
+      contents: write  # publish the rolling "latest-build" release (built-in token only)
     env:
       SCREENSHOT_DIR: ${{ github.workspace }}/screenshots
       RESULT_BUNDLE: ${{ github.workspace }}/build/TestResults.xcresult
@@ -117,3 +119,17 @@ jobs:
           name: ipa
           path: Liftbook.ipa
           if-no-files-found: error
+
+      - name: Publish IPA to rolling release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Stable public URL for sideloading:
+          # https://github.com/${{ github.repository }}/releases/download/latest-build/Liftbook.ipa
+          gh release delete latest-build -R "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
+          gh release create latest-build Liftbook.ipa -R "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --prerelease \
+            --title "Latest build" \
+            --notes "Unsigned build of ${GITHUB_SHA::7} from main. Sideload with SideStore or LiveContainer."
