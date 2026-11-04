@@ -10,7 +10,7 @@ screenshot looks correct.
 - [x] Screenshot harness working
 
 ## Phase 1 — Core logging
-- [ ] Bundled exercise library (~200 exercises in JSON: name, primary/secondary muscles, equipment, type), descriptions written from scratch
+- [x] Bundled exercise library (~200 exercises in JSON: name, primary/secondary muscles, equipment, type), descriptions written from scratch
 - [ ] Search and filter exercises by muscle and equipment
 - [ ] Create, edit, delete custom exercises
 - [ ] Exercise types: weight & reps, bodyweight, assisted, duration, distance
