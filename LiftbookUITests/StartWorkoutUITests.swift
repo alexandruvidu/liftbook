@@ -7,6 +7,10 @@ final class StartWorkoutUITests: XCTestCase {
     func testWorkoutFromRoutineLight() { workoutFromRoutine(appearance: "light") }
     func testWorkoutFromRoutineDark() { workoutFromRoutine(appearance: "dark") }
 
+    private func notLogged(in app: XCUIApplication) -> XCUIElementQuery {
+        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Not logged'"))
+    }
+
     private func emptyWorkout(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
@@ -23,7 +27,8 @@ final class StartWorkoutUITests: XCTestCase {
         search.typeText("plank")
         app.buttons["picker.row.plank"].tap()
         app.buttons["picker.add"].tap()
-        XCTAssertTrue(app.staticTexts["Not logged"].waitForExistence(timeout: 5))
+        // LabeledContent merges "Set 1" and its value into one element.
+        XCTAssertTrue(notLogged(in: app).firstMatch.waitForExistence(timeout: 5))
 
         // Minimize, then resume from the banner
         app.buttons["live.minimize"].tap()
@@ -57,7 +62,8 @@ final class StartWorkoutUITests: XCTestCase {
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["Bent-Over Barbell Row"].exists)
         // Rows below the fold may not be loaded yet, so only check the first exercise's sets.
-        XCTAssertGreaterThanOrEqual(app.staticTexts.matching(NSPredicate(format: "label == 'Not logged'")).count, 3)
+        XCTAssertTrue(notLogged(in: app).firstMatch.waitForExistence(timeout: 5))
+        XCTAssertGreaterThanOrEqual(notLogged(in: app).count, 3)
         snap("live-workout-routine-\(appearance)")
 
         // Starting again while one is running asks what to do

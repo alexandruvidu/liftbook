@@ -73,6 +73,14 @@ jobs:
             -parallel-testing-worker-count 2 \
             CODE_SIGNING_ALLOWED=NO
 
+      - name: Summarize test failures
+        if: failure()
+        run: |
+          # Parallel testing hides assertion messages from the log; print them from the result bundle.
+          xcrun xcresulttool get test-results summary --path "$RESULT_BUNDLE" --compact \
+            | jq -r '.testFailures[]? | "\(.testIdentifierString): \(.failureText)"' \
+            || true
+
       - name: Check screenshots were written
         run: |
           COUNT=$(find "$SCREENSHOT_DIR" -name '*.png' | wc -l | tr -d ' ')

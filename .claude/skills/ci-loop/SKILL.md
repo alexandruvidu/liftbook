@@ -34,6 +34,9 @@ A typical run takes 10–20 minutes.
 gh run view <id> --log-failed | tail -n 300
 ```
 
+- UI tests run in parallel, which hides assertion messages from the main log.
+  Look at the **Summarize test failures** step first: it prints each failing
+  test with its failure text.
 - Find the **first real error**: compiler `error:`, linker error, failed
   assertion, or a test failure line. Later errors are often caused by it.
 - If the log doesn't explain a test failure, download the result bundle:
