@@ -1,0 +1,122 @@
+import SwiftData
+import SwiftUI
+
+/// Sheet for creating (`routine == nil`) or editing a routine.
+struct RoutineEditorView: View {
+    let routine: Routine?
+
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
+    @Query(sort: \RoutineFolder.sortIndex) private var folders: [RoutineFolder]
+    @Query private var customExercises: [CustomExercise]
+    @State private var draft: RoutineDraft
+    @State private var isPicking = false
+    @State private var isConfirmingDelete = false
+
+    init(routine: Routine?) {
+        self.routine = routine
+        _draft = State(initialValue: routine.map(RoutineDraft.init(routine:)) ?? RoutineDraft())
+    }
+
+    var body: some View {
+        let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Routine name", text: $draft.name)
+                        .textInputAutocapitalization(.words)
+                        .accessibilityIdentifier("routine.name")
+                    Picker("Folder", selection: $draft.folderID) {
+                        Text("None").tag(UUID?.none)
+                        ForEach(folders) { Text($0.name).tag(Optional($0.folderID)) }
+                    }
+                    .accessibilityIdentifier("routine.folder")
+                }
+
+                Section {
+                    ForEach($draft.entries) { $entry in
+                        RoutineEntryRow(name: catalog.name(for: entry.exerciseID), setCount: $entry.setCount)
+                    }
+                    .onMove { draft.move(from: $0, to: $1) }
+                    .onDelete { draft.remove(at: $0) }
+
+                    Button("Add Exercises", systemImage: "plus.circle.fill") { isPicking = true }
+                        .accessibilityIdentifier("routine.addExercises")
+                } header: {
+                    Text("Exercises")
+                } footer: {
+                    if !draft.entries.isEmpty {
+                        Text("Drag the handles to reorder. Swipe or tap the minus to remove.")
+                    }
+                }
+
+                Section("Notes") {
+                    TextField("Optional", text: $draft.notes, axis: .vertical)
+                        .lineLimit(2...6)
+                }
+
+                if routine != nil {
+                    Section {
+                        Button("Delete Routine", role: .destructive) { isConfirmingDelete = true }
+                            .accessibilityIdentifier("routine.delete")
+                    }
+                }
+            }
+            .environment(\.editMode, .constant(.active))
+            .navigationTitle(routine == nil ? "New Routine" : "Edit Routine")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save", action: save)
+                        .disabled(!draft.problems.isEmpty)
+                        .accessibilityIdentifier("routine.save")
+                }
+            }
+            .sheet(isPresented: $isPicking) {
+                ExercisePickerView(catalog: catalog) { draft.add($0) }
+            }
+            .confirmationDialog("Delete \(draft.trimmedName)?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
+                Button("Delete Routine", role: .destructive, action: delete)
+            } message: {
+                Text("Past workouts started from it are not affected.")
+            }
+        }
+    }
+
+    private func save() {
+        guard draft.problems.isEmpty else { return }
+        let target = routine ?? Routine()
+        if routine == nil {
+            modelContext.insert(target)
+        }
+        let folder = folders.first { $0.folderID == draft.folderID }
+        target.apply(draft, folder: folder, in: modelContext)
+        dismiss()
+    }
+
+    private func delete() {
+        if let routine {
+            modelContext.delete(routine)
+        }
+        dismiss()
+    }
+}
+
+private struct RoutineEntryRow: View {
+    let name: String
+    @Binding var setCount: Int
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(name)
+            Stepper(value: $setCount, in: RoutineDraft.setCountRange) {
+                Text(setCount == 1 ? "1 set" : "\(setCount) sets")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+}

@@ -3,7 +3,12 @@ import SwiftData
 
 enum Persistence {
     /// Every SwiftData model the app stores.
-    static let schema = Schema([CustomExercise.self])
+    static let schema = Schema([
+        CustomExercise.self,
+        RoutineFolder.self,
+        Routine.self,
+        RoutineEntry.self,
+    ])
 
     static func makeContainer(inMemory: Bool) -> ModelContainer {
         let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)

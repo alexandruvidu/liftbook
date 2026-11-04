@@ -1,0 +1,69 @@
+import SwiftUI
+
+/// Searchable multi-select list of exercises. Returns IDs in the order tapped.
+struct ExercisePickerView: View {
+    let catalog: ExerciseCatalog
+    let onAdd: ([String]) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var filter = ExerciseFilter()
+    @State private var selection: [String] = []
+
+    var body: some View {
+        NavigationStack {
+            let results = filter.apply(to: catalog.exercises)
+            List(results) { exercise in
+                let order = selection.firstIndex(of: exercise.id)
+                Button {
+                    toggle(exercise.id)
+                } label: {
+                    HStack {
+                        ExerciseRow(exercise: exercise)
+                        Spacer()
+                        if let order {
+                            Text("\(order + 1)")
+                                .font(.footnote.weight(.bold))
+                                .foregroundStyle(Color.accentForeground)
+                                .frame(width: 24, height: 24)
+                                .background(Circle().fill(Color.accentColor))
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .foregroundStyle(.primary)
+                .accessibilityIdentifier("picker.row.\(exercise.id)")
+                .accessibilityAddTraits(order != nil ? .isSelected : [])
+            }
+            .listStyle(.plain)
+            .overlay {
+                if results.isEmpty {
+                    ContentUnavailableView.search(text: filter.query)
+                }
+            }
+            .searchable(text: $filter.query, placement: .navigationBarDrawer(displayMode: .always))
+            .navigationTitle("Add Exercises")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(selection.isEmpty ? "Add" : "Add (\(selection.count))") {
+                        onAdd(selection)
+                        dismiss()
+                    }
+                    .disabled(selection.isEmpty)
+                    .accessibilityIdentifier("picker.add")
+                }
+            }
+        }
+    }
+
+    private func toggle(_ id: String) {
+        if let index = selection.firstIndex(of: id) {
+            selection.remove(at: index)
+        } else {
+            selection.append(id)
+        }
+    }
+}

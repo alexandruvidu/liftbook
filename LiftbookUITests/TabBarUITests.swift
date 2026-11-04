@@ -3,7 +3,7 @@ import XCTest
 @MainActor
 final class TabBarUITests: XCTestCase {
     private static let tabs: [(title: String, contentID: String)] = [
-        ("Workout", "workout.empty"),
+        ("Workout", "workout.emptyNewRoutine"),
         ("History", "history.empty"),
         ("Exercises", "exercise.row.ab-wheel-rollout"),
         ("Progress", "progress.empty"),
