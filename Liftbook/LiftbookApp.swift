@@ -1,12 +1,16 @@
+import SwiftData
 import SwiftUI
 
 @main
 struct LiftbookApp: App {
+    private let container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
+
     var body: some Scene {
         WindowGroup {
             RootView()
                 .preferredColorScheme(UITestOverrides.colorScheme)
         }
+        .modelContainer(container)
     }
 }
 
@@ -15,6 +19,11 @@ struct LiftbookApp: App {
 enum UITestOverrides {
     static var colorScheme: ColorScheme? {
         appearance(from: UserDefaults.standard.string(forKey: "uiTestAppearance"))
+    }
+
+    /// `-uiTestInMemoryStore YES` keeps each UI test run's data isolated.
+    static var useInMemoryStore: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestInMemoryStore")
     }
 
     static func appearance(from value: String?) -> ColorScheme? {

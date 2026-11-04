@@ -1,16 +1,20 @@
+import SwiftData
 import SwiftUI
 
 struct ExercisesHomeView: View {
     var library: ExerciseLibrary = .bundled
+    @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
+    @Environment(\.modelContext) private var modelContext
     @State private var filter = ExerciseFilter()
+    @State private var isCreating = false
 
-    private var results: [LibraryExercise] {
-        filter.apply(to: library.exercises)
+    private var allExercises: [LibraryExercise] {
+        ExerciseLibrary(exercises: library.exercises + customExercises.map(\.asLibraryExercise)).exercises
     }
 
     var body: some View {
         NavigationStack {
-            let results = results
+            let results = filter.apply(to: allExercises)
             List {
                 Section {
                     ExerciseFilterBar(filter: $filter, resultCount: results.count)
@@ -25,6 +29,11 @@ struct ExercisesHomeView: View {
                                 ExerciseRow(exercise: exercise)
                             }
                             .accessibilityIdentifier("exercise.row.\(exercise.id)")
+                            .swipeActions {
+                                if exercise.isCustom {
+                                    Button("Delete", role: .destructive) { delete(exercise) }
+                                }
+                            }
                         }
                     }
                 }
@@ -41,10 +50,24 @@ struct ExercisesHomeView: View {
                 prompt: "Search by name, muscle or equipment"
             )
             .navigationTitle(AppTab.exercises.title)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("New Exercise", systemImage: "plus") { isCreating = true }
+                        .accessibilityIdentifier("exercises.add")
+                }
+            }
+            .sheet(isPresented: $isCreating) {
+                ExerciseEditorView(editing: nil)
+            }
             .navigationDestination(for: LibraryExercise.self) { exercise in
-                ExerciseDetailView(exercise: exercise)
+                ExerciseDetailView(exerciseID: exercise.id)
             }
         }
+    }
+
+    private func delete(_ exercise: LibraryExercise) {
+        guard let custom = customExercises.first(where: { $0.exerciseID == exercise.id }) else { return }
+        modelContext.delete(custom)
     }
 }
 
@@ -52,12 +75,23 @@ struct ExerciseRow: View {
     let exercise: LibraryExercise
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(exercise.name)
-                .font(.body)
-            Text(exercise.summary)
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(exercise.name)
+                    .font(.body)
+                Text(exercise.summary)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            if exercise.isCustom {
+                Spacer(minLength: 8)
+                Text("Custom")
+                    .font(.caption.weight(.semibold))
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 3)
+                    .foregroundStyle(.tint)
+                    .background(Capsule().fill(Color.accentColor.opacity(0.15)))
+            }
         }
         .padding(.vertical, 2)
     }
@@ -83,4 +117,5 @@ private struct NoMatchingExercisesView: View {
 
 #Preview {
     ExercisesHomeView()
+        .modelContainer(Persistence.makeContainer(inMemory: true))
 }
