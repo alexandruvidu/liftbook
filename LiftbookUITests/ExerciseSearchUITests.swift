@@ -41,10 +41,12 @@ final class ExerciseSearchUITests: XCTestCase {
         snap("exercise-filter-\(appearance)")
 
         choose("Kettlebell", in: "exercises.filter.equipment", app: app)
-        XCTAssertTrue(app.descendants(matching: .any)["exercises.noResults"].waitForExistence(timeout: 5))
+        let clear = app.buttons["exercises.clearFilters"]
+        XCTAssertTrue(clear.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["No matching exercises"].exists)
         snap("exercise-filter-empty-\(appearance)")
 
-        app.buttons["exercises.clearFilters"].tap()
+        clear.tap()
         XCTAssertTrue(app.buttons["exercise.row.ab-wheel-rollout"].waitForExistence(timeout: 5))
     }
 

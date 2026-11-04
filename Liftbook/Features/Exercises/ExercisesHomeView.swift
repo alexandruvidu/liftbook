@@ -72,11 +72,12 @@ private struct NoMatchingExercisesView: View {
         } description: {
             Text("Try a shorter search or loosen the muscle and equipment filters.")
         } actions: {
-            Button("Clear Filters", action: clear)
-                .buttonStyle(.borderedProminent)
-                .accessibilityIdentifier("exercises.clearFilters")
+            Button(action: clear) {
+                Text("Clear Filters").foregroundStyle(Color.accentForeground)
+            }
+            .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("exercises.clearFilters")
         }
-        .accessibilityIdentifier("exercises.noResults")
     }
 }
 

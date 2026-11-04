@@ -16,6 +16,13 @@ struct BrandAssetsTests {
         #expect(light != dark)
     }
 
+    @Test func onAccentColorIsBundledWithLightAndDarkVariants() throws {
+        let color = try #require(UIColor(named: "OnAccent", in: .main, compatibleWith: nil))
+        let light = color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .light))
+        let dark = color.resolvedColor(with: UITraitCollection(userInterfaceStyle: .dark))
+        #expect(light != dark)
+    }
+
     @Test func appIconIsDeclaredInInfoPlist() throws {
         let icons = try #require(Bundle.main.object(forInfoDictionaryKey: "CFBundleIcons") as? [String: Any])
         let primary = try #require(icons["CFBundlePrimaryIcon"] as? [String: Any])

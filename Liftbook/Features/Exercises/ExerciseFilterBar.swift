@@ -58,7 +58,7 @@ private struct FilterChip: View {
         .font(.subheadline.weight(.medium))
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
-        .foregroundStyle(isActive ? Color.white : Color.primary)
+        .foregroundStyle(isActive ? Color.accentForeground : Color.primary)
         .background(
             Capsule().fill(isActive ? Color.accentColor : Color(.secondarySystemGroupedBackground))
         )
