@@ -66,7 +66,7 @@ final class CustomExerciseUITests: XCTestCase {
 
     /// Taps the destructive button in the confirmation dialog.
     private func confirmDelete(in app: XCUIApplication) {
-        let byID = app.buttons["editor.confirmDelete"]
+        let byID = app.buttons["editor.confirmDelete"].firstMatch
         if byID.waitForExistence(timeout: 3) {
             byID.tap()
             return
