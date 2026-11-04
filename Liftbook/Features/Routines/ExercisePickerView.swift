@@ -40,20 +40,30 @@ struct ExercisePickerView: View {
                     ContentUnavailableView.search(text: filter.query)
                 }
             }
+            .safeAreaInset(edge: .bottom) {
+                if !selection.isEmpty {
+                    Button {
+                        onAdd(selection)
+                        dismiss()
+                    } label: {
+                        Text(selection.count == 1 ? "Add 1 Exercise" : "Add \(selection.count) Exercises")
+                            .font(.headline)
+                            .foregroundStyle(Color.accentForeground)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 8)
+                    .accessibilityIdentifier("picker.add")
+                }
+            }
             .searchable(text: $filter.query, placement: .navigationBarDrawer(displayMode: .always))
             .navigationTitle("Add Exercises")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button(selection.isEmpty ? "Add" : "Add (\(selection.count))") {
-                        onAdd(selection)
-                        dismiss()
-                    }
-                    .disabled(selection.isEmpty)
-                    .accessibilityIdentifier("picker.add")
                 }
             }
         }

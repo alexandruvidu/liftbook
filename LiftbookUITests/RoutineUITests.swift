@@ -50,8 +50,11 @@ final class RoutineUITests: XCTestCase {
             XCTAssertTrue(row.waitForExistence(timeout: 5), "Missing \(id)")
             row.tap()
         }
-        XCTAssertEqual(app.buttons["picker.add"].label, "Add (3)")
-        app.buttons["picker.add"].tap()
+        let add = app.buttons["picker.add"]
+        XCTAssertTrue(add.waitForExistence(timeout: 5))
+        XCTAssertEqual(add.label, "Add 3 Exercises")
+        snap("exercise-picker-\(appearance)")
+        add.tap()
 
         XCTAssertTrue(app.staticTexts["Barbell Bench Press"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Incline Dumbbell Press"].exists)
