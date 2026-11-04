@@ -16,7 +16,7 @@ struct SetFieldsSection: View {
             LabeledContent("Example set", value: type.example.formatted(for: type))
                 .accessibilityIdentifier("exercise.detail.example")
         } header: {
-            Text("Each set records")
+            Text("Logged as \(type.displayName)")
         } footer: {
             Text(type.explanation)
         }

@@ -65,7 +65,6 @@ private struct ExerciseDetailList: View {
 
             Section("Details") {
                 LabeledContent("Equipment", value: exercise.equipment.displayName)
-                LabeledContent("Logged as", value: exercise.type.displayName)
                 if exercise.isCustom {
                     LabeledContent("Source", value: "Created by you")
                 }

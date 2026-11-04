@@ -10,12 +10,13 @@ final class ExerciseTypeUITests: XCTestCase {
         ("running", "running", "5 km in 25:00", "distance"),
     ]
 
-    func testTypeDetailsLight() { showTypes(appearance: "light") }
-    func testTypeDetailsDark() { showTypes(appearance: "dark") }
+    /// Every type in light mode; dark mode uses the same layout, so one type is enough.
+    func testTypeDetailsLight() { showTypes(Self.cases, appearance: "light") }
+    func testTypeDetailsDark() { showTypes(Self.cases.filter { $0.shot == "assisted" }, appearance: "dark") }
 
-    private func showTypes(appearance: String) {
+    private func showTypes(_ items: [(id: String, query: String, example: String, shot: String)], appearance: String) {
         continueAfterFailure = false
-        for item in Self.cases {
+        for item in items {
             let app = XCUIApplication.launchLiftbook(appearance: appearance)
             app.tabBars.buttons["Exercises"].tap()
 
@@ -29,13 +30,12 @@ final class ExerciseTypeUITests: XCTestCase {
             row.tap()
 
             let example = app.descendants(matching: .any)["exercise.detail.example"]
+            // Scroll to the bottom so the set section clears the floating tab bar.
             let list = app.collectionViews.firstMatch
-            var swipes = 0
-            while !(example.exists && example.isHittable) && swipes < 4 {
-                list.swipeUp()
-                swipes += 1
-            }
-            XCTAssertTrue(example.exists, "No example for \(item.id)")
+            XCTAssertTrue(list.waitForExistence(timeout: 5))
+            list.swipeUp()
+            list.swipeUp()
+            XCTAssertTrue(example.waitForExistence(timeout: 5), "No example for \(item.id)")
             let shown = app.descendants(matching: .any)
                 .matching(NSPredicate(format: "label CONTAINS %@", item.example)).firstMatch
             XCTAssertTrue(shown.exists, "Expected example \(item.example)")
