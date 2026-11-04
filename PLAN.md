@@ -13,7 +13,7 @@ screenshot looks correct.
 - [x] Bundled exercise library (~200 exercises in JSON: name, primary/secondary muscles, equipment, type), descriptions written from scratch
 - [x] Search and filter exercises by muscle and equipment
 - [x] Create, edit, delete custom exercises
-- [ ] Exercise types: weight & reps, bodyweight, assisted, duration, distance
+- [x] Exercise types: weight & reps, bodyweight, assisted, duration, distance
 - [ ] Routines: create, edit, reorder exercises, organize in folders
 - [ ] Start an empty workout or start from a routine
 - [ ] Live workout screen: add sets with reps, weight, RPE; check off sets
