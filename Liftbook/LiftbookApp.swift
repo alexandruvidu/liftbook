@@ -3,7 +3,14 @@ import SwiftUI
 
 @main
 struct LiftbookApp: App {
-    private let container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
+    private let container: ModelContainer
+
+    init() {
+        container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
+        if UITestOverrides.seedSampleData {
+            Persistence.seedSampleData(in: container.mainContext)
+        }
+    }
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +31,11 @@ enum UITestOverrides {
     /// `-uiTestInMemoryStore YES` keeps each UI test run's data isolated.
     static var useInMemoryStore: Bool {
         UserDefaults.standard.bool(forKey: "uiTestInMemoryStore")
+    }
+
+    /// `-uiTestSeedSampleData YES` adds a sample routine on launch.
+    static var seedSampleData: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestSeedSampleData")
     }
 
     static func appearance(from value: String?) -> ColorScheme? {
