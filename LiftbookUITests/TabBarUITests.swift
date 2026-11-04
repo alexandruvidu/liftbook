@@ -2,10 +2,10 @@ import XCTest
 
 @MainActor
 final class TabBarUITests: XCTestCase {
-    private static let tabs: [(title: String, emptyID: String)] = [
+    private static let tabs: [(title: String, contentID: String)] = [
         ("Workout", "workout.empty"),
         ("History", "history.empty"),
-        ("Exercises", "exercises.empty"),
+        ("Exercises", "exercise.row.ab-wheel-rollout"),
         ("Progress", "progress.empty"),
         ("Profile", "profile.empty"),
     ]
@@ -29,7 +29,7 @@ final class TabBarUITests: XCTestCase {
             XCTAssertTrue(button.waitForExistence(timeout: 15), "Missing tab \(tab.title)")
             button.tap()
             XCTAssertTrue(app.navigationBars[tab.title].waitForExistence(timeout: 5), "No title for \(tab.title)")
-            XCTAssertTrue(app.descendants(matching: .any)[tab.emptyID].exists, "No empty state on \(tab.title)")
+            XCTAssertTrue(app.descendants(matching: .any)[tab.contentID].exists, "No content on \(tab.title)")
             snap("tab-\(tab.title.lowercased())-\(appearance)")
         }
     }
