@@ -38,6 +38,11 @@ struct ExerciseLibrary: Sendable {
 
     /// Exercises grouped by the first letter of their name, A–Z.
     var sections: [Section] {
+        Self.sections(for: exercises)
+    }
+
+    /// Groups already-sorted exercises by first letter, A–Z.
+    static func sections(for exercises: [LibraryExercise]) -> [Section] {
         let groups = Dictionary(grouping: exercises) { exercise in
             exercise.name.prefix(1).uppercased()
         }
