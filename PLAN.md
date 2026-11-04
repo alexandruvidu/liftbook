@@ -12,7 +12,7 @@ screenshot looks correct.
 ## Phase 1 — Core logging
 - [x] Bundled exercise library (~200 exercises in JSON: name, primary/secondary muscles, equipment, type), descriptions written from scratch
 - [x] Search and filter exercises by muscle and equipment
-- [ ] Create, edit, delete custom exercises
+- [x] Create, edit, delete custom exercises
 - [ ] Exercise types: weight & reps, bodyweight, assisted, duration, distance
 - [ ] Routines: create, edit, reorder exercises, organize in folders
 - [ ] Start an empty workout or start from a routine
