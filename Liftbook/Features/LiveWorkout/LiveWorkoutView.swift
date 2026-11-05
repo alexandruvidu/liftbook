@@ -31,17 +31,11 @@ struct LiveWorkoutView: View {
                     }
                 }
 
-                ForEach(session.orderedExercises) { exercise in
-                    let info = catalog.exercise(id: exercise.exerciseID)
-                    Section(info?.name ?? catalog.name(for: exercise.exerciseID)) {
-                        ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
-                            LabeledContent("Set \(index + 1)") {
-                                Text(set.measurement.isComplete(for: info?.type ?? .weightAndReps)
-                                     ? set.measurement.formatted(for: info?.type ?? .weightAndReps)
-                                     : "Not logged")
-                            }
-                        }
-                    }
+                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.id) { index, exercise in
+                    LiveExerciseSection(exercise: exercise,
+                                        info: catalog.exercise(id: exercise.exerciseID),
+                                        fallbackName: catalog.name(for: exercise.exerciseID),
+                                        identifier: "live.exercise.\(index)")
                 }
 
                 Section {
@@ -55,12 +49,20 @@ struct LiveWorkoutView: View {
                 }
             }
             .listStyle(.insetGrouped)
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle(session.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Minimize", systemImage: "chevron.down") { dismiss() }
                         .accessibilityIdentifier("live.minimize")
+                }
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                    }
+                    .accessibilityIdentifier("live.keyboardDone")
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Finish") {

@@ -7,11 +7,6 @@ final class StartWorkoutUITests: XCTestCase {
     func testWorkoutFromRoutineLight() { workoutFromRoutine(appearance: "light") }
     func testWorkoutFromRoutineDark() { workoutFromRoutine(appearance: "dark") }
 
-    /// LabeledContent merges "Set 1" and its value into one element.
-    private func notLogged(in app: XCUIApplication) -> XCUIElementQuery {
-        app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS 'Not logged'"))
-    }
-
     private func emptyWorkout(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
@@ -33,7 +28,7 @@ final class StartWorkoutUITests: XCTestCase {
         XCTAssertTrue(app.buttons["picker.row.plank"].waitForExistence(timeout: 5), "Plank not in picker")
         app.buttons["picker.row.plank"].tap()
         app.buttons["picker.add"].tap()
-        XCTAssertTrue(notLogged(in: app).firstMatch.waitForExistence(timeout: 5), "Added exercise has no set")
+        XCTAssertTrue(app.textFields["live.exercise.0.set.0.duration"].waitForExistence(timeout: 5), "Added exercise has no set")
 
         // Minimize, then resume from the banner
         app.buttons["live.minimize"].tap()
@@ -73,8 +68,8 @@ final class StartWorkoutUITests: XCTestCase {
         let finish = app.buttons["live.finish"]
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Live workout did not open from routine")
         XCTAssertTrue(app.staticTexts["Bent-Over Barbell Row"].exists, "Routine exercises not copied")
-        XCTAssertTrue(notLogged(in: app).firstMatch.waitForExistence(timeout: 5), "No empty sets")
-        XCTAssertGreaterThanOrEqual(notLogged(in: app).count, 3, "Bench press should have 3 sets")
+        XCTAssertTrue(app.textFields["live.exercise.0.set.2.weight"].waitForExistence(timeout: 5), "Bench press should have 3 sets")
+        XCTAssertFalse(app.textFields["live.exercise.0.set.3.weight"].exists, "Bench press has more than 3 sets")
         snap("live-workout-routine-\(appearance)")
 
         // Starting again while one is running asks what to do
