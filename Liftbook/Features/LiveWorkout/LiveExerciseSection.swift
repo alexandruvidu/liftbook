@@ -13,8 +13,10 @@ struct LiveExerciseSection: View {
     var body: some View {
         Section {
             SetHeaderRow(type: type)
+            let labels = exercise.setLabels
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
-                SetRow(set: set, number: index + 1, type: type, identifier: "\(identifier).set.\(index)")
+                SetRow(set: set, number: index + 1, label: labels[index], type: type,
+                       identifier: "\(identifier).set.\(index)")
             }
             .onDelete { offsets in
                 let sets = exercise.orderedSets

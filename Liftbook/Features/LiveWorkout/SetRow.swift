@@ -32,6 +32,8 @@ struct SetHeaderRow: View {
 struct SetRow: View {
     let set: WorkoutSet
     let number: Int
+    /// "1", "2"… for normal sets, or the kind's tag ("W", "D", "F").
+    let label: String
     let type: ExerciseType
     /// Prefix for accessibility identifiers, e.g. "live.exercise.0.set.1".
     let identifier: String
@@ -39,11 +41,9 @@ struct SetRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("\(number)")
-                .font(.subheadline.weight(.semibold))
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
+            SetKindMenu(set: set, label: label)
                 .frame(width: SetColumns.number)
+                .accessibilityIdentifier("\(identifier).kind")
 
             ForEach(type.fieldSpecs, id: \.self) { spec in
                 SetValueField(set: set, spec: spec, unit: unit)
@@ -95,6 +95,49 @@ private struct SetValueField: View {
                 measurement.setInput(newValue, for: spec.field, unit: unit)
                 if measurement != set.measurement { set.measurement = measurement }
             }
+    }
+}
+
+/// Shows the set's number or kind tag; tapping it changes the kind.
+private struct SetKindMenu: View {
+    let set: WorkoutSet
+    let label: String
+
+    var body: some View {
+        Menu {
+            Picker("Set Type", selection: Binding(get: { set.kind }, set: { set.kind = $0 })) {
+                ForEach(SetKind.allCases) { kind in
+                    Label {
+                        Text(kind.displayName)
+                        Text(kind.explanation)
+                    } icon: {
+                        Text(kind.tag ?? "#")
+                    }
+                    .tag(kind)
+                }
+            }
+        } label: {
+            Text(label)
+                .font(.subheadline.weight(.bold))
+                .monospacedDigit()
+                .foregroundStyle(set.kind == .normal ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+                .frame(width: 26, height: 30)
+                .background(set.kind.tint.opacity(set.kind == .normal ? 0 : 0.28),
+                            in: RoundedRectangle(cornerRadius: 7))
+        }
+        .accessibilityLabel("\(set.kind.displayName): \(label)")
+    }
+}
+
+extension SetKind {
+    /// Background tint for the set's tag.
+    var tint: Color {
+        switch self {
+        case .normal: .clear
+        case .warmUp: .orange
+        case .drop: .indigo
+        case .failure: .red
+        }
     }
 }
 
