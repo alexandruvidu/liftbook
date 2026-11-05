@@ -22,7 +22,7 @@ screenshot looks correct.
 - [x] Rest timer per exercise with adjustable default, sound, and local notification
 - [x] Supersets
 - [x] Notes per workout and per exercise
-- [ ] Finish workout summary (duration, volume, sets, new PRs) and save to history
+- [x] Finish workout summary (duration, volume, sets, new PRs) and save to history
 - [ ] Resume an in-progress workout after the app is relaunched; discard option
 - [ ] kg / lb setting
 
