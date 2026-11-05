@@ -21,6 +21,9 @@ struct RootView: View {
                 ProfileHomeView()
             }
         }
+        // Set explicitly: some system views (e.g. the photo picker button)
+        // otherwise drop the asset-catalog accent from the tab bar.
+        .tint(Color.accentColor)
     }
 }
 

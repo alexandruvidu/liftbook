@@ -32,8 +32,8 @@ screenshot looks correct.
 - [x] Personal records: heaviest weight, best estimated 1RM, best set volume, most reps
 - [x] Per-exercise charts: estimated 1RM, max weight, volume over time
 - [x] Weekly sets and volume per muscle group chart
-- [ ] Workout streaks and weekly goal
-- [ ] Body measurements (weight, body fat, custom) with charts
+- [x] Workout streaks and weekly goal
+- [x] Body measurements (weight, body fat, custom) with charts
 - [ ] Progress photos stored locally
 
 ## Phase 3 — Advanced

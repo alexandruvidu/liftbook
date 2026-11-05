@@ -64,12 +64,12 @@ struct WorkoutSummaryTests {
 
     @Test(arguments: [(100.0, 1, 100.0), (100, 10, 133.33), (60, 5, 70.0)])
     func epleyOneRepMax(weight: Double, reps: Int, expected: Double) {
-        let value = WorkoutSummary.estimatedOneRepMax(weight: weight, reps: reps) ?? 0
+        let value = PersonalRecords.estimatedOneRepMax(weight: weight, reps: reps) ?? 0
         #expect(abs(value - expected) < 0.01)
     }
 
     @Test func noOneRepMaxWithoutWeightOrReps() {
-        #expect(WorkoutSummary.estimatedOneRepMax(weight: 0, reps: 5) == nil)
-        #expect(WorkoutSummary.estimatedOneRepMax(weight: 50, reps: 0) == nil)
+        #expect(PersonalRecords.estimatedOneRepMax(weight: 0, reps: 5) == nil)
+        #expect(PersonalRecords.estimatedOneRepMax(weight: 50, reps: 0) == nil)
     }
 }

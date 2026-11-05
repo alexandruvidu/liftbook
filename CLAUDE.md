@@ -48,6 +48,9 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 - `LiftbookUITests/UITestHelpers.swift`: `field.enter(text)` (waits for
   keyboard focus), `app.dismissKeyboard()`, `button.openMenu(showing:)`,
   `app.scrollTo(element)`, `app.finishWorkout()` (Finish + summary Done).
+- `launchLiftbook(seedSampleData:seedHistory:seedPhotos:)` seeds an
+  "Upper Body" routine, three finished workouts (1, 2 and 9 days ago) and
+  two drawn progress photos (the system photo picker can't be scripted).
 - `launchLiftbook(storeFile:)` keeps data in a temporary file so a test can
   quit and relaunch the app; settings (`@AppStorage`) start empty on each
   UI-test launch.

@@ -19,10 +19,6 @@ struct WorkoutSummary: Equatable, Sendable {
     let volume: Double
     let records: [Record]
 
-    static func estimatedOneRepMax(weight: Double, reps: Int) -> Double? {
-        PersonalRecords.estimatedOneRepMax(weight: weight, reps: reps)
-    }
-
     /// - Parameters:
     ///   - history: other finished sessions to compare against for records.
     ///   - type: the exercise type for an exercise ID.
