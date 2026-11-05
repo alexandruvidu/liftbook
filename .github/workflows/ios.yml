@@ -147,9 +147,21 @@ jobs:
           # Stable public URLs for sideloading:
           #   IPA:    https://github.com/${{ github.repository }}/releases/download/latest-build/Liftbook.ipa
           #   Source: https://github.com/${{ github.repository }}/releases/download/latest-build/source.json
-          gh release delete latest-build -R "$GITHUB_REPOSITORY" --yes --cleanup-tag || true
-          gh release create latest-build Liftbook.ipa source.json -R "$GITHUB_REPOSITORY" \
-            --target "$GITHUB_SHA" \
-            --prerelease \
-            --title "Latest build" \
-            --notes "Unsigned build of ${GITHUB_SHA::7} from main. Sideload with SideStore or LiveContainer."
+          # Replace the files in place so the download links never disappear,
+          # and retry because the releases API sometimes returns HTTP 500.
+          NOTES="Unsigned build of ${GITHUB_SHA::7} from main. Sideload with SideStore or LiveContainer."
+          publish() {
+            if gh release view latest-build -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
+              gh release upload latest-build Liftbook.ipa source.json -R "$GITHUB_REPOSITORY" --clobber &&
+                gh release edit latest-build -R "$GITHUB_REPOSITORY" --notes "$NOTES"
+            else
+              gh release create latest-build Liftbook.ipa source.json -R "$GITHUB_REPOSITORY" \
+                --target "$GITHUB_SHA" --prerelease --title "Latest build" --notes "$NOTES"
+            fi
+          }
+          for attempt in 1 2 3 4; do
+            publish && exit 0
+            echo "Publish attempt $attempt failed; retrying in $((attempt * 15))s"
+            sleep $((attempt * 15))
+          done
+          exit 1
