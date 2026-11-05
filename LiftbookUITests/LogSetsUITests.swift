@@ -35,9 +35,8 @@ final class LogSetsUITests: XCTestCase {
         // A menu opened while the keyboard is still animating away gets closed again
         XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
 
-        app.buttons["live.exercise.0.set.0.rpe"].tap()
         let rpe = app.buttons["RPE 8"]
-        XCTAssertTrue(rpe.waitForExistence(timeout: 5), "RPE menu did not open")
+        XCTAssertTrue(app.buttons["live.exercise.0.set.0.rpe"].openMenu(showing: rpe), "RPE menu did not open")
         rpe.tap()
         XCTAssertEqual(app.buttons["live.exercise.0.set.0.rpe"].label, "RPE 8")
 

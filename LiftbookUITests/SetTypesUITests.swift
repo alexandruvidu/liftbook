@@ -7,10 +7,8 @@ final class SetTypesUITests: XCTestCase {
 
     private func choose(_ kind: String, forSet index: Int, in app: XCUIApplication, snapshot: String? = nil) {
         let menu = app.buttons["live.exercise.0.set.\(index).kind"]
-        XCTAssertTrue(menu.waitForExistence(timeout: 5), "No set type menu for set \(index)")
-        menu.tap()
         let option = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@ AND NOT (identifier BEGINSWITH 'live.')", kind)).firstMatch
-        XCTAssertTrue(option.waitForExistence(timeout: 5), "No \(kind) option")
+        XCTAssertTrue(menu.openMenu(showing: option), "No \(kind) option")
         if let snapshot { snap(snapshot) }
         option.tap()
     }
