@@ -4,9 +4,15 @@ import SwiftUI
 @main
 struct LiftbookApp: App {
     private let container: ModelContainer
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
-        container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
+        if let file = UITestOverrides.storeFile {
+            let url = URL.temporaryDirectory.appending(path: "\(file).store")
+            container = Persistence.makeContainer(url: url)
+        } else {
+            container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
+        }
         if UITestOverrides.seedSampleData {
             Persistence.seedSampleData(in: container.mainContext)
         }
@@ -19,6 +25,11 @@ struct LiftbookApp: App {
                 .defaultAppStorage(AppSettings.store)
         }
         .modelContainer(container)
+        // Save before the app can be suspended or quit, so an in-progress
+        // workout is there after a relaunch.
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { try? container.mainContext.save() }
+        }
     }
 }
 
@@ -39,8 +50,14 @@ enum UITestOverrides {
         UserDefaults.standard.bool(forKey: "uiTestSeedSampleData")
     }
 
-    /// UI tests launch with a fresh in-memory store; treat that as "under test".
-    static var isUITesting: Bool { useInMemoryStore }
+    /// `-uiTestStoreFile <name>` keeps data in a temporary file so a UI test
+    /// can relaunch the app and find it again.
+    static var storeFile: String? {
+        UserDefaults.standard.string(forKey: "uiTestStoreFile").flatMap { $0.isEmpty ? nil : $0 }
+    }
+
+    /// UI tests launch with a test store; treat that as "under test".
+    static var isUITesting: Bool { useInMemoryStore || storeFile != nil }
 
     static func appearance(from value: String?) -> ColorScheme? {
         switch value {

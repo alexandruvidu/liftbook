@@ -103,8 +103,15 @@ struct StartWorkoutSection: View {
 private struct WorkoutStartingModifier: ViewModifier {
     @Bindable var starter: WorkoutStartController
     @Environment(\.modelContext) private var modelContext
-    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil })
+    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)
     private var active: [WorkoutSession]
+    /// Whether this launch already offered to resume a leftover workout.
+    @State private var checkedForLeftover = false
+    @State private var leftover: WorkoutSession?
+
+    private var hasLeftover: Binding<Bool> {
+        Binding(get: { leftover != nil }, set: { if !$0 { leftover = nil } })
+    }
 
     private var hasConflict: Binding<Bool> {
         Binding(get: { starter.conflicting != nil }, set: { if !$0 { starter.conflicting = nil } })
@@ -120,6 +127,25 @@ private struct WorkoutStartingModifier: ViewModifier {
                 } else {
                     starter.conflicting = request
                 }
+            }
+            // A workout still in progress at launch was left when the app quit.
+            .task {
+                guard !checkedForLeftover else { return }
+                checkedForLeftover = true
+                if starter.presented == nil { leftover = active.last }
+            }
+            .alert(ResumePrompt.title, isPresented: hasLeftover, presenting: leftover) { session in
+                Button("Resume") { starter.presentAfterAlert(session) }
+                    .accessibilityIdentifier("leftover.resume")
+                Button("Discard Workout", role: .destructive) {
+                    RestAlerts.cancel()
+                    modelContext.delete(session)
+                    try? modelContext.save()
+                }
+                .accessibilityIdentifier("leftover.discard")
+                Button("Not Now", role: .cancel) {}
+            } message: { session in
+                Text(ResumePrompt.message(for: session))
             }
             .alert("A workout is already in progress", isPresented: hasConflict) {
                 Button("Resume Current") { starter.presentAfterAlert(active.last) }
