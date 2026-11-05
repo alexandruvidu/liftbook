@@ -70,6 +70,10 @@ private struct ExerciseDetailList: View {
                 }
             }
 
+            if exercise.type == .weightAndReps {
+                ExerciseProgressChart(exerciseID: exercise.id)
+            }
+
             RecordsSection(exercise: exercise)
 
             SetFieldsSection(type: exercise.type)
