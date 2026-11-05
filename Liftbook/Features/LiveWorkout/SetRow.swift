@@ -40,6 +40,8 @@ struct SetRow: View {
     /// The set at the same position last time, if any.
     var previous: SetMeasurement?
     var unit: WeightUnit = .kilograms
+    /// Called when the set is checked off (not when un-checked).
+    var onCompleted: () -> Void = {}
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -48,9 +50,11 @@ struct SetRow: View {
                 Button {
                     set.measurement = previous
                 } label: {
-                    Text("Last time: \(previous.formatted(for: type, unit: unit))")
+                    Label("Last time: \(previous.formatted(for: type, unit: unit))",
+                          systemImage: "clock.arrow.circlepath")
                         .font(.caption)
-                        .foregroundStyle(.secondary)
+                        // Buttons tint their label; keep this a quiet gray.
+                        .foregroundStyle(Color.secondary)
                         .padding(.leading, SetColumns.number + 8)
                 }
                 .buttonStyle(.borderless)
@@ -78,7 +82,7 @@ struct SetRow: View {
                 .accessibilityIdentifier("\(identifier).rpe")
 
             Button {
-                set.toggleCompleted(for: type)
+                if set.toggleCompleted(for: type) { onCompleted() }
             } label: {
                 Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
                     .font(.title2)

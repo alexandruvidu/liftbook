@@ -11,6 +11,7 @@ struct LiveWorkoutView: View {
     @Query private var customExercises: [CustomExercise]
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }, sort: \WorkoutSession.startedAt, order: .reverse)
     private var finishedSessions: [WorkoutSession]
+    @AppStorage(RestTimer.soundKey) private var restSound = true
     @State private var isPicking = false
     @State private var isConfirmingDiscard = false
 
@@ -18,14 +19,6 @@ struct LiveWorkoutView: View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         NavigationStack {
             List {
-                Section {
-                    TimelineView(.periodic(from: .now, by: 1)) { context in
-                        LabeledContent("Elapsed", value: SetMeasurement.clock(context.date.timeIntervalSince(session.startedAt)))
-                            .monospacedDigit()
-                    }
-                    .accessibilityIdentifier("live.elapsed")
-                }
-
                 if session.exercises.isEmpty {
                     Section {
                         Text("Add your first exercise to start logging sets.")
@@ -54,9 +47,34 @@ struct LiveWorkoutView: View {
             }
             .listStyle(.insetGrouped)
             .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom) {
+                if session.restEndsAt != nil {
+                    RestTimerBar(session: session,
+                                 exerciseName: session.restExerciseID.map { catalog.name(for: $0) })
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.snappy, value: session.restEndsAt == nil)
+            .task(id: session.restEndsAt) { await runRestTimer(catalog: catalog) }
             .navigationTitle(session.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                // The elapsed clock lives in the bar, outside the list, so its
+                // per-second updates don't refresh list rows (and close menus).
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 0) {
+                        Text(session.name)
+                            .font(.headline)
+                            .lineLimit(1)
+                        TimelineView(.periodic(from: .now, by: 1)) { context in
+                            Text(SetMeasurement.clock(context.date.timeIntervalSince(session.startedAt)))
+                                .font(.caption)
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                        }
+                        .accessibilityIdentifier("live.elapsed")
+                    }
+                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Minimize", systemImage: "chevron.down") { dismiss() }
                         .accessibilityIdentifier("live.minimize")
@@ -70,6 +88,8 @@ struct LiveWorkoutView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Finish") {
+                        session.stopRest()
+                        RestAlerts.cancel()
                         session.endedAt = .now
                         dismiss()
                     }
@@ -80,11 +100,33 @@ struct LiveWorkoutView: View {
                 ExercisePickerView(catalog: catalog) { session.addExercises($0) }
             }
             .confirmationDialog("Discard this workout?", isPresented: $isConfirmingDiscard, titleVisibility: .visible) {
-                Button("Discard Workout", role: .destructive, action: onDiscard)
+                Button("Discard Workout", role: .destructive) {
+                    RestAlerts.cancel()
+                    onDiscard()
+                }
                     .accessibilityIdentifier("live.confirmDiscard")
             } message: {
                 Text("Nothing from this session will be saved.")
             }
         }
+    }
+
+    /// Schedules the end-of-rest notification, then waits for the rest to end
+    /// to play the sound and hide the timer. Restarted whenever the end changes.
+    private func runRestTimer(catalog: ExerciseCatalog) async {
+        guard let end = session.restEndsAt else {
+            RestAlerts.cancel()
+            return
+        }
+        let name = session.restExerciseID.map { catalog.name(for: $0) } ?? "your workout"
+        RestAlerts.schedule(at: end, exerciseName: name, sound: restSound)
+        let delay = end.timeIntervalSinceNow
+        if delay > 0 {
+            try? await Task.sleep(for: .seconds(delay))
+        }
+        guard !Task.isCancelled, session.restEndsAt == end else { return }
+        // Don't beep for a rest that ended while the app was closed.
+        if restSound && delay > -2 { RestAlerts.playSound() }
+        session.stopRest()
     }
 }
