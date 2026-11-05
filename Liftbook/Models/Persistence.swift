@@ -44,4 +44,30 @@ enum Persistence {
         routine.apply(draft, folder: nil, in: context)
         try? context.save()
     }
+
+    /// Adds three finished workouts 1, 2 and 9 days ago. Used by UI tests via
+    /// `-uiTestSeedHistory YES`.
+    @MainActor
+    static func seedHistory(in context: ModelContext, now: Date = .now, calendar: Calendar = .current) {
+        guard ((try? context.fetchCount(FetchDescriptor<WorkoutSession>())) ?? 0) == 0 else { return }
+        let plans: [(daysAgo: Int, name: String, weight: Double)] = [
+            (1, "Upper Body", 62.5), (2, "Leg Day", 100), (9, "Upper Body", 60),
+        ]
+        for plan in plans {
+            let day = calendar.date(byAdding: .day, value: -plan.daysAgo, to: calendar.startOfDay(for: now))!
+            let start = calendar.date(bySettingHour: 18, minute: 0, second: 0, of: day)!
+            let session = WorkoutSession(name: plan.name, startedAt: start)
+            context.insert(session)
+            let exercises = plan.name == "Leg Day" ? ["back-squat"] : ["barbell-bench-press", "bent-over-barbell-row"]
+            session.addExercises(exercises, setCount: 3)
+            for exercise in session.exercises {
+                for set in exercise.sets {
+                    set.measurement = SetMeasurement(weight: plan.weight, reps: 8)
+                    set.toggleCompleted(for: .weightAndReps, at: start)
+                }
+            }
+            session.finish(at: start.addingTimeInterval(52 * 60))
+        }
+        try? context.save()
+    }
 }

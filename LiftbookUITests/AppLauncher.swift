@@ -4,9 +4,11 @@ extension XCUIApplication {
     /// Launches Liftbook with a forced appearance and a fresh in-memory data store.
     /// - Parameter storeFile: keep data in this temporary store file instead of
     ///   memory, so a relaunch with the same name finds it again.
+    /// - Parameter seedHistory: add finished workouts 1, 2 and 9 days ago
+    ///   ("Upper Body", "Leg Day", "Upper Body"), each 52 minutes long.
     @MainActor
     static func launchLiftbook(appearance: String = "light", seedSampleData: Bool = false,
-                               storeFile: String? = nil) -> XCUIApplication {
+                               storeFile: String? = nil, seedHistory: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-uiTestAppearance", appearance]
         if let storeFile {
@@ -17,6 +19,9 @@ extension XCUIApplication {
         if seedSampleData {
             // Adds an "Upper Body" routine: bench press 3 sets, barbell row 3, overhead press 2.
             app.launchArguments += ["-uiTestSeedSampleData", "YES"]
+        }
+        if seedHistory {
+            app.launchArguments += ["-uiTestSeedHistory", "YES"]
         }
         app.launch()
         return app

@@ -16,6 +16,9 @@ struct LiftbookApp: App {
         if UITestOverrides.seedSampleData {
             Persistence.seedSampleData(in: container.mainContext)
         }
+        if UITestOverrides.seedHistory {
+            Persistence.seedHistory(in: container.mainContext)
+        }
     }
 
     var body: some Scene {
@@ -48,6 +51,11 @@ enum UITestOverrides {
     /// `-uiTestSeedSampleData YES` adds a sample routine on launch.
     static var seedSampleData: Bool {
         UserDefaults.standard.bool(forKey: "uiTestSeedSampleData")
+    }
+
+    /// `-uiTestSeedHistory YES` adds a few finished workouts from the past days.
+    static var seedHistory: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestSeedHistory")
     }
 
     /// `-uiTestStoreFile <name>` keeps data in a temporary file so a UI test
