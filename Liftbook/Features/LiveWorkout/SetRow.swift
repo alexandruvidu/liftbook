@@ -127,6 +127,8 @@ private struct SetKindMenu: View {
                 .background(set.kind.tint.opacity(set.kind == .normal ? 0 : 0.28),
                             in: RoundedRectangle(cornerRadius: 7))
         }
+        // Menus tint their label with the accent color; keep the tag readable.
+        .tint(set.kind == .normal ? Color.secondary : Color.primary)
         .accessibilityLabel("\(set.kind.displayName): \(label)")
     }
 }
