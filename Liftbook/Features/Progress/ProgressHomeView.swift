@@ -19,6 +19,8 @@ struct ProgressHomeView: View {
                     .accessibilityIdentifier("progress.empty")
                 } else {
                     List {
+                        GoalSection(sessions: sessions)
+
                         WeeklyMuscleChart(sessions: sessions, catalog: catalog)
 
                         Section {
