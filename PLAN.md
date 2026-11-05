@@ -29,8 +29,8 @@ screenshot looks correct.
 ## Phase 2 — History & progress
 - [x] History list and calendar view
 - [x] Workout detail, edit past workouts, repeat a past workout
-- [ ] Personal records: heaviest weight, best estimated 1RM, best set volume, most reps
-- [ ] Per-exercise charts: estimated 1RM, max weight, volume over time
+- [x] Personal records: heaviest weight, best estimated 1RM, best set volume, most reps
+- [x] Per-exercise charts: estimated 1RM, max weight, volume over time
 - [ ] Weekly sets and volume per muscle group chart
 - [ ] Workout streaks and weekly goal
 - [ ] Body measurements (weight, body fat, custom) with charts
