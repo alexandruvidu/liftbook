@@ -32,6 +32,8 @@ final class LogSetsUITests: XCTestCase {
         type("60", into: app.textFields["live.exercise.0.set.0.weight"])
         type("8", into: app.textFields["live.exercise.0.set.0.reps"])
         app.buttons["live.keyboardDone"].tap()
+        // A menu opened while the keyboard is still animating away gets closed again
+        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
 
         app.buttons["live.exercise.0.set.0.rpe"].tap()
         let rpe = app.buttons["RPE 8"]

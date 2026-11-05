@@ -105,15 +105,17 @@ private struct SetKindMenu: View {
 
     var body: some View {
         Menu {
-            Picker("Set Type", selection: Binding(get: { set.kind }, set: { set.kind = $0 })) {
+            Section("Set Type") {
                 ForEach(SetKind.allCases) { kind in
-                    Label {
-                        Text(kind.displayName)
-                        Text(kind.explanation)
-                    } icon: {
-                        Text(kind.tag ?? "#")
+                    Button {
+                        set.kind = kind
+                    } label: {
+                        if set.kind == kind {
+                            Label(kind.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(kind.displayName)
+                        }
                     }
-                    .tag(kind)
                 }
             }
         } label: {
