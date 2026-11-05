@@ -7,6 +7,8 @@ struct LiveExerciseSection: View {
     let fallbackName: String
     /// Prefix for accessibility identifiers, e.g. "live.exercise.0".
     let identifier: String
+    /// What was done for this exercise last time.
+    var previous: PreviousPerformance?
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
 
@@ -16,7 +18,7 @@ struct LiveExerciseSection: View {
             let labels = exercise.setLabels
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
-                       identifier: "\(identifier).set.\(index)")
+                       identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index))
             }
             .onDelete { offsets in
                 let sets = exercise.orderedSets

@@ -37,9 +37,32 @@ struct SetRow: View {
     let type: ExerciseType
     /// Prefix for accessibility identifiers, e.g. "live.exercise.0.set.1".
     let identifier: String
+    /// The set at the same position last time, if any.
+    var previous: SetMeasurement?
     var unit: WeightUnit = .kilograms
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            inputs
+            if let previous {
+                Button {
+                    set.measurement = previous
+                } label: {
+                    Text("Last time: \(previous.formatted(for: type, unit: unit))")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, SetColumns.number + 8)
+                }
+                .buttonStyle(.borderless)
+                .disabled(set.isCompleted)
+                .accessibilityLabel("Last time: \(previous.formatted(for: type, unit: unit)). Tap to copy.")
+                .accessibilityIdentifier("\(identifier).previous")
+            }
+        }
+        .listRowBackground(set.isCompleted ? Color.accentColor.opacity(0.14) : nil)
+    }
+
+    private var inputs: some View {
         HStack(spacing: 8) {
             SetKindMenu(set: set, label: label)
                 .frame(width: SetColumns.number)
@@ -69,7 +92,6 @@ struct SetRow: View {
             .accessibilityIdentifier("\(identifier).check")
             .sensoryFeedback(.success, trigger: set.isCompleted) { _, done in done }
         }
-        .listRowBackground(set.isCompleted ? Color.accentColor.opacity(0.14) : nil)
     }
 }
 
@@ -94,6 +116,12 @@ private struct SetValueField: View {
                 var measurement = set.measurement
                 measurement.setInput(newValue, for: spec.field, unit: unit)
                 if measurement != set.measurement { set.measurement = measurement }
+            }
+            // Show values set from outside the field, e.g. copied from last time.
+            .onChange(of: set.measurement) { _, measurement in
+                var typed = measurement
+                typed.setInput(text, for: spec.field, unit: unit)
+                if typed != measurement { text = measurement.inputText(for: spec.field, unit: unit) }
             }
     }
 }

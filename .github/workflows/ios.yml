@@ -131,6 +131,9 @@ jobs:
           python3 scripts/make_source.py build/Payload/Liftbook.app/Info.plist Liftbook.ipa source.json
 
       - name: Upload IPA
+        # The rolling release below is the main download; don't let an
+        # artifact-service timeout stop it from being published.
+        continue-on-error: true
         uses: actions/upload-artifact@v6
         with:
           name: ipa

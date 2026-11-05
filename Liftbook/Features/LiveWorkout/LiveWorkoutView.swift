@@ -9,6 +9,8 @@ struct LiveWorkoutView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Query private var customExercises: [CustomExercise]
+    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }, sort: \WorkoutSession.startedAt, order: .reverse)
+    private var finishedSessions: [WorkoutSession]
     @State private var isPicking = false
     @State private var isConfirmingDiscard = false
 
@@ -35,7 +37,9 @@ struct LiveWorkoutView: View {
                     LiveExerciseSection(exercise: exercise,
                                         info: catalog.exercise(id: exercise.exerciseID),
                                         fallbackName: catalog.name(for: exercise.exerciseID),
-                                        identifier: "live.exercise.\(index)")
+                                        identifier: "live.exercise.\(index)",
+                                        previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
+                                                                           in: finishedSessions, excluding: session))
                 }
 
                 Section {
