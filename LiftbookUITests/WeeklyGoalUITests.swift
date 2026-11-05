@@ -21,7 +21,7 @@ final class WeeklyGoalUITests: XCTestCase {
 
         // Yesterday's workout is in this or last week, so the streak is at least 1
         app.tabBars.buttons["Progress"].tap()
-        let streak = app.descendants(matching: .any)["goal.streak"]
+        let streak = app.staticTexts.matching(identifier: "goal.streak").firstMatch
         XCTAssertTrue(streak.waitForExistence(timeout: 10), "No streak on Progress")
         XCTAssertTrue(streak.label.contains("-week streak"), "Streak was \(streak.label)")
         XCTAssertTrue(app.staticTexts["goal.thisWeek"].exists, "No weekly progress")
