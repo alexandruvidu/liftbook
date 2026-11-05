@@ -16,7 +16,7 @@ screenshot looks correct.
 - [x] Exercise types: weight & reps, bodyweight, assisted, duration, distance
 - [x] Routines: create, edit, reorder exercises, organize in folders
 - [x] Start an empty workout or start from a routine
-- [ ] Live workout screen: add sets with reps, weight, RPE; check off sets
+- [x] Live workout screen: add sets with reps, weight, RPE; check off sets
 - [ ] Set types: warm-up, normal, drop set, failure
 - [ ] Show previous performance next to each set
 - [ ] Rest timer per exercise with adjustable default, sound, and local notification
