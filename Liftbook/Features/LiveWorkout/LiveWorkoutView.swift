@@ -20,6 +20,12 @@ struct LiveWorkoutView: View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         NavigationStack {
             List {
+                Section {
+                    TextField("Workout notes", text: Bindable(session).notes, axis: .vertical)
+                        .lineLimit(1...6)
+                        .accessibilityIdentifier("live.notes")
+                }
+
                 if session.exercises.isEmpty {
                     Section {
                         Text("Add your first exercise to start logging sets.")
@@ -33,7 +39,9 @@ struct LiveWorkoutView: View {
                                         fallbackName: catalog.name(for: exercise.exerciseID),
                                         identifier: "live.exercise.\(index)",
                                         previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
-                                                                           in: finishedSessions, excluding: session))
+                                                                           in: finishedSessions, excluding: session),
+                                        previousNote: PreviousPerformance.note(exerciseID: exercise.exerciseID,
+                                                                               in: finishedSessions, excluding: session))
                 }
 
                 Section {
@@ -87,9 +95,8 @@ struct LiveWorkoutView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Finish") {
-                        session.stopRest()
                         RestAlerts.cancel()
-                        session.endedAt = .now
+                        session.finish()
                         dismiss()
                     }
                     .accessibilityIdentifier("live.finish")

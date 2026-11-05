@@ -9,6 +9,8 @@ struct LiveExerciseSection: View {
     let identifier: String
     /// What was done for this exercise last time.
     var previous: PreviousPerformance?
+    /// The note written for this exercise last time, shown as a hint.
+    var previousNote: String?
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
@@ -17,6 +19,11 @@ struct LiveExerciseSection: View {
 
     var body: some View {
         Section {
+            TextField(previousNote.map { "Last note: \($0)" } ?? "Exercise note",
+                      text: Bindable(exercise).notes, axis: .vertical)
+                .font(.subheadline)
+                .lineLimit(1...4)
+                .accessibilityIdentifier("\(identifier).notes")
             SetHeaderRow(type: type)
             let labels = exercise.setLabels
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.stableID) { index, set in
