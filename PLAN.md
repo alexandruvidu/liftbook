@@ -34,7 +34,7 @@ screenshot looks correct.
 - [x] Weekly sets and volume per muscle group chart
 - [x] Workout streaks and weekly goal
 - [x] Body measurements (weight, body fat, custom) with charts
-- [ ] Progress photos stored locally
+- [x] Progress photos stored locally
 
 ## Phase 3 — Advanced
 - [ ] Plate calculator with configurable bar and plates
