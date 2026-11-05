@@ -11,12 +11,12 @@ struct RestTimerBar: View {
         let end = session.restEndsAt ?? .now
         let begin = end.addingTimeInterval(-max(session.restDuration, 1))
         VStack(spacing: 10) {
-            HStack {
+            HStack(spacing: 12) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("Rest")
+                    Text(exerciseName.map { "Rest after \($0)" } ?? "Rest")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
-                        .textCase(.uppercase)
+                        .lineLimit(1)
                     Text(timerInterval: Date.now...max(end, .now), countsDown: true)
                         .font(.title2.weight(.semibold))
                         .monospacedDigit()
@@ -24,16 +24,9 @@ struct RestTimerBar: View {
                         .accessibilityValue("\(Int((session.restRemaining() ?? 0).rounded()))")
                         .accessibilityIdentifier("rest.remaining")
                 }
-                if let exerciseName {
-                    Text("after \(exerciseName)")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                } else {
-                    Spacer()
-                }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 controls
+                    .fixedSize()
             }
             ProgressView(timerInterval: begin...max(end, begin), countsDown: false) {
                 EmptyView()
@@ -64,6 +57,8 @@ struct RestTimerBar: View {
                 .accessibilityIdentifier("rest.skip")
         }
         .buttonStyle(.bordered)
+        .controlSize(.small)
+        .lineLimit(1)
         .font(.subheadline.weight(.semibold))
         .monospacedDigit()
     }

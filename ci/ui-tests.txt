@@ -3,3 +3,4 @@
 # which is required at the end of each phase.
 SupersetUITests
 NotesUITests
+RestTimerUITests
