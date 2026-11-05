@@ -19,6 +19,8 @@ struct ProgressHomeView: View {
                     .accessibilityIdentifier("progress.empty")
                 } else {
                     List {
+                        WeeklyMuscleChart(sessions: sessions, catalog: catalog)
+
                         Section {
                             ForEach(loggedExercises, id: \.exerciseID) { item in
                                 NavigationLink(value: item.exerciseID) {

@@ -4,4 +4,4 @@
 # CI fails if no screenshots are produced.
 PersonalRecordsUITests
 ExerciseProgressUITests
-TabBarUITests
+WeeklyMusclesUITests
