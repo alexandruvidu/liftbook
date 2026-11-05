@@ -46,9 +46,17 @@ struct ExerciseDetailView: View {
 
 private struct ExerciseDetailList: View {
     let exercise: LibraryExercise
+    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil })
+    private var sessions: [WorkoutSession]
 
     var body: some View {
+        // Once the exercise has been logged, progress comes first.
+        let logged = !PersonalRecords.loggedSets(of: exercise.id, in: sessions).isEmpty
         List {
+            if logged {
+                progressSections
+            }
+
             if !exercise.details.isEmpty {
                 Section("How to do it") {
                     Text(exercise.details)
@@ -70,15 +78,20 @@ private struct ExerciseDetailList: View {
                 }
             }
 
-            if exercise.type == .weightAndReps {
-                ExerciseProgressChart(exerciseID: exercise.id)
+            if !logged {
+                progressSections
             }
-
-            RecordsSection(exercise: exercise)
 
             SetFieldsSection(type: exercise.type)
         }
         .listStyle(.insetGrouped)
+    }
+
+    @ViewBuilder private var progressSections: some View {
+        if exercise.type == .weightAndReps {
+            ExerciseProgressChart(exerciseID: exercise.id)
+        }
+        RecordsSection(exercise: exercise)
     }
 
     private func muscleList(_ muscles: [Muscle]) -> String {

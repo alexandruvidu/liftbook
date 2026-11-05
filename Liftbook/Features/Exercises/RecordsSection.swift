@@ -19,18 +19,18 @@ struct RecordsSection: View {
                         .accessibilityIdentifier("exercise.records.empty")
                 }
                 ForEach(records, id: \.kind) { record in
-                    LabeledContent {
-                        VStack(alignment: .trailing, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        HStack(alignment: .firstTextBaseline) {
+                            Label(record.kind.title, systemImage: "trophy")
+                            Spacer()
                             Text(record.kind.formatted(record.value, unit: unit))
                                 .font(.body.weight(.semibold))
                                 .monospacedDigit()
-                                .foregroundStyle(.primary)
-                            Text("\(record.set.formatted(for: exercise.type, unit: unit)) · \(record.date.formatted(.dateTime.day().month(.abbreviated).year()))")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
                         }
-                    } label: {
-                        Label(record.kind.title, systemImage: "trophy")
+                        Text("\(record.set.formatted(for: exercise.type, unit: unit)) · \(record.date.formatted(.dateTime.day().month(.abbreviated).year()))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityIdentifier("exercise.record.\(record.kind.rawValue)")
