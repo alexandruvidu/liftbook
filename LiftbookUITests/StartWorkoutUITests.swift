@@ -43,13 +43,18 @@ final class StartWorkoutUITests: XCTestCase {
         snap("workout-resume-\(appearance)")
         resume.tap()
 
-        // Discard
+        // Discard (retry the tap once if the cover was still animating in)
         let discard = app.buttons["live.discard"]
         XCTAssertTrue(discard.waitForExistence(timeout: 10), "Live workout did not reopen")
+        let confirm = app.buttons.matching(NSPredicate(
+            format: "identifier == 'live.confirmDiscard' OR (label == 'Discard Workout' AND identifier != 'live.discard')"
+        )).firstMatch
         discard.tap()
-        let confirm = app.buttons.matching(NSPredicate(format: "label == 'Discard Workout'"))
-        XCTAssertTrue(confirm.element(boundBy: 1).waitForExistence(timeout: 5), "No discard confirmation")
-        confirm.element(boundBy: confirm.count - 1).tap()
+        if !confirm.waitForExistence(timeout: 4) {
+            discard.tap()
+        }
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5), "No discard confirmation")
+        confirm.tap()
         XCTAssertTrue(app.buttons["workout.startEmpty"].waitForExistence(timeout: 10), "Discard did not end the workout")
     }
 

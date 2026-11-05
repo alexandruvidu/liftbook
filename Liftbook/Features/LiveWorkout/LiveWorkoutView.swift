@@ -75,6 +75,7 @@ struct LiveWorkoutView: View {
             }
             .confirmationDialog("Discard this workout?", isPresented: $isConfirmingDiscard, titleVisibility: .visible) {
                 Button("Discard Workout", role: .destructive, action: onDiscard)
+                    .accessibilityIdentifier("live.confirmDiscard")
             } message: {
                 Text("Nothing from this session will be saved.")
             }
