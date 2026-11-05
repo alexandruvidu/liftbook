@@ -11,6 +11,12 @@ final class WorkoutSession {
     var notes: String
     /// The routine this workout was started from, if any.
     var routineID: UUID?
+    /// When the running rest timer ends; nil when no timer is running.
+    var restEndsAt: Date? = nil
+    /// Length of the running rest timer in seconds, for its progress.
+    var restDuration: Double = 0
+    /// The exercise whose set started the running rest timer.
+    var restExerciseID: String? = nil
     @Relationship(deleteRule: .cascade, inverse: \WorkoutExercise.session)
     var exercises: [WorkoutExercise] = []
 
@@ -45,6 +51,8 @@ final class WorkoutExercise {
     var exerciseID: String
     var position: Int
     var notes: String
+    /// Rest after each set in seconds; nil uses the default, 0 turns it off.
+    var restSeconds: Int? = nil
     var session: WorkoutSession?
     @Relationship(deleteRule: .cascade, inverse: \WorkoutSet.exercise)
     var sets: [WorkoutSet] = []

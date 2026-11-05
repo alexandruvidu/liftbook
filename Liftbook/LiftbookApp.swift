@@ -16,6 +16,7 @@ struct LiftbookApp: App {
         WindowGroup {
             RootView()
                 .preferredColorScheme(UITestOverrides.colorScheme)
+                .defaultAppStorage(AppSettings.store)
         }
         .modelContainer(container)
     }
@@ -37,6 +38,9 @@ enum UITestOverrides {
     static var seedSampleData: Bool {
         UserDefaults.standard.bool(forKey: "uiTestSeedSampleData")
     }
+
+    /// UI tests launch with a fresh in-memory store; treat that as "under test".
+    static var isUITesting: Bool { useInMemoryStore }
 
     static func appearance(from value: String?) -> ColorScheme? {
         switch value {

@@ -10,6 +10,8 @@ struct LiveExerciseSection: View {
     /// What was done for this exercise last time.
     var previous: PreviousPerformance?
 
+    @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
+
     private var type: ExerciseType { info?.type ?? .weightAndReps }
 
     var body: some View {
@@ -18,15 +20,24 @@ struct LiveExerciseSection: View {
             let labels = exercise.setLabels
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
-                       identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index))
+                       identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index)) {
+                    exercise.session?.startRest(seconds: exercise.effectiveRestSeconds(default: defaultRest),
+                                                for: exercise.exerciseID)
+                }
             }
             .onDelete { offsets in
                 let sets = exercise.orderedSets
                 for offset in offsets { exercise.removeSet(sets[offset]) }
             }
 
-            Button("Add Set", systemImage: "plus") { exercise.addSet() }
-                .accessibilityIdentifier("\(identifier).addSet")
+            HStack {
+                Button("Add Set", systemImage: "plus") { exercise.addSet() }
+                    .accessibilityIdentifier("\(identifier).addSet")
+                Spacer()
+                RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
+                    .accessibilityIdentifier("\(identifier).rest")
+            }
+            .buttonStyle(.borderless)
         } header: {
             HStack {
                 Text(info?.name ?? fallbackName)
