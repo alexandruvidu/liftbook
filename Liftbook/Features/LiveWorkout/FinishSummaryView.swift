@@ -90,9 +90,6 @@ struct FinishSummaryView: View {
     }
 
     private func recordValue(_ record: WorkoutSummary.Record) -> String {
-        switch record.kind {
-        case .heaviestWeight, .bestOneRepMax: "\(SetMeasurement.number(record.value, unit: unit)) \(unit.symbol)"
-        case .mostReps: "\(Int(record.value)) reps"
-        }
+        record.kind.formatted(record.value, unit: unit)
     }
 }

@@ -3,17 +3,7 @@ import Foundation
 /// Totals and new records for a finished workout.
 struct WorkoutSummary: Equatable, Sendable {
     struct Record: Equatable, Hashable, Sendable {
-        enum Kind: String, Sendable {
-            case heaviestWeight, bestOneRepMax, mostReps
-
-            var title: String {
-                switch self {
-                case .heaviestWeight: "Heaviest weight"
-                case .bestOneRepMax: "Best estimated 1RM"
-                case .mostReps: "Most reps"
-                }
-            }
-        }
+        typealias Kind = RecordKind
 
         let exerciseID: String
         let kind: Kind
@@ -29,10 +19,8 @@ struct WorkoutSummary: Equatable, Sendable {
     let volume: Double
     let records: [Record]
 
-    /// Estimated one-rep max (Epley formula); nil without weight or reps.
     static func estimatedOneRepMax(weight: Double, reps: Int) -> Double? {
-        guard weight > 0, reps > 0 else { return nil }
-        return reps == 1 ? weight : weight * (1 + Double(reps) / 30)
+        PersonalRecords.estimatedOneRepMax(weight: weight, reps: reps)
     }
 
     /// - Parameters:
@@ -60,8 +48,8 @@ struct WorkoutSummary: Equatable, Sendable {
             let before = past.filter { $0.exerciseID == exerciseID }.map(\.set)
             // A first-ever session sets a baseline, not a record.
             guard !before.isEmpty else { continue }
-            for kind in Self.recordKinds(for: type(exerciseID)) {
-                if let best = Self.best(kind, in: now), best > (Self.best(kind, in: before) ?? 0) {
+            for kind in Self.summaryKinds(for: type(exerciseID)) {
+                if let best = kind.best(in: now), best > (kind.best(in: before) ?? 0) {
                     records.append(Record(exerciseID: exerciseID, kind: kind, value: best))
                 }
             }
@@ -86,23 +74,9 @@ struct WorkoutSummary: Equatable, Sendable {
         type == .weightAndReps || type == .bodyweight
     }
 
-    private static func recordKinds(for type: ExerciseType) -> [Record.Kind] {
-        switch type {
-        case .weightAndReps: [.heaviestWeight, .bestOneRepMax]
-        case .bodyweight: [.mostReps]
-        case .assisted, .duration, .distance: []
-        }
-    }
-
-    private static func best(_ kind: Record.Kind, in sets: [SetMeasurement]) -> Double? {
-        let values: [Double] = sets.compactMap { set in
-            switch kind {
-            case .heaviestWeight: set.reps.flatMap { $0 > 0 ? set.weight : nil }
-            case .bestOneRepMax: set.weight.flatMap { w in set.reps.flatMap { estimatedOneRepMax(weight: w, reps: $0) } }
-            case .mostReps: set.reps.map(Double.init)
-            }
-        }
-        return values.max()
+    /// The summary highlights fewer kinds than the exercise page shows.
+    private static func summaryKinds(for type: ExerciseType) -> [RecordKind] {
+        RecordKind.kinds(for: type).filter { $0 != .bestSetVolume && !(type == .weightAndReps && $0 == .mostReps) }
     }
 
     private static func orderedUnique(_ ids: [String]) -> [String] {

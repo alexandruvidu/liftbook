@@ -70,6 +70,8 @@ private struct ExerciseDetailList: View {
                 }
             }
 
+            RecordsSection(exercise: exercise)
+
             SetFieldsSection(type: exercise.type)
         }
         .listStyle(.insetGrouped)

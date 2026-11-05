@@ -48,8 +48,10 @@ struct LiveExerciseSection: View {
                 }
                     .accessibilityIdentifier("\(identifier).addSet")
                 Spacer()
-                RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
-                    .accessibilityIdentifier("\(identifier).rest")
+                if startsRest {
+                    RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
+                        .accessibilityIdentifier("\(identifier).rest")
+                }
                 if let session = exercise.session {
                     ExerciseOptionsMenu(exercise: exercise, session: session)
                         .accessibilityIdentifier("\(identifier).options")
