@@ -28,7 +28,7 @@ struct WeeklyMuscleChart: View {
                     .accessibilityIdentifier("weekly.empty")
             } else {
                 chart(entries)
-                    .frame(height: CGFloat(entries.count) * 34 + 16)
+                    .frame(height: CGFloat(entries.count) * 48)
                     .accessibilityIdentifier("weekly.chart")
             }
         } header: {
@@ -77,9 +77,15 @@ struct WeeklyMuscleChart: View {
         return Chart(sorted) { entry in
             BarMark(x: .value(measure.rawValue, value(entry)),
                     y: .value("Muscle", entry.muscle.displayName),
-                    height: .fixed(18))
+                    height: .fixed(16))
                 .clipShape(UnevenRoundedRectangle(bottomTrailingRadius: 4, topTrailingRadius: 4))
                 .foregroundStyle(Color.accentColor)
+                // The muscle name sits above its bar; the value at its end.
+                .annotation(position: .top, alignment: .leading, spacing: 4) {
+                    Text(entry.muscle.displayName)
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+                }
                 .annotation(position: .trailing, spacing: 6) {
                     Text(label(entry))
                         .font(.caption)
@@ -90,9 +96,7 @@ struct WeeklyMuscleChart: View {
                 .accessibilityValue(label(entry))
         }
         .chartXAxis(.hidden)
-        .chartYAxis {
-            AxisMarks { AxisValueLabel().font(.subheadline) }
-        }
+        .chartYAxis(.hidden)
         .chartXScale(domain: 0...(sorted.map(value).max() ?? 1) * 1.25)
     }
 }
