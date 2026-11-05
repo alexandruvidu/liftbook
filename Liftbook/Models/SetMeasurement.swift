@@ -6,6 +6,8 @@ enum WeightUnit: String, Codable, CaseIterable, Identifiable, Sendable {
     case kilograms, pounds
 
     static let poundsPerKilogram = 2.204_622_62
+    /// Settings key for the unit chosen in Profile.
+    static let storageKey = "units.weight"
 
     var id: String { rawValue }
     var symbol: String { self == .kilograms ? "kg" : "lb" }

@@ -5,7 +5,7 @@ struct FinishSummaryView: View {
     let session: WorkoutSession
     let summary: WorkoutSummary
     let catalog: ExerciseCatalog
-    var unit: WeightUnit = .kilograms
+    @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
     let onDone: () -> Void
 
     var body: some View {

@@ -38,12 +38,6 @@ extension WorkoutSession {
         return remaining > 0 ? remaining : nil
     }
 
-    /// Fraction of the rest that has passed, 0...1.
-    func restProgress(at date: Date = .now) -> Double {
-        guard let remaining = restRemaining(at: date), restDuration > 0 else { return 1 }
-        return min(max(1 - remaining / restDuration, 0), 1)
-    }
-
     /// Starts (or restarts) the rest timer. Zero or negative seconds stop it.
     func startRest(seconds: Int, for exerciseID: String, at date: Date = .now) {
         guard seconds > 0 else { return stopRest() }

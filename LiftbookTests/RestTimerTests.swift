@@ -21,7 +21,6 @@ struct RestTimerTests {
         session.startRest(seconds: 90, for: "barbell-bench-press", at: now)
         #expect(session.restRemaining(at: now) == 90)
         #expect(session.restRemaining(at: now.addingTimeInterval(30)) == 60)
-        #expect(session.restProgress(at: now.addingTimeInterval(45)) == 0.5)
         #expect(session.restExerciseID == "barbell-bench-press")
         #expect(session.restRemaining(at: now.addingTimeInterval(90)) == nil)
     }

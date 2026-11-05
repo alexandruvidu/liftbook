@@ -3,10 +3,23 @@ import SwiftUI
 struct ProfileHomeView: View {
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @AppStorage(RestTimer.soundKey) private var restSound = true
+    @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
 
     var body: some View {
         NavigationStack {
             Form {
+                Section {
+                    Picker("Weight", selection: $unit) {
+                        Text("Kilograms (kg)").tag(WeightUnit.kilograms)
+                        Text("Pounds (lb)").tag(WeightUnit.pounds)
+                    }
+                    .accessibilityIdentifier("settings.unit")
+                } header: {
+                    Text("Units")
+                } footer: {
+                    Text("Changes how weights and distances are shown and entered. Your logged sets stay the same.")
+                }
+
                 Section {
                     Picker("Default Rest", selection: $defaultRest) {
                         ForEach(RestTimer.options, id: \.self) { seconds in

@@ -23,7 +23,7 @@ screenshot looks correct.
 - [x] Supersets
 - [x] Notes per workout and per exercise
 - [x] Finish workout summary (duration, volume, sets, new PRs) and save to history
-- [ ] Resume an in-progress workout after the app is relaunched; discard option
+- [x] Resume an in-progress workout after the app is relaunched; discard option
 - [ ] kg / lb setting
 
 ## Phase 2 — History & progress

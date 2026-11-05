@@ -44,6 +44,20 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   keep screenshot names unique and tests independent of each other.
 - Review every new screenshot in both appearances before ticking an item.
 
+## UI test helpers and pitfalls
+- `LiftbookUITests/UITestHelpers.swift`: `field.enter(text)` (waits for
+  keyboard focus), `app.dismissKeyboard()`, `button.openMenu(showing:)`,
+  `app.scrollTo(element)`, `app.finishWorkout()` (Finish + summary Done).
+- `launchLiftbook(storeFile:)` keeps data in a temporary file so a test can
+  quit and relaunch the app; settings (`@AppStorage`) start empty on each
+  UI-test launch.
+- Never key SwiftUI views (`ForEach` ids, `sheet(item:)`) on a new model's
+  `persistentModelID`: it changes on the first save and rebuilds the view
+  (menus close, fields lose focus). Save right after inserting, and use a
+  UUID or `ObjectIdentifier`.
+- Avoid per-second `TimelineView`s in screens with menus or text fields; use
+  `Text(date, style: .timer)` / `ProgressView(timerInterval:)`.
+
 ## Workflow for every PLAN.md item
 1. Take the first unchecked item in `PLAN.md`; implement it in small, focused
    changes.
