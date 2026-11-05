@@ -14,7 +14,7 @@ struct BodyMeasurementsTests {
         let metrics = try context.fetch(FetchDescriptor<BodyMetric>(sortBy: [SortDescriptor(\.sortIndex)]))
         #expect(metrics.map(\.metricID) == [BodyMetric.bodyWeightID, BodyMetric.bodyFatID])
         #expect(metrics.map(\.kind) == [.weight, .percent])
-        #expect(metrics.allSatisfy(\.isBuiltIn))
+        #expect(metrics.allSatisfy { $0.isBuiltIn })
     }
 
     @Test(arguments: [
