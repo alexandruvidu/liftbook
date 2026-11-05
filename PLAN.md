@@ -24,7 +24,7 @@ screenshot looks correct.
 - [x] Notes per workout and per exercise
 - [x] Finish workout summary (duration, volume, sets, new PRs) and save to history
 - [x] Resume an in-progress workout after the app is relaunched; discard option
-- [ ] kg / lb setting
+- [x] kg / lb setting
 
 ## Phase 2 — History & progress
 - [ ] History list and calendar view
