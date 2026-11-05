@@ -21,9 +21,13 @@ final class PersonalRecordsUITests: XCTestCase {
         app.scrollTo(heaviest)
         XCTAssertTrue(heaviest.exists, "No heaviest weight record")
         XCTAssertTrue(heaviest.label.contains("62.5 kg"), "Heaviest was \(heaviest.label)")
-        XCTAssertTrue(app.descendants(matching: .any)["exercise.record.bestSetVolume"].label.contains("500 kg"))
-        XCTAssertTrue(app.descendants(matching: .any)["exercise.record.mostReps"].label.contains("8 reps"))
         snap("exercise-records-\(appearance)")
+        let volume = app.descendants(matching: .any)["exercise.record.bestSetVolume"]
+        app.scrollTo(volume)
+        XCTAssertTrue(volume.label.contains("500 kg"), "Set volume was \(volume.label)")
+        let reps = app.descendants(matching: .any)["exercise.record.mostReps"]
+        app.scrollTo(reps)
+        XCTAssertTrue(reps.label.contains("8 reps"), "Most reps was \(reps.label)")
 
         // An exercise never logged invites a first workout
         app.navigationBars.buttons.element(boundBy: 0).tap()
