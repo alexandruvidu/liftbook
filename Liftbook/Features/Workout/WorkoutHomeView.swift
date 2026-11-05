@@ -60,8 +60,10 @@ struct WorkoutHomeView: View {
                 RoutineEditorView(routine: target.routine)
             }
             .folderActions($folderAction, folderCount: folders.count)
-            .workoutStarting(starter)
         }
+        // Attached to the stack (not its root list) so the alert and the live
+        // workout cover still present while a routine's detail page is pushed.
+        .workoutStarting(starter)
     }
 
     private func routineLink(_ routine: Routine, catalog: ExerciseCatalog) -> some View {

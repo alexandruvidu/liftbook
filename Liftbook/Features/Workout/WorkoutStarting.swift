@@ -17,9 +17,26 @@ final class WorkoutStartController {
     /// Deleted once the live workout screen has finished dismissing.
     fileprivate var discardAfterDismiss: WorkoutSession?
 
+    /// UIKit ignores a present/dismiss that starts while an alert or dialog is
+    /// still animating away, so changes made from one wait for it to finish.
+    static let transitionDelay: Duration = .milliseconds(450)
+
+    /// Called from the discard confirmation dialog.
     func discard(_ session: WorkoutSession) {
         discardAfterDismiss = session
-        presented = nil
+        afterTransition { self.presented = nil }
+    }
+
+    /// Presents a session from an alert button.
+    func presentAfterAlert(_ session: WorkoutSession?) {
+        afterTransition { self.presented = session }
+    }
+
+    private func afterTransition(_ change: @escaping @MainActor () -> Void) {
+        Task { @MainActor in
+            try? await Task.sleep(for: Self.transitionDelay)
+            change()
+        }
     }
 
     func start(_ request: WorkoutStartRequest) {
@@ -100,13 +117,13 @@ private struct WorkoutStartingModifier: ViewModifier {
                 }
             }
             .alert("A workout is already in progress", isPresented: hasConflict) {
-                Button("Resume Current") { starter.presented = active.last }
+                Button("Resume Current") { starter.presentAfterAlert(active.last) }
                 Button("Discard and Start New", role: .destructive) {
                     let request = starter.conflicting
                     for session in active {
                         modelContext.delete(session)
                     }
-                    if let request { begin(request) }
+                    if let request { begin(request, fromAlert: true) }
                 }
                 Button("Cancel", role: .cancel) {}
             } message: {
@@ -124,13 +141,17 @@ private struct WorkoutStartingModifier: ViewModifier {
         }
     }
 
-    private func begin(_ request: WorkoutStartRequest) {
+    private func begin(_ request: WorkoutStartRequest, fromAlert: Bool = false) {
         let session = switch request {
         case .empty: WorkoutStarter.emptyWorkout()
         case .routine(let routine): WorkoutStarter.workout(from: routine)
         }
         modelContext.insert(session)
-        starter.presented = session
+        if fromAlert {
+            starter.presentAfterAlert(session)
+        } else {
+            starter.presented = session
+        }
     }
 }
 
