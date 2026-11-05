@@ -8,7 +8,8 @@ extension XCUIApplication {
     ///   ("Upper Body", "Leg Day", "Upper Body"), each 52 minutes long.
     @MainActor
     static func launchLiftbook(appearance: String = "light", seedSampleData: Bool = false,
-                               storeFile: String? = nil, seedHistory: Bool = false) -> XCUIApplication {
+                               storeFile: String? = nil, seedHistory: Bool = false,
+                               seedPhotos: Bool = false) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-uiTestAppearance", appearance]
         if let storeFile {
@@ -22,6 +23,10 @@ extension XCUIApplication {
         }
         if seedHistory {
             app.launchArguments += ["-uiTestSeedHistory", "YES"]
+        }
+        if seedPhotos {
+            // Two drawn photos: today and 30 days ago.
+            app.launchArguments += ["-uiTestSeedPhotos", "YES"]
         }
         app.launch()
         return app

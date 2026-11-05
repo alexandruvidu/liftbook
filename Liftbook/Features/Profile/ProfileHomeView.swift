@@ -16,6 +16,12 @@ struct ProfileHomeView: View {
                         Label("Body Measurements", systemImage: "figure")
                     }
                     .accessibilityIdentifier("profile.body")
+                    NavigationLink {
+                        ProgressPhotosView()
+                    } label: {
+                        Label("Progress Photos", systemImage: "photo.on.rectangle")
+                    }
+                    .accessibilityIdentifier("profile.photos")
                 }
 
                 Section {

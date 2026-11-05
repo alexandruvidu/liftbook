@@ -4,4 +4,5 @@
 # CI fails if no screenshots are produced.
 WeeklyGoalUITests
 BodyMeasurementsUITests
+ProgressPhotosUITests
 TabBarUITests

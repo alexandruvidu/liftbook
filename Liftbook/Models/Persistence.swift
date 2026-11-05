@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import UIKit
 
 enum Persistence {
     /// Every SwiftData model the app stores.
@@ -13,6 +14,7 @@ enum Persistence {
         WorkoutSet.self,
         BodyMetric.self,
         BodyMeasurement.self,
+        ProgressPhoto.self,
     ])
 
     static func makeContainer(inMemory: Bool) -> ModelContainer {
@@ -69,6 +71,28 @@ enum Persistence {
                 }
             }
             session.finish(at: start.addingTimeInterval(52 * 60))
+        }
+        try? context.save()
+    }
+
+    /// Adds two drawn progress photos, today and 30 days ago. Used by UI tests
+    /// via `-uiTestSeedPhotos YES` (the system photo picker can't be scripted).
+    @MainActor
+    static func seedPhotos(in context: ModelContext, store: PhotoStore = .standard) {
+        guard ((try? context.fetchCount(FetchDescriptor<ProgressPhoto>())) ?? 0) == 0 else { return }
+        let colors: [UIColor] = [.systemTeal, .systemIndigo]
+        for (index, daysAgo) in [0, 30].enumerated() {
+            let format = UIGraphicsImageRendererFormat()
+            format.scale = 1
+            let image = UIGraphicsImageRenderer(size: CGSize(width: 600, height: 800), format: format).image { ctx in
+                colors[index].setFill()
+                ctx.fill(CGRect(x: 0, y: 0, width: 600, height: 800))
+                UIColor.white.withAlphaComponent(0.5).setFill()
+                ctx.cgContext.fillEllipse(in: CGRect(x: 200, y: 120, width: 200, height: 200))
+                ctx.fill(CGRect(x: 170, y: 340, width: 260, height: 380))
+            }
+            guard let fileName = try? store.save(image) else { continue }
+            context.insert(ProgressPhoto(date: .now.addingTimeInterval(TimeInterval(-daysAgo) * 86_400), fileName: fileName))
         }
         try? context.save()
     }
