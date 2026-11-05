@@ -1,6 +1,7 @@
 # UI test classes to run on the next push (one per line, class name only).
 # Unit tests always run. Put ALL on its own line to run every UI test,
 # which is required at the end of each phase.
-SupersetUITests
+FinishSummaryUITests
+StartWorkoutUITests
+PreviousPerformanceUITests
 NotesUITests
-RestTimerUITests

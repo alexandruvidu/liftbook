@@ -56,3 +56,14 @@ extension XCUIApplication {
         return element.exists && element.isHittable
     }
 }
+
+extension XCUIApplication {
+    /// Taps Finish, then Done on the summary that follows.
+    @MainActor
+    func finishWorkout() {
+        buttons["live.finish"].tap()
+        let done = buttons["summary.done"]
+        XCTAssertTrue(done.waitForExistence(timeout: 10), "No workout summary after Finish")
+        done.tap()
+    }
+}

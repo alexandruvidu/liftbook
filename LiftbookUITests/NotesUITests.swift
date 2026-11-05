@@ -37,7 +37,7 @@ final class NotesUITests: XCTestCase {
         snap("notes-\(appearance)")
 
         // Next time, the exercise shows the last note as a hint
-        finish.tap()
+        app.finishWorkout()
         XCTAssertTrue(start.waitForExistence(timeout: 10), "Finish did not close the workout")
         start.tap()
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Second workout did not open")

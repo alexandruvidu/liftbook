@@ -81,7 +81,7 @@ final class StartWorkoutUITests: XCTestCase {
 
         // Finish ends it
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Resume Current did not reopen the workout")
-        finish.tap()
+        app.finishWorkout()
         XCTAssertTrue(start.waitForExistence(timeout: 10), "Finish did not close the workout")
         app.navigationBars.buttons.element(boundBy: 0).tap()
         XCTAssertTrue(app.buttons["workout.startEmpty"].waitForExistence(timeout: 10), "Workout still active after Finish")

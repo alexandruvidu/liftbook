@@ -27,7 +27,7 @@ final class PreviousPerformanceUITests: XCTestCase {
         reps.enter("6")
         app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
-        finish.tap()
+        app.finishWorkout()
 
         // Second workout shows what was done last time
         XCTAssertTrue(start.waitForExistence(timeout: 10), "Finish did not close the workout")
