@@ -42,3 +42,17 @@ extension XCUIElement {
         typeText(text)
     }
 }
+
+extension XCUIApplication {
+    /// Swipes up until the element exists and is on screen (lists only build
+    /// visible rows). Returns whether it was found.
+    @MainActor
+    @discardableResult
+    func scrollTo(_ element: XCUIElement, maxSwipes: Int = 6) -> Bool {
+        for _ in 0..<maxSwipes {
+            if element.exists && element.isHittable { return true }
+            swipeUp()
+        }
+        return element.exists && element.isHittable
+    }
+}

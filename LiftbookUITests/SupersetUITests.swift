@@ -7,7 +7,9 @@ final class SupersetUITests: XCTestCase {
 
     private func chooseOption(_ title: String, forExercise index: Int, in app: XCUIApplication) {
         let option = app.buttons[title]
-        XCTAssertTrue(app.buttons["live.exercise.\(index).options"].openMenu(showing: option),
+        let menu = app.buttons["live.exercise.\(index).options"]
+        app.scrollTo(menu)
+        XCTAssertTrue(menu.openMenu(showing: option),
                       "No \"\(title)\" in exercise \(index) options")
         option.tap()
     }
