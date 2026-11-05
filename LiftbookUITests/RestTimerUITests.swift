@@ -40,8 +40,7 @@ final class RestTimerUITests: XCTestCase {
         let reps = app.textFields["live.exercise.0.set.0.reps"]
         reps.tap()
         reps.typeText("8")
-        app.buttons["live.keyboardDone"].tap()
-        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
+        app.dismissKeyboard()
         let check = app.buttons["live.exercise.0.set.0.check"]
         check.tap()
 

@@ -12,3 +12,15 @@ extension XCUIElement {
         return item.waitForExistence(timeout: timeout)
     }
 }
+
+extension XCUIApplication {
+    /// Closes the number keyboard with its Done button. When the simulator
+    /// uses a hardware keyboard there's no on-screen keyboard (or Done), so
+    /// this just checks nothing is left open.
+    @MainActor
+    func dismissKeyboard() {
+        let done = buttons["live.keyboardDone"]
+        if done.waitForExistence(timeout: 2) { done.tap() }
+        XCTAssertTrue(keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
+    }
+}

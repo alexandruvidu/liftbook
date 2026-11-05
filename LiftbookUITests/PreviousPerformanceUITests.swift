@@ -27,8 +27,7 @@ final class PreviousPerformanceUITests: XCTestCase {
         let reps = app.textFields["live.exercise.0.set.0.reps"]
         reps.tap()
         reps.typeText("6")
-        app.buttons["live.keyboardDone"].tap()
-        XCTAssertTrue(app.keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
+        app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
         finish.tap()
 

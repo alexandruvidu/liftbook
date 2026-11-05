@@ -9,8 +9,9 @@ final class SetTypesUITests: XCTestCase {
         let menu = app.buttons["live.exercise.0.set.\(index).kind"]
         let option = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@ AND NOT (identifier BEGINSWITH 'live.')", kind)).firstMatch
         XCTAssertTrue(menu.openMenu(showing: option), "No \(kind) option")
-        if let snapshot { snap(snapshot) }
         option.tap()
+        // Screenshot after choosing: taking one while the menu is open closes it.
+        if let snapshot { snap(snapshot) }
     }
 
     private func setTypes(appearance: String) {
@@ -26,7 +27,7 @@ final class SetTypesUITests: XCTestCase {
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
 
         choose("Warm-up", forSet: 0, in: app)
-        choose("To Failure", forSet: 2, in: app, snapshot: "set-type-menu-\(appearance)")
+        choose("To Failure", forSet: 2, in: app, snapshot: "set-type-failure-\(appearance)")
 
         // Warm-ups show "W" and don't take a number; failure sets show "F"
         let first = app.buttons["live.exercise.0.set.0.kind"]
