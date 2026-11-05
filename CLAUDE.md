@@ -38,8 +38,8 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 - Launch the app in UI tests with `XCUIApplication.launchLiftbook(appearance:)`
   (`LiftbookUITests/AppLauncher.swift`): it forces the appearance and uses a
   fresh in-memory SwiftData store, so tests never share data.
-- UI tests run in parallel on two simulator clones; keep screenshot names
-  unique and tests independent of each other.
+- UI tests run on one pre-booted simulator (parallel clones timed out on CI);
+  keep screenshot names unique and tests independent of each other.
 - Review every new screenshot in both appearances before ticking an item.
 
 ## Workflow for every PLAN.md item

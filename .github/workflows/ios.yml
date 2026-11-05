@@ -60,6 +60,12 @@ jobs:
           ')
           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
 
+      - name: Boot simulator
+        run: |
+          # Booting up front avoids instruments/lockdown timeouts on a cold simulator.
+          xcrun simctl boot "$SIM_UDID" || true
+          xcrun simctl bootstatus "$SIM_UDID" -b
+
       - name: Test
         run: |
           set -o pipefail
@@ -69,14 +75,13 @@ jobs:
             -scheme Liftbook \
             -destination "id=$SIM_UDID" \
             -resultBundlePath "$RESULT_BUNDLE" \
-            -parallel-testing-enabled YES \
-            -parallel-testing-worker-count 2 \
+            -parallel-testing-enabled NO \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Summarize test failures
         if: failure()
         run: |
-          # Parallel testing hides assertion messages from the log; print them from the result bundle.
+          # Print each failing test with its message from the result bundle.
           xcrun xcresulttool get test-results summary --path "$RESULT_BUNDLE" --compact \
             | jq -r '.testFailures[]? | "\(.testIdentifierString): \(.failureText)"' \
             || true
