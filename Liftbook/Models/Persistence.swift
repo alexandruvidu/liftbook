@@ -11,6 +11,8 @@ enum Persistence {
         WorkoutSession.self,
         WorkoutExercise.self,
         WorkoutSet.self,
+        BodyMetric.self,
+        BodyMeasurement.self,
     ])
 
     static func makeContainer(inMemory: Bool) -> ModelContainer {

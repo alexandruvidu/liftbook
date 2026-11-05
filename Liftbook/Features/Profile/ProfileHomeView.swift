@@ -10,6 +10,15 @@ struct ProfileHomeView: View {
         NavigationStack {
             Form {
                 Section {
+                    NavigationLink {
+                        BodyMeasurementsView()
+                    } label: {
+                        Label("Body Measurements", systemImage: "figure")
+                    }
+                    .accessibilityIdentifier("profile.body")
+                }
+
+                Section {
                     Picker("Weight", selection: $unit) {
                         Text("Kilograms (kg)").tag(WeightUnit.kilograms)
                         Text("Pounds (lb)").tag(WeightUnit.pounds)
