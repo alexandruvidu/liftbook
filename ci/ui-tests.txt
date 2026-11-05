@@ -3,3 +3,4 @@
 # which is required at the end of each phase. Keep at least one class:
 # CI fails if no screenshots are produced.
 ExerciseProgressUITests
+ProgressPhotosUITests

@@ -19,9 +19,6 @@ struct LiftbookApp: App {
         if UITestOverrides.seedHistory {
             Persistence.seedHistory(in: container.mainContext)
         }
-        if UITestOverrides.seedPhotos {
-            Persistence.seedPhotos(in: container.mainContext)
-        }
     }
 
     var body: some Scene {
@@ -29,6 +26,11 @@ struct LiftbookApp: App {
             RootView()
                 .preferredColorScheme(UITestOverrides.colorScheme)
                 .defaultAppStorage(AppSettings.store)
+                // Seeded after launch: drawing with UIKit in init, before any
+                // window exists, made the app lose its accent color.
+                .task {
+                    if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
+                }
         }
         .modelContainer(container)
         // Save before the app can be suspended or quit, so an in-progress
