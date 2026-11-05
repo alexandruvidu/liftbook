@@ -53,6 +53,8 @@ final class WorkoutExercise {
     var notes: String
     /// Rest after each set in seconds; nil uses the default, 0 turns it off.
     var restSeconds: Int? = nil
+    /// Exercises in the same session with the same group form a superset.
+    var supersetGroup: UUID? = nil
     var session: WorkoutSession?
     @Relationship(deleteRule: .cascade, inverse: \WorkoutSet.exercise)
     var sets: [WorkoutSet] = []

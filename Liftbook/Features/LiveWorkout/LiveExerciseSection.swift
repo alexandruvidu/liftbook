@@ -21,8 +21,9 @@ struct LiveExerciseSection: View {
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
                        identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index)) {
-                    exercise.session?.startRest(seconds: exercise.effectiveRestSeconds(default: defaultRest),
-                                                for: exercise.exerciseID)
+                    guard let session = exercise.session else { return }
+                    session.startRest(seconds: session.restSeconds(after: exercise, default: defaultRest),
+                                      for: exercise.exerciseID)
                 }
             }
             .onDelete { offsets in
@@ -36,15 +37,27 @@ struct LiveExerciseSection: View {
                 Spacer()
                 RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
                     .accessibilityIdentifier("\(identifier).rest")
+                if let session = exercise.session {
+                    ExerciseOptionsMenu(exercise: exercise, session: session)
+                        .accessibilityIdentifier("\(identifier).options")
+                }
             }
             .buttonStyle(.borderless)
         } header: {
-            HStack {
-                Text(info?.name ?? fallbackName)
-                Spacer()
-                Text(progressText)
-                    .monospacedDigit()
-                    .accessibilityIdentifier("\(identifier).progress")
+            VStack(alignment: .leading, spacing: 4) {
+                if let letter = exercise.session?.supersetLetter(for: exercise) {
+                    Label("Superset \(letter)", systemImage: "link")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.accentColor)
+                        .accessibilityIdentifier("\(identifier).superset")
+                }
+                HStack {
+                    Text(info?.name ?? fallbackName)
+                    Spacer()
+                    Text(progressText)
+                        .monospacedDigit()
+                        .accessibilityIdentifier("\(identifier).progress")
+                }
             }
         }
     }
@@ -52,5 +65,33 @@ struct LiveExerciseSection: View {
     private var progressText: String {
         let done = exercise.sets.filter(\.isCompleted).count
         return "\(done)/\(exercise.sets.count) done"
+    }
+}
+
+/// Superset linking and removing an exercise from the workout.
+private struct ExerciseOptionsMenu: View {
+    let exercise: WorkoutExercise
+    let session: WorkoutSession
+
+    var body: some View {
+        Menu {
+            if session.isLinkedToNext(exercise) {
+                Button("Unlink from Next Exercise", systemImage: "link.badge.plus") {
+                    session.unlinkFromNext(exercise)
+                }
+            } else if session.exercise(after: exercise) != nil {
+                Button("Superset with Next Exercise", systemImage: "link") {
+                    session.linkWithNext(exercise)
+                }
+            }
+            Button("Remove Exercise", systemImage: "trash", role: .destructive) {
+                session.removeExercise(exercise)
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+                .font(.title3)
+                .frame(minWidth: 32, minHeight: 32)
+        }
+        .accessibilityLabel("Exercise options")
     }
 }
