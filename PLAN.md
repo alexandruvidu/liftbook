@@ -18,10 +18,10 @@ screenshot looks correct.
 - [x] Start an empty workout or start from a routine
 - [x] Live workout screen: add sets with reps, weight, RPE; check off sets
 - [x] Set types: warm-up, normal, drop set, failure
-- [ ] Show previous performance next to each set
-- [ ] Rest timer per exercise with adjustable default, sound, and local notification
-- [ ] Supersets
-- [ ] Notes per workout and per exercise
+- [x] Show previous performance next to each set
+- [x] Rest timer per exercise with adjustable default, sound, and local notification
+- [x] Supersets
+- [x] Notes per workout and per exercise
 - [ ] Finish workout summary (duration, volume, sets, new PRs) and save to history
 - [ ] Resume an in-progress workout after the app is relaunched; discard option
 - [ ] kg / lb setting
