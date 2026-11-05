@@ -38,7 +38,9 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 - Launch the app in UI tests with `XCUIApplication.launchLiftbook(appearance:)`
   (`LiftbookUITests/AppLauncher.swift`): it forces the appearance and uses a
   fresh in-memory SwiftData store, so tests never share data.
-- UI tests run on one pre-booted simulator (parallel clones timed out on CI);
+- UI tests run on one pre-booted simulator (parallel clones timed out on CI).
+  Only the classes in `ci/ui-tests.txt` run per push (`ALL` runs everything;
+  so does a manual workflow run with "full" checked);
   keep screenshot names unique and tests independent of each other.
 - Review every new screenshot in both appearances before ticking an item.
 
@@ -48,7 +50,10 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 2. Add unit tests for logic, and a UI test that navigates to the feature and
    calls `snap("<feature-name>")`. Add accessibility identifiers so UI tests
    can find elements.
-3. Commit with a clear message, push, and follow the `ci-loop` skill
+3. List the UI test classes for this item (new ones and any whose screens you
+   changed) in `ci/ui-tests.txt`; CI runs all unit tests but only those UI
+   tests, to keep runs short. Commit with a clear message, push, and follow
+   the `ci-loop` skill
    (`.claude/skills/ci-loop/SKILL.md`) until CI is green and screenshots look
    right.
 4. Tick the item in `PLAN.md`, commit, push, move to the next.
@@ -58,6 +63,8 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 ## Stopping rules
 - If the same item fails CI 3 times in a row, stop: write what you tried and
   the error into `BLOCKED.md`, commit it, and end.
+- At the end of each phase, set `ci/ui-tests.txt` to `ALL` so the full UI
+  suite runs, and fix anything it finds before the summary.
 - Stop at the end of each phase and give a short summary so the owner can test
   the IPA (the `ipa` artifact) on their iPhone.
 - About every 10 items, do a cleanup pass: remove dead code, split files over

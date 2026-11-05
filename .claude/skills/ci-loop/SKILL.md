@@ -8,6 +8,13 @@ description: Use after every git push in the Liftbook repo to wait for the iOS G
 There is no local Mac. GitHub Actions (`.github/workflows/ios.yml`) is the only
 place the app is built and tested. Run this loop after **every** push.
 
+## 0. Before pushing: choose the UI tests
+
+`ci/ui-tests.txt` lists the UI test classes CI runs (one per line). Unit tests
+always run. Put the current item's UI test classes there, plus any existing
+class whose screens your change touches. Use `ALL` at the end of a phase.
+The "Test selection" line in the Test step log shows what ran.
+
 ## 1. Find the run for the commit you just pushed
 
 ```bash

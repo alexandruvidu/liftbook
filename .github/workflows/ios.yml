@@ -3,6 +3,11 @@ name: iOS CI
 on:
   push:
   workflow_dispatch:
+    inputs:
+      full:
+        description: Run every UI test, ignoring ci/ui-tests.txt
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -70,7 +75,17 @@ jobs:
         run: |
           set -o pipefail
           mkdir -p "$SCREENSHOT_DIR"
-          TEST_RUNNER_SCREENSHOT_DIR="$SCREENSHOT_DIR" xcodebuild test \
+          # Unit tests always run. UI tests are limited to the classes listed in
+          # ci/ui-tests.txt, unless it says ALL or a full run was requested.
+          SELECT=()
+          if [ "${{ inputs.full }}" != "true" ] && [ -f ci/ui-tests.txt ] && ! grep -qx 'ALL' ci/ui-tests.txt; then
+            SELECT+=("-only-testing:LiftbookTests")
+            while read -r name; do
+              SELECT+=("-only-testing:LiftbookUITests/$name")
+            done < <(grep -vE '^[[:space:]]*(#|$)' ci/ui-tests.txt)
+          fi
+          echo "Test selection: ${SELECT[*]:-everything}"
+          TEST_RUNNER_SCREENSHOT_DIR="$SCREENSHOT_DIR" xcodebuild test "${SELECT[@]}" \
             -project Liftbook.xcodeproj \
             -scheme Liftbook \
             -destination "id=$SIM_UDID" \
