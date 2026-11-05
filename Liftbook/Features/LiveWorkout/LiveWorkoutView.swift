@@ -8,6 +8,7 @@ struct LiveWorkoutView: View {
     let onDiscard: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Query private var customExercises: [CustomExercise]
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }, sort: \WorkoutSession.startedAt, order: .reverse)
     private var finishedSessions: [WorkoutSession]
@@ -26,7 +27,7 @@ struct LiveWorkoutView: View {
                     }
                 }
 
-                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.id) { index, exercise in
+                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
                     LiveExerciseSection(exercise: exercise,
                                         info: catalog.exercise(id: exercise.exerciseID),
                                         fallbackName: catalog.name(for: exercise.exerciseID),
@@ -95,7 +96,10 @@ struct LiveWorkoutView: View {
                 }
             }
             .sheet(isPresented: $isPicking) {
-                ExercisePickerView(catalog: catalog) { session.addExercises($0) }
+                ExercisePickerView(catalog: catalog) {
+                    session.addExercises($0)
+                    try? modelContext.save()
+                }
             }
             .confirmationDialog("Discard this workout?", isPresented: $isConfirmingDiscard, titleVisibility: .visible) {
                 Button("Discard Workout", role: .destructive) {

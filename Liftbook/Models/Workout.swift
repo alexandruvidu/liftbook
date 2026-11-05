@@ -116,3 +116,14 @@ final class WorkoutSet {
         }
     }
 }
+
+extension WorkoutExercise {
+    /// Identity for SwiftUI lists that never changes, unlike `persistentModelID`,
+    /// which switches from temporary to permanent on the first save.
+    var stableID: ObjectIdentifier { ObjectIdentifier(self) }
+}
+
+extension WorkoutSet {
+    /// See `WorkoutExercise.stableID`.
+    var stableID: ObjectIdentifier { ObjectIdentifier(self) }
+}

@@ -48,6 +48,11 @@ final class WorkoutStartController {
     }
 }
 
+private struct PresentedWorkout: Identifiable {
+    let session: WorkoutSession
+    var id: UUID { session.sessionID }
+}
+
 /// "Start Empty Workout" or, while a workout is running, a resume banner.
 struct StartWorkoutSection: View {
     let starter: WorkoutStartController
@@ -129,9 +134,16 @@ private struct WorkoutStartingModifier: ViewModifier {
             } message: {
                 Text("Finish or discard it before starting another one.")
             }
-            .fullScreenCover(item: $starter.presented, onDismiss: deleteDiscarded) { session in
-                LiveWorkoutView(session: session) { starter.discard(session) }
+            .fullScreenCover(item: presentedItem, onDismiss: deleteDiscarded) { item in
+                LiveWorkoutView(session: item.session) { starter.discard(item.session) }
             }
+    }
+
+    /// Keyed by the session's own UUID: the SwiftData identifier changes from
+    /// temporary to permanent on the first save, which would re-present the cover.
+    private var presentedItem: Binding<PresentedWorkout?> {
+        Binding(get: { starter.presented.map(PresentedWorkout.init) },
+                set: { starter.presented = $0?.session })
     }
 
     private func deleteDiscarded() {
@@ -147,6 +159,9 @@ private struct WorkoutStartingModifier: ViewModifier {
         case .routine(let routine): WorkoutStarter.workout(from: routine)
         }
         modelContext.insert(session)
+        // Save now so the new models get permanent identifiers before any view
+        // uses them; an autosave later would change them mid-workout.
+        try? modelContext.save()
         if fromAlert {
             starter.presentAfterAlert(session)
         } else {

@@ -11,6 +11,7 @@ struct LiveExerciseSection: View {
     var previous: PreviousPerformance?
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
+    @Environment(\.modelContext) private var modelContext
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
 
@@ -18,7 +19,7 @@ struct LiveExerciseSection: View {
         Section {
             SetHeaderRow(type: type)
             let labels = exercise.setLabels
-            ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.id) { index, set in
+            ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.stableID) { index, set in
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
                        identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index)) {
                     guard let session = exercise.session else { return }
@@ -32,7 +33,10 @@ struct LiveExerciseSection: View {
             }
 
             HStack {
-                Button("Add Set", systemImage: "plus") { exercise.addSet() }
+                Button("Add Set", systemImage: "plus") {
+                    exercise.addSet()
+                    try? modelContext.save()
+                }
                     .accessibilityIdentifier("\(identifier).addSet")
                 Spacer()
                 RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
