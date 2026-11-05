@@ -22,11 +22,9 @@ final class PreviousPerformanceUITests: XCTestCase {
         XCTAssertFalse(app.buttons["live.exercise.0.set.0.previous"].exists, "Previous shown on the first workout")
         let weight = app.textFields["live.exercise.0.set.0.weight"]
         XCTAssertTrue(weight.waitForExistence(timeout: 5), "No weight field")
-        weight.tap()
-        weight.typeText("62.5")
+        weight.enter("62.5")
         let reps = app.textFields["live.exercise.0.set.0.reps"]
-        reps.tap()
-        reps.typeText("6")
+        reps.enter("6")
         app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
         finish.tap()

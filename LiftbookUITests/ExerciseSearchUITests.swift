@@ -20,8 +20,7 @@ final class ExerciseSearchUITests: XCTestCase {
 
         let field = app.searchFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 5))
-        field.tap()
-        field.typeText("curl")
+        field.enter("curl")
 
         XCTAssertTrue(app.buttons["exercise.row.barbell-curl"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["exercise.row.ab-wheel-rollout"].exists)

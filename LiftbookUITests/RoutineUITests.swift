@@ -18,8 +18,7 @@ final class RoutineUITests: XCTestCase {
         app.buttons["workout.newFolder"].firstMatch.tap()
         let folderName = app.alerts.textFields.firstMatch
         XCTAssertTrue(folderName.waitForExistence(timeout: 5))
-        folderName.tap()
-        folderName.typeText("Push")
+        folderName.enter("Push")
         app.alerts.buttons["Create"].tap()
         XCTAssertTrue(app.staticTexts["No routines in this folder yet."].waitForExistence(timeout: 5))
 
@@ -28,8 +27,7 @@ final class RoutineUITests: XCTestCase {
         app.buttons["workout.newRoutine"].firstMatch.tap()
         let name = app.textFields["routine.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
-        name.tap()
-        name.typeText("Push Day")
+        name.enter("Push Day")
         XCTAssertFalse(app.buttons["routine.save"].isEnabled, "Save needs an exercise")
 
         app.buttons["routine.folder"].tap()
@@ -44,8 +42,7 @@ final class RoutineUITests: XCTestCase {
             ("incline dumbbell press", "incline-dumbbell-press"),
         ]
         for (query, id) in picks {
-            search.tap()
-            search.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 30) + query)
+            search.enter(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 30) + query)
             let row = app.buttons["picker.row.\(id)"]
             XCTAssertTrue(row.waitForExistence(timeout: 5), "Missing \(id)")
             row.tap()

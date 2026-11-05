@@ -59,20 +59,18 @@ struct LiveWorkoutView: View {
             .navigationTitle(session.name)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                // The elapsed clock lives in the bar, outside the list, so its
-                // per-second updates don't refresh list rows (and close menus).
                 ToolbarItem(placement: .principal) {
                     VStack(spacing: 0) {
                         Text(session.name)
                             .font(.headline)
                             .lineLimit(1)
-                        TimelineView(.periodic(from: .now, by: 1)) { context in
-                            Text(SetMeasurement.clock(context.date.timeIntervalSince(session.startedAt)))
-                                .font(.caption)
-                                .monospacedDigit()
-                                .foregroundStyle(.secondary)
-                        }
-                        .accessibilityIdentifier("live.elapsed")
+                        // A timer-style Text ticks on its own without re-rendering
+                        // views, so open menus and focused fields aren't disturbed.
+                        Text(session.startedAt, style: .timer)
+                            .font(.caption)
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                            .accessibilityIdentifier("live.elapsed")
                     }
                 }
                 ToolbarItem(placement: .cancellationAction) {

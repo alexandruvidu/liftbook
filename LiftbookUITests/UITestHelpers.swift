@@ -24,3 +24,21 @@ extension XCUIApplication {
         XCTAssertTrue(keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
     }
 }
+
+extension XCUIElement {
+    var hasKeyboardFocus: Bool { (value(forKey: "hasKeyboardFocus") as? Bool) ?? false }
+
+    /// Taps the field, waits until it has keyboard focus (tapping again if a
+    /// scroll swallowed the first tap), then types the text.
+    @MainActor
+    func enter(_ text: String) {
+        XCTAssertTrue(waitForExistence(timeout: 5), "Field \(self) missing")
+        for _ in 0..<3 where !hasKeyboardFocus {
+            tap()
+            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: self)
+            if XCTWaiter().wait(for: [focused], timeout: 2) == .completed { break }
+        }
+        XCTAssertTrue(hasKeyboardFocus, "Field \(self) never got keyboard focus")
+        typeText(text)
+    }
+}

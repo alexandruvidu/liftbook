@@ -22,8 +22,7 @@ final class ExerciseTypeUITests: XCTestCase {
 
             let search = app.searchFields.firstMatch
             XCTAssertTrue(search.waitForExistence(timeout: 10))
-            search.tap()
-            search.typeText(item.query)
+            search.enter(item.query)
 
             let row = app.buttons["exercise.row.\(item.id)"]
             XCTAssertTrue(row.waitForExistence(timeout: 5), "No row for \(item.id)")

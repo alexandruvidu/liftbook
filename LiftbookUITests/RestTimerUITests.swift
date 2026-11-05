@@ -5,10 +5,9 @@ final class RestTimerUITests: XCTestCase {
     func testRestTimerLight() { restTimer(appearance: "light") }
     func testRestTimerDark() { restTimer(appearance: "dark") }
 
-    /// Seconds shown on the rest timer ("1:58" → 118).
+    /// Seconds left on the rest timer when it was last drawn.
     private func remainingSeconds(_ app: XCUIApplication) -> Int {
-        let parts = app.staticTexts["rest.remaining"].label.split(separator: ":").compactMap { Int($0) }
-        return parts.count == 2 ? parts[0] * 60 + parts[1] : -1
+        Int(app.staticTexts["rest.remaining"].value as? String ?? "") ?? -1
     }
 
     private func restTimer(appearance: String) {
@@ -35,11 +34,9 @@ final class RestTimerUITests: XCTestCase {
         // Checking off a set starts the default rest
         let weight = app.textFields["live.exercise.0.set.0.weight"]
         XCTAssertTrue(weight.waitForExistence(timeout: 5), "No weight field")
-        weight.tap()
-        weight.typeText("60")
+        weight.enter("60")
         let reps = app.textFields["live.exercise.0.set.0.reps"]
-        reps.tap()
-        reps.typeText("8")
+        reps.enter("8")
         app.dismissKeyboard()
         let check = app.buttons["live.exercise.0.set.0.check"]
         check.tap()

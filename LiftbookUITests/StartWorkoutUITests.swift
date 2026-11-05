@@ -23,8 +23,7 @@ final class StartWorkoutUITests: XCTestCase {
             app.buttons["live.addExercises"].tap()
         }
         XCTAssertTrue(search.waitForExistence(timeout: 10), "Exercise picker did not open")
-        search.tap()
-        search.typeText("plank")
+        search.enter("plank")
         XCTAssertTrue(app.buttons["picker.row.plank"].waitForExistence(timeout: 5), "Plank not in picker")
         app.buttons["picker.row.plank"].tap()
         app.buttons["picker.add"].tap()

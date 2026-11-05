@@ -18,8 +18,7 @@ final class CustomExerciseUITests: XCTestCase {
         app.buttons["exercises.add"].tap()
         let name = app.textFields["editor.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
-        name.tap()
-        name.typeText("Sandbag Carry")
+        name.enter("Sandbag Carry")
         let save = app.buttons["editor.save"]
         XCTAssertFalse(save.isEnabled, "Save should need a primary muscle")
 
@@ -36,8 +35,7 @@ final class CustomExerciseUITests: XCTestCase {
         // Find it in the library
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 5))
-        search.tap()
-        search.typeText("sandbag")
+        search.enter("sandbag")
         let row = customRows(in: app).firstMatch
         XCTAssertTrue(row.waitForExistence(timeout: 5))
         snap("custom-exercise-list-\(appearance)")
@@ -47,8 +45,7 @@ final class CustomExerciseUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["Sandbag Carry"].waitForExistence(timeout: 5))
         app.buttons["exercise.edit"].tap()
         XCTAssertTrue(name.waitForExistence(timeout: 5))
-        name.tap()
-        name.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20) + "Heavy Sandbag Carry")
+        name.enter(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20) + "Heavy Sandbag Carry")
         save.tap()
         XCTAssertTrue(app.navigationBars["Heavy Sandbag Carry"].waitForExistence(timeout: 5))
         snap("custom-exercise-detail-\(appearance)")

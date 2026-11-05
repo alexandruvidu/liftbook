@@ -7,8 +7,7 @@ final class LogSetsUITests: XCTestCase {
 
     private func type(_ text: String, into field: XCUIElement) {
         XCTAssertTrue(field.waitForExistence(timeout: 5), "Missing field \(field)")
-        field.tap()
-        field.typeText(text)
+        field.enter(text)
     }
 
     private func logSets(appearance: String) {

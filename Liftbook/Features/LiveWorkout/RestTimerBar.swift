@@ -6,35 +6,41 @@ struct RestTimerBar: View {
     let exerciseName: String?
 
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 1)) { context in
-            let remaining = session.restRemaining(at: context.date) ?? 0
-            VStack(spacing: 10) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Rest")
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                            .textCase(.uppercase)
-                        Text(SetMeasurement.clock(remaining.rounded(.up)))
-                            .font(.title2.weight(.semibold))
-                            .monospacedDigit()
-                            .contentTransition(.numericText(countsDown: true))
-                            .accessibilityIdentifier("rest.remaining")
-                    }
-                    if let exerciseName {
-                        Text("after \(exerciseName)")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        Spacer()
-                    }
-                    controls
+        // Timer-style Text and ProgressView count down on their own, without
+        // re-rendering every second (which closed menus and dropped focus).
+        let end = session.restEndsAt ?? .now
+        let begin = end.addingTimeInterval(-max(session.restDuration, 1))
+        VStack(spacing: 10) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Rest")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                    Text(timerInterval: Date.now...max(end, .now), countsDown: true)
+                        .font(.title2.weight(.semibold))
+                        .monospacedDigit()
+                        // Seconds left when last drawn; refreshed on every change.
+                        .accessibilityValue("\(Int((session.restRemaining() ?? 0).rounded()))")
+                        .accessibilityIdentifier("rest.remaining")
                 }
-                ProgressView(value: session.restProgress(at: context.date))
-                    .accessibilityHidden(true)
+                if let exerciseName {
+                    Text("after \(exerciseName)")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Spacer()
+                }
+                controls
             }
+            ProgressView(timerInterval: begin...max(end, begin), countsDown: false) {
+                EmptyView()
+            } currentValueLabel: {
+                EmptyView()
+            }
+            .accessibilityHidden(true)
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
