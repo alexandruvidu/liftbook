@@ -11,6 +11,8 @@ struct LiveExerciseSection: View {
     var previous: PreviousPerformance?
     /// The note written for this exercise last time, shown as a hint.
     var previousNote: String?
+    /// False when editing a finished workout: checking a set starts no timer.
+    var startsRest = true
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
@@ -29,7 +31,7 @@ struct LiveExerciseSection: View {
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.stableID) { index, set in
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
                        identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index)) {
-                    guard let session = exercise.session else { return }
+                    guard startsRest, let session = exercise.session else { return }
                     session.startRest(seconds: session.restSeconds(after: exercise, default: defaultRest),
                                       for: exercise.exerciseID)
                 }

@@ -18,7 +18,7 @@ final class HistoryUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
 
         app.tabBars.buttons["History"].tap()
-        let rows = app.descendants(matching: .any).matching(identifier: "history.row")
+        let rows = app.buttons.matching(identifier: "history.row")
         XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 10), "No history rows")
         XCTAssertEqual(rows.count, 3, "Expected the three seeded workouts")
         XCTAssertTrue(rows.element(boundBy: 0).label.contains("Upper Body"), "Newest workout first")

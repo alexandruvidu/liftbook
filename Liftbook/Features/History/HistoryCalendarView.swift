@@ -27,7 +27,7 @@ struct HistoryCalendarView: View {
                         Text("No workout on this day.")
                             .foregroundStyle(.secondary)
                     }
-                    ForEach(onDay) { HistoryRow(session: $0, catalog: catalog) }
+                    ForEach(onDay) { HistoryLink(session: $0, catalog: catalog) }
                 }
             }
         }

@@ -5,6 +5,7 @@ import SwiftUI
 enum WorkoutStartRequest {
     case empty
     case routine(Routine)
+    case repeating(WorkoutSession)
 }
 
 /// Shared state for starting, resuming and presenting the live workout.
@@ -55,6 +56,8 @@ private struct PresentedWorkout: Identifiable {
 
 private struct WorkoutStartingModifier: ViewModifier {
     @Bindable var starter: WorkoutStartController
+    /// Only one screen (the Workout tab) should offer to resume at launch.
+    let offersLeftover: Bool
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)
     private var active: [WorkoutSession]
@@ -83,7 +86,7 @@ private struct WorkoutStartingModifier: ViewModifier {
             }
             // A workout still in progress at launch was left when the app quit.
             .task {
-                guard !checkedForLeftover else { return }
+                guard offersLeftover, !checkedForLeftover else { return }
                 checkedForLeftover = true
                 if starter.presented == nil { leftover = active.last }
             }
@@ -136,6 +139,7 @@ private struct WorkoutStartingModifier: ViewModifier {
         let session = switch request {
         case .empty: WorkoutStarter.emptyWorkout()
         case .routine(let routine): WorkoutStarter.workout(from: routine)
+        case .repeating(let past): WorkoutStarter.repeating(past)
         }
         modelContext.insert(session)
         // Save now so the new models get permanent identifiers before any view
@@ -150,7 +154,8 @@ private struct WorkoutStartingModifier: ViewModifier {
 }
 
 extension View {
-    func workoutStarting(_ starter: WorkoutStartController) -> some View {
-        modifier(WorkoutStartingModifier(starter: starter))
+    /// - Parameter offersLeftover: ask at launch to resume a workout left in progress.
+    func workoutStarting(_ starter: WorkoutStartController, offersLeftover: Bool = false) -> some View {
+        modifier(WorkoutStartingModifier(starter: starter, offersLeftover: offersLeftover))
     }
 }

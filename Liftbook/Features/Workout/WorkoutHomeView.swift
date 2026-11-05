@@ -63,7 +63,7 @@ struct WorkoutHomeView: View {
         }
         // Attached to the stack (not its root list) so the alert and the live
         // workout cover still present while a routine's detail page is pushed.
-        .workoutStarting(starter)
+        .workoutStarting(starter, offersLeftover: true)
     }
 
     private func routineLink(_ routine: Routine, catalog: ExerciseCatalog) -> some View {

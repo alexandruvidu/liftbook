@@ -11,6 +11,7 @@ struct HistoryHomeView: View {
     private var sessions: [WorkoutSession]
     @Query private var customExercises: [CustomExercise]
     @State private var mode: Mode = .list
+    @State private var starter = WorkoutStartController()
 
     var body: some View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
@@ -31,6 +32,9 @@ struct HistoryHomeView: View {
                 }
             }
             .navigationTitle(AppTab.history.title)
+            .navigationDestination(for: WorkoutSession.self) { session in
+                WorkoutDetailView(session: session, catalog: catalog) { starter.start(.repeating(session)) }
+            }
             .toolbar {
                 if !sessions.isEmpty {
                     ToolbarItem(placement: .principal) {
@@ -44,6 +48,7 @@ struct HistoryHomeView: View {
                 }
             }
         }
+        .workoutStarting(starter)
     }
 }
 
@@ -56,13 +61,24 @@ private struct HistoryListView: View {
         List {
             ForEach(HistoryCalendar().months(of: sessions)) { group in
                 Section(group.month.formatted(.dateTime.month(.wide).year())) {
-                    ForEach(group.sessions) { session in
-                        HistoryRow(session: session, catalog: catalog)
-                    }
+                    ForEach(group.sessions) { HistoryLink(session: $0, catalog: catalog) }
                 }
             }
         }
         .listStyle(.insetGrouped)
+    }
+}
+
+/// A history row that opens the workout's detail page.
+struct HistoryLink: View {
+    let session: WorkoutSession
+    let catalog: ExerciseCatalog
+
+    var body: some View {
+        NavigationLink(value: session) {
+            HistoryRow(session: session, catalog: catalog)
+        }
+        .accessibilityIdentifier("history.row")
     }
 }
 
@@ -100,8 +116,6 @@ struct HistoryRow: View {
                 .lineLimit(2)
         }
         .padding(.vertical, 2)
-        .accessibilityElement(children: .combine)
-        .accessibilityIdentifier("history.row")
     }
 
     private var exerciseNames: String {
