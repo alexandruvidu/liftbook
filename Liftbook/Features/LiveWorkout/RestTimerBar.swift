@@ -41,6 +41,7 @@ struct RestTimerBar: View {
         .padding(.horizontal, 12)
         .padding(.bottom, 4)
         .accessibilityElement(children: .contain)
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     private var controls: some View {

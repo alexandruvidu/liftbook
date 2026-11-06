@@ -25,11 +25,16 @@ struct SetHeaderRow: View {
         .font(.caption.weight(.semibold))
         .foregroundStyle(.secondary)
         .textCase(.uppercase)
+        .dynamicTypeSize(...SetRow.largestTextSize)
     }
 }
 
 /// One editable set in the live workout.
 struct SetRow: View {
+    /// The set grid has four columns side by side; beyond this size the
+    /// numbers no longer fit, so text stops growing here.
+    static let largestTextSize = DynamicTypeSize.accessibility2
+
     let set: WorkoutSet
     let number: Int
     /// "1", "2"… for normal sets, or the kind's tag ("W", "D", "F").
@@ -64,6 +69,7 @@ struct SetRow: View {
             }
         }
         .listRowBackground(set.isCompleted ? Color.accentColor.opacity(0.14) : nil)
+        .dynamicTypeSize(...Self.largestTextSize)
     }
 
     private var inputs: some View {
@@ -73,7 +79,8 @@ struct SetRow: View {
                 .accessibilityIdentifier("\(identifier).kind")
 
             ForEach(type.fieldSpecs, id: \.self) { spec in
-                SetValueField(set: set, spec: spec, unit: unit)
+                SetValueField(set: set, spec: spec, unit: unit,
+                              accessibilityName: "Set \(number) \(spec.label.lowercased())")
                     .accessibilityIdentifier("\(identifier).\(spec.field.rawValue)")
             }
 
@@ -105,6 +112,8 @@ private struct SetValueField: View {
     let set: WorkoutSet
     let spec: ExerciseType.FieldSpec
     let unit: WeightUnit
+    /// e.g. "Set 2 weight", so VoiceOver says which set a field belongs to.
+    let accessibilityName: String
     @State private var text = ""
 
     var body: some View {
@@ -114,7 +123,7 @@ private struct SetValueField: View {
             .monospacedDigit()
             .padding(.vertical, 7)
             .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))
-            .accessibilityLabel(spec.label)
+            .accessibilityLabel(accessibilityName)
             .onAppear { text = set.measurement.inputText(for: spec.field, unit: unit) }
             .onChange(of: text) { _, newValue in
                 var measurement = set.measurement
