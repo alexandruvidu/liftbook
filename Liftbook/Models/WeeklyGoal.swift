@@ -35,23 +35,6 @@ struct WeeklyGoal {
         return streak
     }
 
-    /// The longest run of consecutive weeks that met the goal.
-    func bestStreak(goal: Int, sessions: [WorkoutSession]) -> Int {
-        let met = weeklyCounts(sessions).filter { $0.value >= goal }.keys.sorted()
-        var best = 0, run = 0
-        var previous: Date?
-        for start in met {
-            if let previous, calendar.date(byAdding: .weekOfYear, value: 1, to: previous) == start {
-                run += 1
-            } else {
-                run = 1
-            }
-            best = max(best, run)
-            previous = start
-        }
-        return best
-    }
-
     /// Finished workouts per week, keyed by week start.
     private func weeklyCounts(_ sessions: [WorkoutSession]) -> [Date: Int] {
         var counts: [Date: Int] = [:]

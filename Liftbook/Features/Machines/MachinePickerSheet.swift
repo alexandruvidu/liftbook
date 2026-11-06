@@ -162,3 +162,10 @@ struct MachinePhoto: View {
             .accessibilityHidden(true)
     }
 }
+
+/// An exercise whose machine is being chosen, keyed by the object itself (its
+/// SwiftData ID can change on the first save).
+struct MachinePickTarget: Identifiable {
+    let exercise: WorkoutExercise
+    var id: ObjectIdentifier { exercise.stableID }
+}

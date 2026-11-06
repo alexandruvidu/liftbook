@@ -46,12 +46,10 @@ struct WeeklyGoalTests {
     @Test func aMissedWeekEndsTheStreak() {
         let all = sessions(weeksBack: [1, 3, 4, 5])
         #expect(goal.currentStreak(goal: 2, sessions: all, now: now) == 1)
-        #expect(goal.bestStreak(goal: 2, sessions: all) == 3)
     }
 
     @Test func noWorkoutsNoStreak() {
         #expect(goal.currentStreak(goal: 3, sessions: [], now: now) == 0)
-        #expect(goal.bestStreak(goal: 3, sessions: []) == 0)
     }
 
     @Test func unfinishedWorkoutsDontCount() {

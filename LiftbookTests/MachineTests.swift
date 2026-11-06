@@ -75,4 +75,25 @@ struct MachineTests {
         let other = Machine(exerciseID: "y", name: "C")
         #expect([late, other, early].of("x").map(\.name) == ["A", "B"])
     }
+
+    @Test func addedExerciseStartsOnLastUsedMachineUnconfirmed() {
+        let a = Machine(exerciseID: "barbell-bench-press", name: "A")
+        let b = Machine(exerciseID: "barbell-bench-press", name: "B")
+        let history = [Self.session(daysAgo: 1, machine: b.machineID, weight: 50, reps: 8, now: now)]
+        let session = WorkoutSession(name: "Now", startedAt: now)
+        let asked = session.addExercises(["back-squat", "barbell-bench-press"], machines: [a, b], history: history)
+        #expect(asked?.exerciseID == "barbell-bench-press")
+        #expect(asked?.machineID == b.machineID)
+        #expect(asked?.machineConfirmed == false)
+        let squat = session.orderedExercises[0]
+        #expect(squat.machineID == nil && squat.machineConfirmed, "Exercise without machines unchanged")
+    }
+
+    @Test func addedExerciseWithoutHistoryHasNoMachineYet() {
+        let a = Machine(exerciseID: "barbell-bench-press", name: "A")
+        let session = WorkoutSession(name: "Now", startedAt: now)
+        let asked = session.addExercises(["barbell-bench-press"], machines: [a], history: [])
+        #expect(asked != nil)
+        #expect(asked?.machineID == nil)
+    }
 }

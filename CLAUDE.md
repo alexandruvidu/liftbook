@@ -22,6 +22,8 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   an `.xcodeproj`.**
 - Folders:
   - `Liftbook/Features/<Feature>/` — views and view logic per feature
+    (Activity, Machines and Media included); shared building blocks
+    (`Block`, `BlockSection`, pill buttons) are in `Features/Shared/Blocks.swift`
   - `Liftbook/Models/` — SwiftData models and domain logic
   - `Liftbook/Resources/` — assets, bundled JSON
   - `LiftbookTests/` — unit tests (Swift Testing)
@@ -47,10 +49,18 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 ## UI test helpers and pitfalls
 - `LiftbookUITests/UITestHelpers.swift`: `field.enter(text)` (waits for
   keyboard focus), `app.dismissKeyboard()`, `button.openMenu(showing:)`,
-  `app.scrollTo(element)`, `app.finishWorkout()` (Finish + summary Done).
+  `app.scrollTo(element)`, `app.finishWorkout()` (Finish + summary Done),
+  `app.openTab("Home"|"Exercises"|"Activity"|"Profile"|"Start")`,
+  `app.startEmptyWorkout()`, `app.runningBar` (shown while a workout runs).
 - `launchLiftbook(seedSampleData:seedHistory:seedPhotos:)` seeds an
   "Upper Body" routine, three finished workouts (1, 2 and 9 days ago) and
   two drawn progress photos (the system photo picker can't be scripted).
+- `launchLiftbook(seedMachines:)` adds bench press machines "Flat bench A",
+  "Flat bench B" and "Smith" with drawn photos and a workout on A (50 kg × 10);
+  `seedMedia:` adds two drawn photos of your own to bench press. UI tests
+  never download exercise images from the network.
+- Elements inside a `Button` (e.g. an exercise header) aren't separately
+  visible to UI tests; read the button's `label` instead.
 - `launchLiftbook(storeFile:)` keeps data in a temporary file so a test can
   quit and relaunch the app; settings (`@AppStorage`) start empty on each
   UI-test launch.

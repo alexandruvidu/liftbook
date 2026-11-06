@@ -81,3 +81,24 @@ extension WorkoutExercise {
         return "\(name) · \(machine)"
     }
 }
+
+extension WorkoutSession {
+    /// Adds exercises; those with machines start on the machine used last
+    /// (if it still exists), marked unconfirmed. Returns the first added
+    /// exercise that has machines, to ask which one it's on.
+    @discardableResult
+    func addExercises(_ exerciseIDs: [String], machines: [Machine], history: [WorkoutSession]) -> WorkoutExercise? {
+        let before = Set(exercises.map(\.stableID))
+        addExercises(exerciseIDs)
+        var firstWithMachines: WorkoutExercise?
+        for exercise in orderedExercises where !before.contains(exercise.stableID) {
+            let own = machines.of(exercise.exerciseID)
+            guard !own.isEmpty else { continue }
+            let last = Machine.lastUsed(exerciseID: exercise.exerciseID, in: history)
+            exercise.machineID = own.contains { $0.machineID == last } ? last : nil
+            exercise.machineConfirmed = false
+            if firstWithMachines == nil { firstWithMachines = exercise }
+        }
+        return firstWithMachines
+    }
+}

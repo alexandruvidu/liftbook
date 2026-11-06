@@ -150,17 +150,9 @@ struct LiveWorkoutView: View {
             pendingMachinePick = nil
         }) {
             ExercisePickerView(catalog: catalog) { ids in
-                let before = Set(session.exercises.map(\.stableID))
-                session.addExercises(ids)
                 // Exercises with machines start on the one used last; the
                 // first of them asks which machine it is.
-                let added = session.orderedExercises.filter { !before.contains($0.stableID) }
-                for exercise in added where !allMachines.of(exercise.exerciseID).isEmpty {
-                    exercise.machineID = Machine.lastUsed(exerciseID: exercise.exerciseID, in: finishedSessions)
-                        .flatMap { id in allMachines.contains { $0.machineID == id } ? id : nil }
-                    exercise.machineConfirmed = false
-                    if pendingMachinePick == nil { pendingMachinePick = exercise }
-                }
+                pendingMachinePick = session.addExercises(ids, machines: allMachines, history: finishedSessions)
                 try? modelContext.save()
             }
         }
@@ -202,11 +194,4 @@ struct LiveWorkoutView: View {
         if restSound && delay > -2 { RestAlerts.playSound() }
         session.stopRest()
     }
-}
-
-/// An exercise whose machine is being chosen, keyed by the object itself (its
-/// SwiftData ID can change on the first save).
-private struct MachinePickTarget: Identifiable {
-    let exercise: WorkoutExercise
-    var id: ObjectIdentifier { exercise.stableID }
 }

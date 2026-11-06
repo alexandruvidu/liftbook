@@ -57,8 +57,8 @@ screenshot looks correct.
 - [x] Own exercise photos and videos; exercise page gallery
 - [x] Download exercise images; library as a photo grid
 - [x] Export a single workout as CSV
-- [ ] Restyle Home, Profile, exercise and workout screens
-- [ ] Restyle body tracking, tools, data and editors
+- [x] Restyle Home, Profile, exercise and workout screens
+- [x] Restyle body tracking, tools, data and editors
 - [ ] Phase 5 cleanup and full UI run
 
 Out of scope: social feed, followers, cloud sync, accounts.

@@ -196,13 +196,3 @@ struct ExerciseBlock: View {
         return "\(done) / \(exercise.sets.count) sets"
     }
 }
-
-extension Binding where Value == Set<ObjectIdentifier> {
-    /// Whether `id` is in the set, as a toggle: true inserts it, false removes it.
-    func member(_ id: ObjectIdentifier) -> Binding<Bool> {
-        Binding<Bool>(get: { wrappedValue.contains(id) },
-                      set: { isMember in
-                          if isMember { wrappedValue.insert(id) } else { wrappedValue.remove(id) }
-                      })
-    }
-}
