@@ -49,4 +49,16 @@ screenshot looks correct.
 - [ ] Live Activity for the rest timer
 - [ ] Home screen widget for streak and last workout
 
+## Phase 5 — Redesign (spec: docs/superpowers/specs/2026-11-06-redesign-design.md, plan: docs/superpowers/plans/2026-11-06-redesign.md)
+- [ ] New tab bar with start button and workout-running bar; Activity tab (History + Progress)
+- [ ] Live workout screen redesign (blocks, stat strip, last-time column, pre-fill, collapse)
+- [ ] Machines per exercise: picker with photos, per-machine last time and pre-fill
+- [ ] Per-machine charts and records with combined view; machine in history and summary
+- [ ] Own exercise photos and videos; exercise page gallery
+- [ ] Download exercise images; library as a photo grid
+- [ ] Export a single workout as CSV
+- [ ] Restyle Home, Profile, exercise and workout screens
+- [ ] Restyle body tracking, tools, data and editors
+- [ ] Phase 5 cleanup and full UI run
+
 Out of scope: social feed, followers, cloud sync, accounts.
