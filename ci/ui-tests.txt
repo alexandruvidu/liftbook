@@ -8,3 +8,7 @@ SubstitutionsUITests
 MachinesUITests
 ExerciseMediaUITests
 TabBarUITests
+WorkoutDetailUITests
+ActivityUITests
+DataTransferUITests
+HistoryUITests

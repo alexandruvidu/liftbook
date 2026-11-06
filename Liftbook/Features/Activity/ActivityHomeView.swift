@@ -33,12 +33,18 @@ struct ActivityHomeView: View {
                         }
                         .accessibilityIdentifier("activity.empty")
                     } else {
-                        ForEach(sessions, id: \.sessionID) { session in
+                        ForEach(Array(sessions.enumerated()), id: \.element.sessionID) { index, session in
                             NavigationLink(value: session) {
                                 WorkoutCard(session: session, catalog: catalog)
                             }
                             .buttonStyle(.plain)
                             .accessibilityIdentifier("history.row")
+                            // Beside the link, not inside it, so it gets its own taps.
+                            .overlay(alignment: .topTrailing) {
+                                ShareWorkoutButton(session: session, catalog: catalog, compact: true)
+                                    .padding(10)
+                                    .accessibilityIdentifier("workoutCard.share.\(index)")
+                            }
                         }
                     }
                 }

@@ -79,7 +79,8 @@ struct DataTransferView: View {
     private func prepareExports() {
         do {
             let day = Date.now.formatted(.iso8601.year().month().day())
-            let csv = DataExport.workoutsCSV(sessions, catalog: catalog)
+            let machines = (try? modelContext.fetch(FetchDescriptor<Machine>())) ?? []
+            let csv = DataExport.workoutsCSV(sessions, catalog: catalog, machines: machines)
             csvURL = try DataExport.temporaryFile(named: "liftbook-workouts-\(day).csv", data: Data(csv.utf8))
             let backup = try DataExport.backup(from: modelContext)
             jsonURL = try DataExport.temporaryFile(named: "liftbook-backup-\(day).json", data: try DataExport.json(backup))

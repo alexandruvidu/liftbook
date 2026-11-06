@@ -51,8 +51,14 @@ struct WorkoutDetailView: View {
         .navigationTitle(session.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            Button("Edit") { isEditing = true }
-                .accessibilityIdentifier("detail.edit")
+            ToolbarItem(placement: .topBarTrailing) {
+                ShareWorkoutButton(session: session, catalog: catalog)
+                    .accessibilityIdentifier("detail.share")
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Edit") { isEditing = true }
+                    .accessibilityIdentifier("detail.edit")
+            }
         }
         .sheet(isPresented: $isEditing) {
             EditWorkoutView(session: session, catalog: catalog)

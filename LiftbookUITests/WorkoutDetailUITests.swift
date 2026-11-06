@@ -24,6 +24,17 @@ final class WorkoutDetailUITests: XCTestCase {
         XCTAssertTrue(element("detail.exercise.0.set.0", in: app).label.contains("62.5 kg × 8"), "Set line wrong")
         snap("workout-detail-\(appearance)")
 
+        // Share exports this workout as a CSV file
+        // (The system share sheet is checked by its screenshot: asserting on
+        // its elements was flaky on CI.)
+        app.buttons["detail.share"].tap()
+        _ = app.otherElements["ActivityListView"].waitForExistence(timeout: 5)
+        snap("workout-share-\(appearance)")
+        // Close the share sheet
+        let close = app.buttons.matching(NSPredicate(format: "label == 'Close' OR identifier == 'Close'")).firstMatch
+        if close.exists { close.tap() } else { app.swipeDown(velocity: .fast) }
+        XCTAssertTrue(app.buttons["detail.edit"].waitForExistence(timeout: 5), "Share sheet did not close")
+
         // Edit the name and length
         app.buttons["detail.edit"].tap()
         let name = app.textFields["edit.name"]

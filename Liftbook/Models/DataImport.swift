@@ -35,6 +35,17 @@ enum DataImport {
         let existing = try context.fetch(FetchDescriptor<WorkoutSession>())
         var known = Set(existing.map { key($0.name, $0.startedAt) })
         let byName = Dictionary(catalog.exercises.map { ($0.name.lowercased(), $0.id) }, uniquingKeysWith: { first, _ in first })
+        // Machines by exercise and name; ones named in the file but missing are created.
+        var machines = Dictionary(try context.fetch(FetchDescriptor<Machine>()).map { (machineKey($0.exerciseID, $0.name), $0) },
+                                  uniquingKeysWith: { first, _ in first })
+        func machine(named name: String, for exerciseID: String) -> Machine? {
+            guard !name.isEmpty else { return nil }
+            if let found = machines[machineKey(exerciseID, name)] { return found }
+            let created = Machine(exerciseID: exerciseID, name: name)
+            context.insert(created)
+            machines[machineKey(exerciseID, name)] = created
+            return created
+        }
 
         var result = Result()
         var current: (key: String, session: WorkoutSession?)?
@@ -68,11 +79,15 @@ enum DataImport {
                 exerciseID = match
             }
             guard !exerciseID.isEmpty else { continue }
-            let exercise = exercises[exerciseID] ?? {
+            // The same exercise on two machines stays two entries.
+            let machineName = value(row, "machine")
+            let exerciseKey = machineKey(exerciseID, machineName)
+            let exercise = exercises[exerciseKey] ?? {
                 let added = WorkoutExercise(exerciseID: exerciseID, position: session.exercises.count)
                 added.notes = value(row, "exercise_notes")
+                added.machineID = machine(named: machineName, for: exerciseID)?.machineID
                 session.exercises.append(added)
-                exercises[exerciseID] = added
+                exercises[exerciseKey] = added
                 return added
             }()
             let set = WorkoutSet(position: exercise.sets.count,
@@ -91,6 +106,10 @@ enum DataImport {
         }
         try context.save()
         return result
+    }
+
+    private static func machineKey(_ exerciseID: String, _ name: String) -> String {
+        "\(exerciseID)|\(name.trimmingCharacters(in: .whitespaces).lowercased())"
     }
 
     private static func key(_ name: String, _ date: Date) -> String {

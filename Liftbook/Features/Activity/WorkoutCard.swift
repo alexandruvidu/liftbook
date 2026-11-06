@@ -20,10 +20,8 @@ struct WorkoutCard: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 8)
-                Image(systemName: "chevron.right")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.tertiary)
-                    .accessibilityHidden(true)
+                // Room for the share button laid over the card.
+                Color.clear.frame(width: 40, height: 40)
             }
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 16) { stats(summary) }
