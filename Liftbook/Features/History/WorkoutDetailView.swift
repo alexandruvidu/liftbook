@@ -10,6 +10,7 @@ struct WorkoutDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Query private var machines: [Machine]
     @State private var isEditing = false
     @State private var isConfirmingDelete = false
 
@@ -114,7 +115,7 @@ struct WorkoutDetailView: View {
             }
         } header: {
             HStack {
-                Text(catalog.name(for: exercise.exerciseID))
+                Text(exercise.displayName(catalog: catalog, machines: machines))
                 if let letter = session.supersetLetter(for: exercise) {
                     Text("· Superset \(letter)")
                 }

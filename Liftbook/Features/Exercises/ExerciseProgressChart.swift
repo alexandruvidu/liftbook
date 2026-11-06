@@ -6,6 +6,7 @@ import SwiftUI
 /// One series in the accent color, touch a point to read its exact value.
 struct ExerciseProgressChart: View {
     let exerciseID: String
+    var machine: MachineFilter = .all
 
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil })
     private var sessions: [WorkoutSession]
@@ -14,7 +15,7 @@ struct ExerciseProgressChart: View {
     @State private var selectedDate: Date?
 
     var body: some View {
-        let points = ExerciseProgress.points(for: exerciseID, metric: metric, in: sessions)
+        let points = ExerciseProgress.points(for: exerciseID, metric: metric, machine: machine, in: sessions)
             .map { ExerciseProgress.Point(date: $0.date, value: unit.display(kilograms: $0.value)) }
         Section {
             Picker("Metric", selection: $metric) {

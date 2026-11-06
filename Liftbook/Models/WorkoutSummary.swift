@@ -6,6 +6,8 @@ struct WorkoutSummary: Equatable, Sendable {
         typealias Kind = RecordKind
 
         let exerciseID: String
+        /// The machine the record was set on; records are per machine.
+        var machineID: UUID? = nil
         let kind: Kind
         /// Kilograms for weights, a count for reps.
         let value: Double
@@ -38,31 +40,41 @@ struct WorkoutSummary: Equatable, Sendable {
         let past = history
             .filter { $0.endedAt != nil && $0.sessionID != session.sessionID }
             .flatMap(Self.workingSets(in:))
+        // Machines load differently, so each machine (and "no machine")
+        // keeps its own records.
         var records: [Record] = []
-        for exerciseID in Self.orderedUnique(working.map(\.exerciseID)) {
-            let now = working.filter { $0.exerciseID == exerciseID }.map(\.set)
-            let before = past.filter { $0.exerciseID == exerciseID }.map(\.set)
+        for group in Self.orderedUnique(working.map(\.group)) {
+            let now = working.filter { $0.group == group }.map(\.set)
+            let before = past.filter { $0.group == group }.map(\.set)
             // A first-ever session sets a baseline, not a record.
             guard !before.isEmpty else { continue }
-            for kind in Self.summaryKinds(for: type(exerciseID)) {
+            for kind in Self.summaryKinds(for: type(group.exerciseID)) {
                 if let best = kind.best(in: now), best > (kind.best(in: before) ?? 0) {
-                    records.append(Record(exerciseID: exerciseID, kind: kind, value: best))
+                    records.append(Record(exerciseID: group.exerciseID, machineID: group.machineID, kind: kind, value: best))
                 }
             }
         }
         self.records = records
     }
 
+    private struct Group: Hashable {
+        let exerciseID: String
+        let machineID: UUID?
+    }
+
     private struct LoggedSet {
         let exerciseID: String
+        let machineID: UUID?
         let set: SetMeasurement
+
+        var group: Group { Group(exerciseID: exerciseID, machineID: machineID) }
     }
 
     private static func workingSets(in session: WorkoutSession) -> [LoggedSet] {
         session.orderedExercises.flatMap { exercise in
             exercise.orderedSets
                 .filter { $0.isCompleted && $0.kind.isWorkingSet }
-                .map { LoggedSet(exerciseID: exercise.exerciseID, set: $0.measurement) }
+                .map { LoggedSet(exerciseID: exercise.exerciseID, machineID: exercise.machineID, set: $0.measurement) }
         }
     }
 
@@ -75,8 +87,8 @@ struct WorkoutSummary: Equatable, Sendable {
         RecordKind.kinds(for: type).filter { $0 != .bestSetVolume && !(type == .weightAndReps && $0 == .mostReps) }
     }
 
-    private static func orderedUnique(_ ids: [String]) -> [String] {
-        var seen = Set<String>()
-        return ids.filter { seen.insert($0).inserted }
+    private static func orderedUnique<T: Hashable>(_ items: [T]) -> [T] {
+        var seen = Set<T>()
+        return items.filter { seen.insert($0).inserted }
     }
 }

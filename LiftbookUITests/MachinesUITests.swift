@@ -48,4 +48,42 @@ final class MachinesUITests: XCTestCase {
         XCTAssertTrue(chip.label.contains("Smith"), "Chip was \(chip.label)")
         snap("machine-chip-\(appearance)")
     }
+
+    func testPerMachineProgressLight() { perMachineProgress(appearance: "light") }
+    func testPerMachineProgressDark() { perMachineProgress(appearance: "dark") }
+
+    private func perMachineProgress(appearance: String) {
+        continueAfterFailure = false
+        // A workout on "Flat bench A" two days ago at 50 kg × 10
+        let app = XCUIApplication.launchLiftbook(appearance: appearance, seedMachines: true)
+        app.openTab("Exercises")
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 10), "No search field")
+        search.enter("bench press")
+        let row = app.buttons["exercise.row.barbell-bench-press"]
+        XCTAssertTrue(row.waitForExistence(timeout: 5), "Bench press not listed")
+        row.tap()
+
+        // Records for one machine
+        let onA = app.buttons["machineSwitcher.Flat bench A"]
+        XCTAssertTrue(onA.waitForExistence(timeout: 10), "No machine switcher")
+        onA.tap()
+        let heaviest = app.descendants(matching: .any)["exercise.record.heaviestWeight"]
+        app.scrollTo(heaviest)
+        XCTAssertTrue(heaviest.label.contains("50 kg"), "Heaviest on A was \(heaviest.label)")
+        snap("machine-progress-\(appearance)")
+
+        // A machine never used has no records yet
+        let smith = app.buttons["machineSwitcher.Smith"]
+        if !smith.isHittable { app.swipeDown() }
+        smith.tap()
+        let empty = app.descendants(matching: .any)["exercise.records.empty"]
+        app.scrollTo(empty)
+        XCTAssertTrue(empty.exists, "Smith shows records")
+
+        // The machines are listed on the page
+        let machine = app.buttons["exercise.machine.Flat bench B"]
+        app.scrollTo(machine)
+        XCTAssertTrue(machine.exists, "Machines not listed on the exercise page")
+    }
 }

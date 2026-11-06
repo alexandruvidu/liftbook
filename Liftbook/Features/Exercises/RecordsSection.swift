@@ -4,6 +4,7 @@ import SwiftUI
 /// An exercise's personal records across all finished workouts.
 struct RecordsSection: View {
     let exercise: LibraryExercise
+    var machine: MachineFilter = .all
 
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil })
     private var sessions: [WorkoutSession]
@@ -11,7 +12,7 @@ struct RecordsSection: View {
 
     var body: some View {
         if !RecordKind.kinds(for: exercise.type).isEmpty {
-            let records = PersonalRecords.records(for: exercise.id, type: exercise.type, in: sessions)
+            let records = PersonalRecords.records(for: exercise.id, type: exercise.type, machine: machine, in: sessions)
             Section("Personal Records") {
                 if records.isEmpty {
                     Text("Finish a workout with this exercise to set your first records.")

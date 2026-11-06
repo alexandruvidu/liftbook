@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// Shown after finishing: duration, volume, sets and any new records.
@@ -6,6 +7,7 @@ struct FinishSummaryView: View {
     let summary: WorkoutSummary
     let catalog: ExerciseCatalog
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Query private var machines: [Machine]
     let onDone: () -> Void
 
     var body: some View {
@@ -40,7 +42,7 @@ struct FinishSummaryView: View {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(catalog.name(for: record.exerciseID))
                                         .font(.subheadline.weight(.semibold))
-                                    Text(record.kind.title)
+                                    Text(recordTitle(record))
                                         .font(.caption)
                                         .foregroundStyle(.secondary)
                                 }
@@ -82,6 +84,12 @@ struct FinishSummaryView: View {
             .accessibilityIdentifier("summary.done")
         }
         .background(Color(.systemGroupedBackground))
+    }
+
+    /// "Heaviest weight", or "Heaviest weight on Plate-loaded" for a machine.
+    private func recordTitle(_ record: WorkoutSummary.Record) -> String {
+        guard let machine = machines.name(for: record.machineID) else { return record.kind.title }
+        return "\(record.kind.title) on \(machine)"
     }
 
     private func recordValue(_ record: WorkoutSummary.Record) -> String {

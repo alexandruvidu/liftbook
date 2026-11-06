@@ -71,3 +71,13 @@ extension Array where Element == Machine {
         filter { $0.exerciseID == exerciseID }.sorted { $0.createdAt < $1.createdAt }
     }
 }
+
+extension WorkoutExercise {
+    /// "T-Bar Row · Plate-loaded", or just the exercise when there's no
+    /// machine (or it was deleted).
+    func displayName(catalog: ExerciseCatalog, machines: [Machine]) -> String {
+        let name = catalog.name(for: exerciseID)
+        guard let machine = machines.name(for: machineID) else { return name }
+        return "\(name) · \(machine)"
+    }
+}

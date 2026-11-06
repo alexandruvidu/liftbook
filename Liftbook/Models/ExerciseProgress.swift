@@ -33,13 +33,14 @@ enum ExerciseProgress {
     }
 
     /// Oldest first; workouts without a usable set for the metric are skipped.
-    static func points(for exerciseID: String, metric: Metric, in sessions: [WorkoutSession]) -> [Point] {
+    static func points(for exerciseID: String, metric: Metric, machine: MachineFilter = .all,
+                       in sessions: [WorkoutSession]) -> [Point] {
         sessions
             .filter { $0.endedAt != nil }
             .sorted { $0.startedAt < $1.startedAt }
             .compactMap { session in
                 let sets = session.orderedExercises
-                    .filter { $0.exerciseID == exerciseID }
+                    .filter { $0.exerciseID == exerciseID && machine.matches($0) }
                     .flatMap(\.orderedSets)
                     .filter { $0.isCompleted && $0.kind.isWorkingSet }
                     .map(\.measurement)

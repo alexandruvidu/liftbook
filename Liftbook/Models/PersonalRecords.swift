@@ -70,10 +70,11 @@ enum PersonalRecords {
     }
 
     /// Completed working sets of an exercise in finished sessions, with dates.
-    static func loggedSets(of exerciseID: String, in sessions: [WorkoutSession]) -> [(set: SetMeasurement, date: Date)] {
+    static func loggedSets(of exerciseID: String, machine: MachineFilter = .all,
+                           in sessions: [WorkoutSession]) -> [(set: SetMeasurement, date: Date)] {
         sessions.filter { $0.endedAt != nil }.flatMap { session in
             session.orderedExercises
-                .filter { $0.exerciseID == exerciseID }
+                .filter { $0.exerciseID == exerciseID && machine.matches($0) }
                 .flatMap(\.orderedSets)
                 .filter { $0.isCompleted && $0.kind.isWorkingSet }
                 .map { ($0.measurement, $0.completedAt ?? session.startedAt) }
@@ -81,8 +82,9 @@ enum PersonalRecords {
     }
 
     /// Records for an exercise; the earliest set wins a tie.
-    static func records(for exerciseID: String, type: ExerciseType, in sessions: [WorkoutSession]) -> [Record] {
-        let logged = loggedSets(of: exerciseID, in: sessions).sorted { $0.date < $1.date }
+    static func records(for exerciseID: String, type: ExerciseType, machine: MachineFilter = .all,
+                        in sessions: [WorkoutSession]) -> [Record] {
+        let logged = loggedSets(of: exerciseID, machine: machine, in: sessions).sorted { $0.date < $1.date }
         return RecordKind.kinds(for: type).compactMap { kind in
             var best: Record?
             for item in logged {

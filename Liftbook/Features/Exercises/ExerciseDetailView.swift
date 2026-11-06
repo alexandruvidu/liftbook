@@ -49,6 +49,9 @@ private struct ExerciseDetailList: View {
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil })
     private var sessions: [WorkoutSession]
     @Query private var customExercises: [CustomExercise]
+    @Query(sort: \Machine.createdAt) private var allMachines: [Machine]
+    /// Which machine's charts and records to show.
+    @State private var machineFilter: MachineFilter = .all
 
     var body: some View {
         // Once the exercise has been logged, progress comes first.
@@ -119,10 +122,20 @@ private struct ExerciseDetailList: View {
     }
 
     @ViewBuilder private var progressSections: some View {
-        if exercise.type == .weightAndReps {
-            ExerciseProgressChart(exerciseID: exercise.id)
+        let machines = allMachines.of(exercise.id)
+        if !machines.isEmpty {
+            Section {
+                MachineSwitcher(machines: machines,
+                                hasUnassigned: !PersonalRecords.loggedSets(of: exercise.id, machine: .none, in: sessions).isEmpty,
+                                selection: $machineFilter)
+                    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                    .listRowBackground(Color.clear)
+            }
         }
-        RecordsSection(exercise: exercise)
+        if exercise.type == .weightAndReps {
+            ExerciseProgressChart(exerciseID: exercise.id, machine: machineFilter)
+        }
+        RecordsSection(exercise: exercise, machine: machineFilter)
     }
 
     private func muscleList(_ muscles: [Muscle]) -> String {

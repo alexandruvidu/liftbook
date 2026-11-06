@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// One finished workout in Activity: name, when, totals and its exercises.
@@ -5,6 +6,7 @@ struct WorkoutCard: View {
     let session: WorkoutSession
     let catalog: ExerciseCatalog
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Query private var machines: [Machine]
 
     var body: some View {
         let summary = WorkoutSummary(session: session, history: []) { catalog.exercise(id: $0)?.type ?? .weightAndReps }
@@ -50,7 +52,7 @@ struct WorkoutCard: View {
         let exercises = session.orderedExercises
         return VStack(alignment: .leading, spacing: 3) {
             ForEach(exercises.prefix(2), id: \.stableID) { exercise in
-                Text(catalog.name(for: exercise.exerciseID))
+                Text(exercise.displayName(catalog: catalog, machines: machines))
                     .lineLimit(1)
             }
             if exercises.count > 2 {
