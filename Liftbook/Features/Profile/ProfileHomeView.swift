@@ -24,6 +24,15 @@ struct ProfileHomeView: View {
                     .accessibilityIdentifier("profile.photos")
                 }
 
+                Section("Tools") {
+                    NavigationLink {
+                        PlateCalculatorView()
+                    } label: {
+                        Label("Plate Calculator", systemImage: "scalemass")
+                    }
+                    .accessibilityIdentifier("profile.plates")
+                }
+
                 Section {
                     Picker("Weight", selection: $unit) {
                         Text("Kilograms (kg)").tag(WeightUnit.kilograms)

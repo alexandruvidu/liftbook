@@ -16,6 +16,7 @@ struct LiveExerciseSection: View {
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
+    @State private var isShowingPlates = false
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
 
@@ -53,11 +54,21 @@ struct LiveExerciseSection: View {
                         .accessibilityIdentifier("\(identifier).rest")
                 }
                 if let session = exercise.session {
-                    ExerciseOptionsMenu(exercise: exercise, session: session)
+                    ExerciseOptionsMenu(exercise: exercise, session: session,
+                                        showsPlates: type == .weightAndReps) { isShowingPlates = true }
                         .accessibilityIdentifier("\(identifier).options")
                 }
             }
             .buttonStyle(.borderless)
+            .sheet(isPresented: $isShowingPlates) {
+                NavigationStack {
+                    PlateCalculatorView(initialKilograms: exercise.orderedSets.last(where: { ($0.weight ?? 0) > 0 })?.weight)
+                        .toolbar {
+                            Button("Done") { isShowingPlates = false }
+                                .accessibilityIdentifier("plates.done")
+                        }
+                }
+            }
         } header: {
             VStack(alignment: .leading, spacing: 4) {
                 if let letter = exercise.session?.supersetLetter(for: exercise) {
@@ -83,10 +94,12 @@ struct LiveExerciseSection: View {
     }
 }
 
-/// Superset linking and removing an exercise from the workout.
+/// Superset linking, the plate calculator, and removing an exercise.
 private struct ExerciseOptionsMenu: View {
     let exercise: WorkoutExercise
     let session: WorkoutSession
+    let showsPlates: Bool
+    let onShowPlates: () -> Void
 
     var body: some View {
         Menu {
@@ -98,6 +111,9 @@ private struct ExerciseOptionsMenu: View {
                 Button("Superset with Next Exercise", systemImage: "link") {
                     session.linkWithNext(exercise)
                 }
+            }
+            if showsPlates {
+                Button("Plate Calculator", systemImage: "scalemass", action: onShowPlates)
             }
             Button("Remove Exercise", systemImage: "trash", role: .destructive) {
                 session.removeExercise(exercise)
