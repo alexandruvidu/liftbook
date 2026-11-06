@@ -4,6 +4,8 @@ import SwiftUI
 struct SetKindMenu: View {
     let set: WorkoutSet
     let label: String
+    /// Removes the set; nil hides the option.
+    var onRemove: (() -> Void)?
 
     var body: some View {
         Menu {
@@ -20,12 +22,15 @@ struct SetKindMenu: View {
                     }
                 }
             }
+            if let onRemove {
+                Button("Remove Set", systemImage: "trash", role: .destructive, action: onRemove)
+            }
         } label: {
             Text(label)
                 .font(.subheadline.weight(.bold))
                 .monospacedDigit()
                 .foregroundStyle(set.kind == .normal ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
-                .frame(width: 26, height: 30)
+                .frame(width: 28, height: 32)
                 .background(set.kind.tint.opacity(set.kind == .normal ? 0 : 0.28),
                             in: RoundedRectangle(cornerRadius: 7))
         }

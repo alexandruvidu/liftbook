@@ -38,6 +38,8 @@ final class SubstitutionsUITests: XCTestCase {
         let name = String(choice.label.split(separator: ",").first ?? "")
         choice.tap()
         XCTAssertTrue(options.firstMatch.waitForNonExistence(timeout: 5), "Sheet did not close")
-        XCTAssertTrue(app.staticTexts[name].waitForExistence(timeout: 5), "Exercise not swapped to \(name)")
+        let header = app.buttons["live.exercise.0.collapse"]
+        XCTAssertTrue(header.waitForExistence(timeout: 5), "No exercise header")
+        XCTAssertTrue(header.label.contains(name), "Exercise not swapped to \(name): \(header.label)")
     }
 }

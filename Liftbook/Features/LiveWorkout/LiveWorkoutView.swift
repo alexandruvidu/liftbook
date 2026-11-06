@@ -15,6 +15,9 @@ struct LiveWorkoutView: View {
     @AppStorage(RestTimer.soundKey) private var restSound = true
     @State private var isPicking = false
     @State private var isConfirmingDiscard = false
+    @State private var isEditingNote = false
+    /// Exercises the user folded down to their header.
+    @State private var collapsed: Set<ObjectIdentifier> = []
     /// Set when the workout is finished; shows the summary instead of the list.
     @State private var summary: WorkoutSummary?
 
@@ -29,44 +32,50 @@ struct LiveWorkoutView: View {
         }
     }
 
-    /// The workout in progress: notes, exercises and their sets.
+    /// The workout in progress: totals, then each exercise as a block.
     private func liveList(catalog: ExerciseCatalog) -> some View {
-        List {
-            Section {
-                TextField("Workout notes", text: Bindable(session).notes, axis: .vertical)
-                    .lineLimit(1...6)
-                    .accessibilityIdentifier("live.notes")
-            }
+        ScrollView {
+            VStack(spacing: 12) {
+                WorkoutStatStrip(session: session, stats: WorkoutStats.of(session) {
+                    catalog.exercise(id: $0)?.type ?? .weightAndReps
+                })
 
-            if session.exercises.isEmpty {
-                Section {
+                if session.exercises.isEmpty {
                     Text("Add your first exercise to start logging sets.")
                         .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 24)
                 }
-            }
 
-            ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
-                LiveExerciseSection(exercise: exercise,
-                                    info: catalog.exercise(id: exercise.exerciseID),
-                                    fallbackName: catalog.name(for: exercise.exerciseID),
-                                    identifier: "live.exercise.\(index)",
-                                    previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
-                                                                       in: finishedSessions, excluding: session),
-                                    previousNote: PreviousPerformance.note(exerciseID: exercise.exerciseID,
-                                                                           in: finishedSessions, excluding: session))
-            }
+                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
+                    ExerciseBlock(exercise: exercise,
+                                  info: catalog.exercise(id: exercise.exerciseID),
+                                  fallbackName: catalog.name(for: exercise.exerciseID),
+                                  identifier: "live.exercise.\(index)",
+                                  previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
+                                                                     in: finishedSessions, excluding: session),
+                                  previousNote: PreviousPerformance.note(exerciseID: exercise.exerciseID,
+                                                                         in: finishedSessions, excluding: session),
+                                  isCollapsed: $collapsed.member(exercise.stableID))
+                }
 
-            Section {
-                Button("Add Exercises", systemImage: "plus.circle.fill") { isPicking = true }
-                    .accessibilityIdentifier("live.addExercises")
-            }
+                Button {
+                    isPicking = true
+                } label: {
+                    Label("Add Exercises", systemImage: "plus")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.pillProminent)
+                .accessibilityIdentifier("live.addExercises")
 
-            Section {
                 Button("Discard Workout", role: .destructive) { isConfirmingDiscard = true }
+                    .frame(maxWidth: .infinity, minHeight: 44)
                     .accessibilityIdentifier("live.discard")
             }
+            .padding(16)
         }
-        .listStyle(.insetGrouped)
+        .blockScreenBackground()
         .scrollDismissesKeyboard(.interactively)
         .keyboardDoneButton()
         .safeAreaInset(edge: .bottom) {
@@ -99,10 +108,21 @@ struct LiveWorkoutView: View {
                 Button("Minimize", systemImage: "chevron.down") { dismiss() }
                     .accessibilityIdentifier("live.minimize")
             }
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Workout Note", systemImage: session.notes.isEmpty ? "note.text.badge.plus" : "note.text") {
+                    isEditingNote = true
+                }
+                .accessibilityIdentifier("live.noteButton")
+            }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Finish") { finish(catalog: catalog) }
+                    .buttonStyle(.borderedProminent)
+                    .foregroundStyle(Color.accentForeground)
                     .accessibilityIdentifier("live.finish")
             }
+        }
+        .sheet(isPresented: $isEditingNote) {
+            WorkoutNoteSheet(session: session)
         }
         .sheet(isPresented: $isPicking) {
             ExercisePickerView(catalog: catalog) {
@@ -149,3 +169,4 @@ struct LiveWorkoutView: View {
         session.stopRest()
     }
 }
+

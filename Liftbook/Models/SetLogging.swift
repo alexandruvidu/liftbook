@@ -33,6 +33,36 @@ enum SetInput {
 }
 
 extension SetMeasurement {
+    /// These values with each empty field in `fields` taken from `other`.
+    func filled(from other: SetMeasurement, fields: [SetField]) -> SetMeasurement {
+        var result = self
+        for field in fields {
+            switch field {
+            case .weight: result.weight = result.weight ?? other.weight
+            case .reps: result.reps = result.reps ?? other.reps
+            case .duration: result.duration = result.duration ?? other.duration
+            case .distance: result.distance = result.distance ?? other.distance
+            }
+        }
+        return result
+    }
+
+    /// A short form for a narrow column, without units: "62.5 × 8", "+10 × 12",
+    /// "1:30", "5 · 25:00".
+    func compactText(for type: ExerciseType, unit: WeightUnit = .kilograms) -> String {
+        let weight = inputText(for: .weight, unit: unit)
+        let reps = inputText(for: .reps, unit: unit)
+        let parts: [String] = switch type {
+        case .weightAndReps, .assisted: [weight, reps]
+        case .bodyweight: [(self.weight ?? 0) > 0 ? "+" + weight : "", reps]
+        case .duration: [inputText(for: .duration, unit: unit)]
+        case .distance: [inputText(for: .distance, unit: unit), inputText(for: .duration, unit: unit)]
+        }
+        let shown = parts.filter { !$0.isEmpty }
+        guard !shown.isEmpty else { return "–" }
+        return shown.joined(separator: type == .distance ? " · " : " × ")
+    }
+
     /// The text shown in an input field, in the display unit.
     func inputText(for field: SetField, unit: WeightUnit = .kilograms) -> String {
         switch field {
@@ -84,6 +114,18 @@ extension WorkoutSet {
     /// it has every required value. Returns whether the set is now completed.
     @discardableResult
     func toggleCompleted(for type: ExerciseType, at date: Date = .now) -> Bool {
+        toggleCompleted(for: type, placeholder: nil, at: date)
+    }
+
+    /// Like `toggleCompleted(for:at:)`, but when checking off, every field of
+    /// the type that's still empty is first filled from `placeholder` (last
+    /// time's values shown in the empty fields). Typed values win.
+    @discardableResult
+    func toggleCompleted(for type: ExerciseType, placeholder: SetMeasurement?, at date: Date = .now) -> Bool {
+        if !isCompleted, let placeholder {
+            let filled = measurement.filled(from: placeholder, fields: type.fieldSpecs.map(\.field))
+            if filled.isComplete(for: type) { measurement = filled }
+        }
         if isCompleted {
             isCompleted = false
             completedAt = nil

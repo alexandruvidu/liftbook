@@ -73,7 +73,7 @@ final class StartWorkoutUITests: XCTestCase {
 
         let finish = app.buttons["live.finish"]
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Live workout did not open from routine")
-        XCTAssertTrue(app.staticTexts["Bent-Over Barbell Row"].exists, "Routine exercises not copied")
+        XCTAssertTrue(app.buttons["live.exercise.1.collapse"].label.contains("Bent-Over Barbell Row"), "Routine exercises not copied")
         XCTAssertTrue(app.textFields["live.exercise.0.set.2.weight"].waitForExistence(timeout: 5), "Bench press should have 3 sets")
         XCTAssertFalse(app.textFields["live.exercise.0.set.3.weight"].exists, "Bench press has more than 3 sets")
         snap("live-workout-routine-\(appearance)")

@@ -2,9 +2,10 @@ import SwiftUI
 
 /// Column widths shared by the set rows and their header.
 private enum SetColumns {
-    static let number: CGFloat = 26
-    static let rpe: CGFloat = 44
-    static let check: CGFloat = 32
+    static let number: CGFloat = 28
+    static let last: CGFloat = 66
+    static let rpe: CGFloat = 40
+    static let check: CGFloat = 40
 }
 
 /// Column titles above an exercise's sets.
@@ -15,6 +16,7 @@ struct SetHeaderRow: View {
     var body: some View {
         HStack(spacing: 8) {
             Text("Set").frame(width: SetColumns.number)
+            Text("Last").frame(width: SetColumns.last)
             ForEach(type.fieldSpecs, id: \.self) { spec in
                 Text(spec.columnTitle(unit: unit)).frame(maxWidth: .infinity)
             }
@@ -47,44 +49,24 @@ struct SetRow: View {
     let identifier: String
     /// The set at the same position last time, if any.
     var previous: SetMeasurement?
+    /// Removes the set; nil when it's the only one.
+    var onRemove: (() -> Void)?
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
     /// Called when the set is checked off (not when un-checked).
     var onCompleted: () -> Void = {}
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            inputs
-            if let previous {
-                Button {
-                    set.measurement = previous
-                } label: {
-                    // Inline icon, so it wraps with the text at large sizes
-                // instead of overlapping it.
-                Text("\(Image(systemName: "clock.arrow.circlepath")) Last time: \(previous.formatted(for: type, unit: unit))")
-                        .font(.caption)
-                        .multilineTextAlignment(.leading)
-                        // Buttons tint their label; keep this a quiet gray.
-                        .foregroundStyle(Color.secondary)
-                        .padding(.leading, SetColumns.number + 8)
-                }
-                .buttonStyle(.borderless)
-                .disabled(set.isCompleted)
-                .accessibilityLabel("Last time: \(previous.formatted(for: type, unit: unit)). Tap to copy.")
-                .accessibilityIdentifier("\(identifier).previous")
-            }
-        }
-        .listRowBackground(set.isCompleted ? Color.accentColor.opacity(0.14) : nil)
-        .dynamicTypeSize(...Self.largestTextSize)
-    }
-
-    private var inputs: some View {
         HStack(spacing: 8) {
-            SetKindMenu(set: set, label: label)
+            SetKindMenu(set: set, label: label, onRemove: onRemove)
                 .frame(width: SetColumns.number)
                 .accessibilityIdentifier("\(identifier).kind")
 
+            lastTime
+                .frame(width: SetColumns.last)
+
             ForEach(type.fieldSpecs, id: \.self) { spec in
                 SetValueField(set: set, spec: spec, unit: unit,
+                              placeholder: previous.map { $0.inputText(for: spec.field, unit: unit) },
                               accessibilityName: "Set \(number) \(spec.label.lowercased())")
                     .accessibilityIdentifier("\(identifier).\(spec.field.rawValue)")
             }
@@ -93,21 +75,62 @@ struct SetRow: View {
                 .frame(width: SetColumns.rpe)
                 .accessibilityIdentifier("\(identifier).rpe")
 
+            checkButton
+        }
+        .padding(.vertical, 4)
+        .padding(.horizontal, 6)
+        .background(set.isCompleted ? Color.accentColor.opacity(0.14) : Color.clear,
+                    in: RoundedRectangle(cornerRadius: 10))
+        .padding(.horizontal, -6)
+        .dynamicTypeSize(...Self.largestTextSize)
+    }
+
+    /// Last time's values for this set; tapping copies them in.
+    @ViewBuilder
+    private var lastTime: some View {
+        if let previous {
             Button {
-                if set.toggleCompleted(for: type) { onCompleted() }
+                set.measurement = previous
             } label: {
-                Image(systemName: set.isCompleted ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
-                    .foregroundStyle(set.isCompleted ? Color.accentColor : Color.secondary)
-                    .frame(width: SetColumns.check, height: 36)
-                    .contentShape(Rectangle())
+                Text(previous.compactText(for: type, unit: unit))
+                    .font(.subheadline)
+                    .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
+                    // Buttons tint their label; keep this a quiet gray.
+                    .foregroundStyle(Color.secondary)
+                    .frame(maxWidth: .infinity, minHeight: 36)
             }
             .buttonStyle(.borderless)
-            .disabled(!set.isCompleted && !set.measurement.isComplete(for: type))
-            .accessibilityLabel(set.isCompleted ? "Set \(number) done" : "Mark set \(number) done")
-            .accessibilityIdentifier("\(identifier).check")
-            .sensoryFeedback(.success, trigger: set.isCompleted) { _, done in done }
+            .disabled(set.isCompleted)
+            .accessibilityLabel("Last time: \(previous.formatted(for: type, unit: unit)). Tap to copy.")
+            .accessibilityIdentifier("\(identifier).previous")
+        } else {
+            Text("–")
+                .foregroundStyle(.tertiary)
+                .accessibilityLabel("Nothing last time")
         }
+    }
+
+    private var checkButton: some View {
+        let ready = set.measurement.filled(from: previous ?? SetMeasurement(), fields: type.fieldSpecs.map(\.field))
+            .isComplete(for: type)
+        return Button {
+            if set.toggleCompleted(for: type, placeholder: previous) { onCompleted() }
+        } label: {
+            Image(systemName: "checkmark")
+                .font(.headline.weight(.bold))
+                .foregroundStyle(set.isCompleted ? Color.accentForeground : Color.secondary)
+                .frame(width: SetColumns.check, height: 36)
+                .background(set.isCompleted ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.fill.tertiary),
+                            in: RoundedRectangle(cornerRadius: 10))
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
+        .disabled(!set.isCompleted && !ready)
+        .accessibilityLabel(set.isCompleted ? "Set \(number) done" : "Mark set \(number) done")
+        .accessibilityIdentifier("\(identifier).check")
+        .sensoryFeedback(.success, trigger: set.isCompleted) { _, done in done }
     }
 }
 
@@ -117,12 +140,14 @@ private struct SetValueField: View {
     let set: WorkoutSet
     let spec: ExerciseType.FieldSpec
     let unit: WeightUnit
+    /// Last time's value, shown in the empty field.
+    let placeholder: String?
     /// e.g. "Set 2 weight", so VoiceOver says which set a field belongs to.
     let accessibilityName: String
     @State private var text = ""
 
     var body: some View {
-        TextField(spec.placeholder, text: $text)
+        TextField(spec.placeholder, text: $text, prompt: placeholder.flatMap { $0.isEmpty ? nil : Text($0) })
             .keyboardType(spec.field.keyboard)
             .multilineTextAlignment(.center)
             .monospacedDigit()

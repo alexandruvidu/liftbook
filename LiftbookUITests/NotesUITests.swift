@@ -23,16 +23,23 @@ final class NotesUITests: XCTestCase {
         let finish = app.buttons["live.finish"]
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Live workout did not open")
 
+        // The workout note is written in a sheet from the toolbar
+        app.buttons["live.noteButton"].tap()
         let workoutNote = field("live.notes", in: app)
         XCTAssertTrue(workoutNote.waitForExistence(timeout: 5), "No workout notes field")
         workoutNote.enter("Slept well, felt strong")
+        XCTAssertEqual(workoutNote.value as? String, "Slept well, felt strong")
+        snap("notes-workout-\(appearance)")
+        app.buttons["live.notesDone"].tap()
+        XCTAssertTrue(workoutNote.waitForNonExistence(timeout: 5), "Note sheet did not close")
 
+        // An exercise note opens from its Note pill
         let exerciseNote = field("live.exercise.0.notes", in: app)
-        XCTAssertTrue(exerciseNote.exists, "No exercise notes field")
+        XCTAssertFalse(exerciseNote.exists, "Empty exercise note shown before asking")
+        app.buttons["live.exercise.0.note"].tap()
+        XCTAssertTrue(exerciseNote.waitForExistence(timeout: 5), "No exercise notes field")
         exerciseNote.enter("Wide grip, pause on chest")
         app.dismissKeyboard()
-
-        XCTAssertEqual(workoutNote.value as? String, "Slept well, felt strong")
         XCTAssertEqual(exerciseNote.value as? String, "Wide grip, pause on chest")
         snap("notes-\(appearance)")
 
@@ -44,6 +51,9 @@ final class NotesUITests: XCTestCase {
         let nextNote = field("live.exercise.0.notes", in: app)
         XCTAssertTrue(nextNote.waitForExistence(timeout: 5), "No exercise notes field")
         XCTAssertEqual(nextNote.placeholderValue, "Last note: Wide grip, pause on chest")
-        XCTAssertEqual(field("live.exercise.1.notes", in: app).placeholderValue, "Exercise note")
+        app.buttons["live.exercise.1.note"].tap()
+        let otherNote = field("live.exercise.1.notes", in: app)
+        XCTAssertTrue(otherNote.waitForExistence(timeout: 5), "Note pill did not open the field")
+        XCTAssertEqual(otherNote.placeholderValue, "Exercise note")
     }
 }

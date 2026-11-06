@@ -88,7 +88,11 @@ struct RestSecondsMenu: View {
             }
         } label: {
             Label("Rest \(RestTimer.label(seconds: current))", systemImage: "timer")
-                .font(.subheadline)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(Color.primary)
+                .padding(.horizontal, 14)
+                .frame(minHeight: 34)
+                .background(.fill.tertiary, in: Capsule())
         }
         .accessibilityLabel("Rest: \(RestTimer.label(seconds: current))")
     }

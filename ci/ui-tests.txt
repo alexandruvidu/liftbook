@@ -1,1 +1,14 @@
-ALL
+LiveWorkoutLayoutUITests
+LogSetsUITests
+PreviousPerformanceUITests
+SetTypesUITests
+NotesUITests
+SupersetUITests
+RestTimerUITests
+ProgressionUITests
+WarmUpUITests
+PlateCalculatorUITests
+SubstitutionsUITests
+StartWorkoutUITests
+WorkoutDetailUITests
+AccessibilityUITests

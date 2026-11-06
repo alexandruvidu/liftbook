@@ -128,3 +128,64 @@ struct WorkoutSetLoggingTests {
         #expect(set.completedAt == nil)
     }
 }
+
+/// Checking off a set whose empty fields show last time's values.
+struct PlaceholderCompletionTests {
+    private let last = SetMeasurement(weight: 40, reps: 10)
+
+    @Test func placeholderFillsEmptyFields() {
+        let set = WorkoutSet(position: 0)
+        #expect(set.toggleCompleted(for: .weightAndReps, placeholder: last))
+        #expect(set.measurement == SetMeasurement(weight: 40, reps: 10))
+    }
+
+    @Test func typedValueWinsOverPlaceholder() {
+        let set = WorkoutSet(position: 0, measurement: SetMeasurement(reps: 8))
+        #expect(set.toggleCompleted(for: .weightAndReps, placeholder: last))
+        #expect(set.measurement == SetMeasurement(weight: 40, reps: 8))
+    }
+
+    @Test func noPlaceholderStillNeedsCompleteInput() {
+        let set = WorkoutSet(position: 0, measurement: SetMeasurement(reps: 8))
+        #expect(!set.toggleCompleted(for: .weightAndReps, placeholder: nil))
+        #expect(set.measurement == SetMeasurement(reps: 8))
+    }
+
+    @Test func uncheckKeepsValues() {
+        let set = WorkoutSet(position: 0)
+        set.toggleCompleted(for: .weightAndReps, placeholder: last)
+        #expect(!set.toggleCompleted(for: .weightAndReps, placeholder: SetMeasurement(weight: 99, reps: 1)))
+        #expect(set.measurement == SetMeasurement(weight: 40, reps: 10))
+    }
+
+    @Test func placeholderOnlyFillsTheTypesFields() {
+        // A timed exercise doesn't pick up weight or reps.
+        let set = WorkoutSet(position: 0)
+        #expect(!set.toggleCompleted(for: .duration, placeholder: last))
+        #expect(set.measurement == SetMeasurement())
+    }
+}
+
+struct CompactTextTests {
+    @Test func weightAndReps() {
+        #expect(SetMeasurement(weight: 62.5, reps: 8).compactText(for: .weightAndReps) == "62.5 × 8")
+    }
+
+    @Test func poundsConverted() {
+        #expect(SetMeasurement(weight: 100, reps: 5).compactText(for: .weightAndReps, unit: .pounds) == "220.5 × 5")
+    }
+
+    @Test func bodyweightShowsAddedWeight() {
+        #expect(SetMeasurement(reps: 12).compactText(for: .bodyweight) == "12")
+        #expect(SetMeasurement(weight: 10, reps: 12).compactText(for: .bodyweight) == "+10 × 12")
+    }
+
+    @Test func durationAndDistance() {
+        #expect(SetMeasurement(duration: 90).compactText(for: .duration) == "1:30")
+        #expect(SetMeasurement(duration: 1500, distance: 5000).compactText(for: .distance) == "5 · 25:00")
+    }
+
+    @Test func emptyIsDash() {
+        #expect(SetMeasurement().compactText(for: .weightAndReps) == "–")
+    }
+}

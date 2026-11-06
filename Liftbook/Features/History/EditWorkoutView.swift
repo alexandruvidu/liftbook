@@ -9,39 +9,53 @@ struct EditWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @State private var isPicking = false
+    @State private var collapsed: Set<ObjectIdentifier> = []
 
     var body: some View {
         NavigationStack {
-            List {
-                Section {
-                    TextField("Name", text: $session.name)
-                        .accessibilityIdentifier("edit.name")
-                    DatePicker("Started", selection: Binding(get: { session.startedAt }, set: { session.moveStart(to: $0) }))
-                        .accessibilityIdentifier("edit.start")
-                    Stepper(value: Binding(get: { session.durationMinutes }, set: { session.setDuration(minutes: $0) }),
-                            in: 1...(24 * 60), step: 5) {
-                        LabeledContent("Duration", value: "\(session.durationMinutes) min")
+            ScrollView {
+                VStack(spacing: 12) {
+                    Block {
+                        TextField("Name", text: $session.name)
+                            .font(.headline)
+                            .accessibilityIdentifier("edit.name")
+                        Divider()
+                        DatePicker("Started", selection: Binding(get: { session.startedAt }, set: { session.moveStart(to: $0) }))
+                            .accessibilityIdentifier("edit.start")
+                        Divider()
+                        Stepper(value: Binding(get: { session.durationMinutes }, set: { session.setDuration(minutes: $0) }),
+                                in: 1...(24 * 60), step: 5) {
+                            LabeledContent("Duration", value: "\(session.durationMinutes) min")
+                        }
+                        .accessibilityIdentifier("edit.duration")
+                        Divider()
+                        TextField("Workout notes", text: $session.notes, axis: .vertical)
+                            .lineLimit(1...6)
+                            .accessibilityIdentifier("edit.notes")
                     }
-                    .accessibilityIdentifier("edit.duration")
-                    TextField("Workout notes", text: $session.notes, axis: .vertical)
-                        .lineLimit(1...6)
-                        .accessibilityIdentifier("edit.notes")
-                }
 
-                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
-                    LiveExerciseSection(exercise: exercise,
-                                        info: catalog.exercise(id: exercise.exerciseID),
-                                        fallbackName: catalog.name(for: exercise.exerciseID),
-                                        identifier: "edit.exercise.\(index)",
-                                        startsRest: false)
-                }
+                    ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
+                        ExerciseBlock(exercise: exercise,
+                                      info: catalog.exercise(id: exercise.exerciseID),
+                                      fallbackName: catalog.name(for: exercise.exerciseID),
+                                      identifier: "edit.exercise.\(index)",
+                                      startsRest: false,
+                                      isCollapsed: $collapsed.member(exercise.stableID))
+                    }
 
-                Section {
-                    Button("Add Exercises", systemImage: "plus.circle.fill") { isPicking = true }
-                        .accessibilityIdentifier("edit.addExercises")
+                    Button {
+                        isPicking = true
+                    } label: {
+                        Label("Add Exercises", systemImage: "plus")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 6)
+                    }
+                    .buttonStyle(.pillProminent)
+                    .accessibilityIdentifier("edit.addExercises")
                 }
+                .padding(16)
             }
-            .listStyle(.insetGrouped)
+            .blockScreenBackground()
             .scrollDismissesKeyboard(.interactively)
             .keyboardDoneButton()
             .navigationTitle("Edit Workout")
