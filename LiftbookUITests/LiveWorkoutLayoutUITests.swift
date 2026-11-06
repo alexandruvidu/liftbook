@@ -27,7 +27,7 @@ final class LiveWorkoutLayoutUITests: XCTestCase {
         XCTAssertEqual(check.label, "Set 1 done", "Placeholder set not checked off")
         XCTAssertEqual(app.textFields["live.exercise.0.set.0.weight"].value as? String, "62.5")
         let sets = app.descendants(matching: .any)["live.stat.sets"]
-        XCTAssertTrue(sets.label.contains("1 / 6"), "Sets tile was \(sets.label)")
+        XCTAssertTrue(sets.label.contains("1 / 8"), "Sets tile was \(sets.label)")
         snap("live-workout-\(appearance)")
 
         // Collapsing hides the sets but keeps the header and its count

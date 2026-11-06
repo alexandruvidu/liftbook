@@ -40,8 +40,8 @@ final class LogSetsUITests: XCTestCase {
         XCTAssertTrue(check.isEnabled, "Logged set can't be checked off")
         check.tap()
         XCTAssertEqual(check.label, "Set 1 done", "Set was not checked off")
-        let progress = app.staticTexts.matching(NSPredicate(format: "label ==[c] '1/3 done'"))
-        XCTAssertTrue(progress.firstMatch.exists, "Progress not updated")
+        let header = app.buttons["live.exercise.0.collapse"]
+        XCTAssertTrue(header.label.contains("1 / 3 sets"), "Progress not updated: \(header.label)")
 
         // Add Set copies the latest logged values
         app.buttons["live.exercise.0.addSet"].tap()
