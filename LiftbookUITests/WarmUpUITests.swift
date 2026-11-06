@@ -11,6 +11,9 @@ final class WarmUpUITests: XCTestCase {
 
         // Profile > Tools > Warm-up Calculator
         app.openTab("Profile")
+        let tools = app.buttons["profile.tools"]
+        XCTAssertTrue(tools.waitForExistence(timeout: 10), "No Tools tile")
+        tools.tap()
         let link = app.buttons["profile.warmup"]
         XCTAssertTrue(app.scrollTo(link), "No warm-up calculator in Profile")
         link.tap()

@@ -64,6 +64,35 @@ extension BlockHeader where Trailing == EmptyView {
     }
 }
 
+/// A titled block for screens built from blocks instead of a list: a small
+/// bold title, the block, then an optional note.
+struct BlockSection<Content: View>: View {
+    let title: String
+    var footer: String?
+    @ViewBuilder var content: Content
+
+    init(_ title: String, footer: String? = nil, @ViewBuilder content: () -> Content) {
+        self.title = title
+        self.footer = footer
+        self.content = content()
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
+            Block { content }
+            if let footer {
+                Text(footer)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 4)
+            }
+        }
+    }
+}
+
 /// A bold section title between blocks, e.g. "History".
 struct SectionTitle: View {
     let text: String

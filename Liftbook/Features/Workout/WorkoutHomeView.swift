@@ -5,6 +5,9 @@ struct WorkoutHomeView: View {
     @Query(sort: \RoutineFolder.sortIndex) private var folders: [RoutineFolder]
     @Query(sort: \Routine.name) private var routines: [Routine]
     @Query private var customExercises: [CustomExercise]
+    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }) private var finished: [WorkoutSession]
+    @AppStorage(WeeklyGoal.storageKey) private var goal = WeeklyGoal.defaultGoal
+    @State private var collapsedFolders: Set<UUID> = []
 
     @Environment(WorkoutStartController.self) private var starter
     @State private var editorTarget: RoutineEditorTarget?
@@ -14,31 +17,57 @@ struct WorkoutHomeView: View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         NavigationStack {
             let unfiled = routines.filter { $0.folder == nil }
-            List {
-                if routines.isEmpty && folders.isEmpty {
-                    NoRoutinesSection { editorTarget = .new }
-                }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
+                    WeekStrip(week: WeekActivity.week(containing: .now, sessions: finished, goal: goal) {
+                        catalog.exercise(id: $0)?.type ?? .weightAndReps
+                    })
 
-                ForEach(folders) { folder in
-                    Section {
-                        let inFolder = routines.filter { $0.folder == folder }
-                        if inFolder.isEmpty {
-                            Text("No routines in this folder yet.")
-                                .foregroundStyle(.secondary)
+                    if routines.isEmpty && folders.isEmpty {
+                        Block {
+                            NoRoutinesSection { editorTarget = .new }
                         }
-                        ForEach(inFolder) { routineLink($0, catalog: catalog) }
-                    } header: {
-                        FolderHeader(folder: folder) { folderAction = $0 }
                     }
-                }
 
-                if !unfiled.isEmpty {
-                    Section(folders.isEmpty ? "Routines" : "Other Routines") {
-                        ForEach(unfiled) { routineLink($0, catalog: catalog) }
+                    ForEach(folders) { folder in
+                        let isCollapsed = collapsedFolders.contains(folder.folderID)
+                        HStack(spacing: 8) {
+                            Button {
+                                withAnimation(.snappy) {
+                                    if isCollapsed { collapsedFolders.remove(folder.folderID) } else { collapsedFolders.insert(folder.folderID) }
+                                }
+                            } label: {
+                                Image(systemName: "chevron.down")
+                                    .font(.subheadline.weight(.bold))
+                                    .rotationEffect(.degrees(isCollapsed ? -90 : 0))
+                                    .frame(width: 28, height: 44)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(isCollapsed ? "Show \(folder.name)" : "Hide \(folder.name)")
+                            FolderHeader(folder: folder) { folderAction = $0 }
+                                .font(.title3.weight(.bold))
+                        }
+                        .padding(.top, 8)
+                        if !isCollapsed {
+                            let inFolder = routines.filter { $0.folder == folder }
+                            if inFolder.isEmpty {
+                                Text("No routines in this folder yet.")
+                                    .foregroundStyle(.secondary)
+                                    .padding(.leading, 4)
+                            }
+                            ForEach(inFolder) { routineCard($0, catalog: catalog) }
+                        }
+                    }
+
+                    if !unfiled.isEmpty {
+                        SectionTitle(folders.isEmpty ? "Routines" : "Other Routines")
+                        ForEach(unfiled) { routineCard($0, catalog: catalog) }
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .listStyle(.insetGrouped)
+            .blockScreenBackground()
             .navigationTitle(AppTab.home.title)
             .navigationDestination(for: Routine.self) { routine in
                 RoutineDetailView(routine: routine, catalog: catalog) { starter.start(.routine(routine)) }
@@ -61,11 +90,31 @@ struct WorkoutHomeView: View {
         }
     }
 
-    private func routineLink(_ routine: Routine, catalog: ExerciseCatalog) -> some View {
+    /// A routine as a card that opens its details, with a Start button.
+    private func routineCard(_ routine: Routine, catalog: ExerciseCatalog) -> some View {
         NavigationLink(value: routine) {
-            RoutineRow(routine: routine, catalog: catalog)
+            Block {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(routine.name)
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+                    Text(RoutineRow.summary(of: routine.orderedEntries.map { catalog.name(for: $0.exerciseID) }))
+                        .font(.subheadline)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(2)
+                }
+                .padding(.trailing, 80)
+            }
         }
+        .buttonStyle(.plain)
         .accessibilityIdentifier("routine.row.\(routine.name)")
+        // Beside the link, not inside it, so it gets its own taps.
+        .overlay(alignment: .trailing) {
+            Button("Start") { starter.start(.routine(routine)) }
+                .buttonStyle(.pillProminent)
+                .padding(.trailing, 14)
+                .accessibilityIdentifier("routine.quickStart.\(routine.name)")
+        }
     }
 }
 

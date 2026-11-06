@@ -59,11 +59,10 @@ private struct ExerciseDetailList: View {
         // Once the exercise has been logged, progress comes first.
         let logged = !PersonalRecords.loggedSets(of: exercise.id, in: sessions).isEmpty
         let media = allMedia.display(for: exercise.id)
-        List {
-            Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
                 if !media.isEmpty {
                     MediaGallery(media: media)
-                        .listRowInsets(EdgeInsets())
                 }
                 HStack {
                     AddMediaButton(exerciseID: exercise.id)
@@ -73,46 +72,46 @@ private struct ExerciseDetailList: View {
                             .accessibilityIdentifier("media.edit")
                     }
                 }
-                .buttonStyle(.borderless)
-            }
-            .listRowBackground(media.isEmpty ? nil : Color.clear)
+                .buttonStyle(.pill)
 
-            if logged {
-                progressSections
-            }
-
-            if !exercise.details.isEmpty {
-                Section("How to do it") {
-                    Text(exercise.details)
-                        .accessibilityIdentifier("exercise.detail.description")
+                Block {
+                    BlockHeader(exercise.equipment.displayName, subtitle: muscleList(exercise.primaryMuscles),
+                                image: Image(systemName: exercise.equipment.symbolName))
+                    if !exercise.secondaryMuscles.isEmpty {
+                        LabeledContent("Also works", value: muscleList(exercise.secondaryMuscles))
+                            .font(.subheadline)
+                    }
+                    if exercise.isCustom {
+                        LabeledContent("Source", value: "Created by you")
+                            .font(.subheadline)
+                    }
                 }
-            }
 
-            Section("Muscles") {
-                LabeledContent("Primary", value: muscleList(exercise.primaryMuscles))
-                if !exercise.secondaryMuscles.isEmpty {
-                    LabeledContent("Secondary", value: muscleList(exercise.secondaryMuscles))
+                if logged {
+                    progressSections
                 }
-            }
 
-            Section("Details") {
-                LabeledContent("Equipment", value: exercise.equipment.displayName)
-                if exercise.isCustom {
-                    LabeledContent("Source", value: "Created by you")
+                if !exercise.details.isEmpty {
+                    BlockSection("How to do it") {
+                        Text(exercise.details)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("exercise.detail.description")
+                    }
                 }
+
+                if !logged {
+                    progressSections
+                }
+
+                MachinesSection(exerciseID: exercise.id)
+
+                SetFieldsSection(type: exercise.type)
+
+                alternativesSection
             }
-
-            if !logged {
-                progressSections
-            }
-
-            MachinesSection(exerciseID: exercise.id)
-
-            SetFieldsSection(type: exercise.type)
-
-            alternativesSection
+            .padding(16)
         }
-        .listStyle(.insetGrouped)
+        .blockScreenBackground()
         .sheet(isPresented: $isEditingMedia) {
             EditMediaView(exerciseID: exercise.id)
         }
@@ -122,24 +121,28 @@ private struct ExerciseDetailList: View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         let alternatives = Substitutions.suggestions(for: exercise, among: catalog.exercises)
         if !alternatives.isEmpty {
-            Section {
+            BlockSection("Alternatives", footer: "Exercises that train the same main muscles, for when equipment is busy or you want variety.") {
                 ForEach(alternatives) { alternative in
                     NavigationLink {
                         ExerciseDetailView(exerciseID: alternative.id)
                     } label: {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(alternative.name)
-                            Text(alternative.summary)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(alternative.name)
+                                    .foregroundStyle(Color.primary)
+                                Text(alternative.summary)
+                                    .font(.caption)
+                                    .foregroundStyle(Color.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(.tertiary)
                         }
+                        .contentShape(Rectangle())
                     }
+                    .buttonStyle(.plain)
                     .accessibilityIdentifier("exercise.alternative.\(alternative.id)")
                 }
-            } header: {
-                Text("Alternatives")
-            } footer: {
-                Text("Exercises that train the same main muscles, for when equipment is busy or you want variety.")
             }
         }
     }
@@ -147,13 +150,10 @@ private struct ExerciseDetailList: View {
     @ViewBuilder private var progressSections: some View {
         let machines = allMachines.of(exercise.id)
         if !machines.isEmpty {
-            Section {
-                MachineSwitcher(machines: machines,
-                                hasUnassigned: !PersonalRecords.loggedSets(of: exercise.id, machine: .none, in: sessions).isEmpty,
-                                selection: $machineFilter)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
-                    .listRowBackground(Color.clear)
-            }
+            MachineSwitcher(machines: machines,
+                            hasUnassigned: !PersonalRecords.loggedSets(of: exercise.id, machine: .none, in: sessions).isEmpty,
+                            selection: $machineFilter)
+                .padding(.horizontal, -16)
         }
         if exercise.type == .weightAndReps {
             ExerciseProgressChart(exerciseID: exercise.id, machine: machineFilter)

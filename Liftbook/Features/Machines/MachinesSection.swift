@@ -10,7 +10,7 @@ struct MachinesSection: View {
 
     var body: some View {
         let machines = allMachines.of(exerciseID)
-        Section {
+        BlockSection("Machines", footer: "Doing this on more than one machine? Add each one, and last time's weights follow the machine you pick.") {
             ForEach(machines) { machine in
                 Button {
                     editing = machine
@@ -34,10 +34,6 @@ struct MachinesSection: View {
             }
             Button("Add Machine", systemImage: "plus") { isAdding = true }
                 .accessibilityIdentifier("exercise.machines.add")
-        } header: {
-            Text("Machines")
-        } footer: {
-            Text("Doing this on more than one machine? Add each one, and last time's weights follow the machine you pick.")
         }
         .sheet(item: $editing) { machine in
             MachineEditorView(exerciseID: exerciseID, machine: machine)

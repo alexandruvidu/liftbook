@@ -55,8 +55,8 @@ screenshot looks correct.
 - [x] Machines per exercise: picker with photos, per-machine last time and pre-fill
 - [x] Per-machine charts and records with combined view; machine in history and summary
 - [x] Own exercise photos and videos; exercise page gallery
-- [ ] Download exercise images; library as a photo grid
-- [ ] Export a single workout as CSV
+- [x] Download exercise images; library as a photo grid
+- [x] Export a single workout as CSV
 - [ ] Restyle Home, Profile, exercise and workout screens
 - [ ] Restyle body tracking, tools, data and editors
 - [ ] Phase 5 cleanup and full UI run

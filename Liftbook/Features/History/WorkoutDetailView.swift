@@ -16,38 +16,43 @@ struct WorkoutDetailView: View {
 
     var body: some View {
         let summary = WorkoutSummary(session: session, history: []) { type(of: $0) }
-        List {
-            Section {
-                HStack(spacing: 12) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text(session.startedAt.formatted(date: .complete, time: .shortened))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                HStack(spacing: 8) {
                     StatTile(title: "Duration", value: SetMeasurement.clock(summary.duration), identifier: "detail.duration")
                     StatTile(title: "Volume", value: unit.volumeText(kilograms: summary.volume), identifier: "detail.volume")
                     StatTile(title: "Sets", value: "\(summary.setCount)", identifier: "detail.sets")
                 }
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-            } header: {
-                Text(session.startedAt.formatted(date: .complete, time: .shortened))
-            }
 
-            if !session.notes.isEmpty {
-                Section("Notes") {
-                    Text(session.notes)
-                        .accessibilityIdentifier("detail.notes")
+                if !session.notes.isEmpty {
+                    BlockSection("Notes") {
+                        Text(session.notes)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .accessibilityIdentifier("detail.notes")
+                    }
                 }
-            }
 
-            ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
-                exerciseSection(exercise, index: index)
-            }
+                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
+                    exerciseBlock(exercise, index: index)
+                }
 
-            Section {
-                Button("Repeat Workout", systemImage: "arrow.clockwise", action: onRepeat)
-                    .accessibilityIdentifier("detail.repeat")
-                Button("Delete Workout", systemImage: "trash", role: .destructive) { isConfirmingDelete = true }
+                Button(action: onRepeat) {
+                    Label("Repeat Workout", systemImage: "arrow.clockwise")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.pillProminent)
+                .accessibilityIdentifier("detail.repeat")
+                Button("Delete Workout", role: .destructive) { isConfirmingDelete = true }
+                    .frame(maxWidth: .infinity, minHeight: 44)
                     .accessibilityIdentifier("detail.delete")
             }
+            .padding(16)
         }
-        .listStyle(.insetGrouped)
+        .blockScreenBackground()
         .navigationTitle(session.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -85,10 +90,26 @@ struct WorkoutDetailView: View {
         catalog.exercise(id: exerciseID)?.type ?? .weightAndReps
     }
 
-    private func exerciseSection(_ exercise: WorkoutExercise, index: Int) -> some View {
+    private func exerciseBlock(_ exercise: WorkoutExercise, index: Int) -> some View {
         let type = type(of: exercise.exerciseID)
         let labels = exercise.setLabels
-        return Section {
+        let machinePhoto = machines.first { $0.machineID == exercise.machineID }?.photoFileName
+        return Block {
+            HStack(spacing: 12) {
+                ExerciseThumbnail(exerciseID: exercise.exerciseID,
+                                  equipment: catalog.exercise(id: exercise.exerciseID)?.equipment ?? .other,
+                                  machinePhoto: machinePhoto, size: 44)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(exercise.displayName(catalog: catalog, machines: machines))
+                        .font(.headline)
+                        .foregroundStyle(.tint)
+                    if let letter = session.supersetLetter(for: exercise) {
+                        Text("Superset \(letter)")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
             if !exercise.notes.isEmpty {
                 Text(exercise.notes)
                     .font(.subheadline)
@@ -118,13 +139,6 @@ struct WorkoutDetailView: View {
                 .opacity(set.isCompleted ? 1 : 0.6)
                 .accessibilityElement(children: .combine)
                 .accessibilityIdentifier("detail.exercise.\(index).set.\(setIndex)")
-            }
-        } header: {
-            HStack {
-                Text(exercise.displayName(catalog: catalog, machines: machines))
-                if let letter = session.supersetLetter(for: exercise) {
-                    Text("· Superset \(letter)")
-                }
             }
         }
     }

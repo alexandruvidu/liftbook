@@ -30,10 +30,8 @@ final class ExerciseTypeUITests: XCTestCase {
 
             let example = app.descendants(matching: .any)["exercise.detail.example"]
             // Scroll to the bottom so the set section clears the floating tab bar.
-            let list = app.collectionViews.firstMatch
-            XCTAssertTrue(list.waitForExistence(timeout: 5))
-            list.swipeUp()
-            list.swipeUp()
+            XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 5))
+            app.scrollTo(example, maxSwipes: 10)
             XCTAssertTrue(example.waitForExistence(timeout: 5), "No example for \(item.id)")
             let shown = app.descendants(matching: .any)
                 .matching(NSPredicate(format: "label CONTAINS %@", item.example)).firstMatch

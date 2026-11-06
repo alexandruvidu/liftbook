@@ -17,7 +17,7 @@ struct ExerciseProgressChart: View {
     var body: some View {
         let points = ExerciseProgress.points(for: exerciseID, metric: metric, machine: machine, in: sessions)
             .map { ExerciseProgress.Point(date: $0.date, value: unit.display(kilograms: $0.value)) }
-        Section {
+        BlockSection("Progress") {
             Picker("Metric", selection: $metric) {
                 ForEach(ExerciseProgress.Metric.allCases) { Text($0.title).tag($0) }
             }
@@ -34,8 +34,6 @@ struct ExerciseProgressChart: View {
                     .frame(height: 200)
                     .accessibilityIdentifier("progress.chart")
             }
-        } header: {
-            Text("Progress")
         }
     }
 

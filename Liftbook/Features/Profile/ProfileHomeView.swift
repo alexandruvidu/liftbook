@@ -1,107 +1,118 @@
+import SwiftData
 import SwiftUI
 
+/// You at a glance, then tiles into body tracking, photos, tools and data,
+/// and one block of settings.
 struct ProfileHomeView: View {
-    @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
-    @AppStorage(RestTimer.soundKey) private var restSound = true
-    @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }) private var sessions: [WorkoutSession]
     @AppStorage(WeeklyGoal.storageKey) private var weeklyGoal = WeeklyGoal.defaultGoal
 
     var body: some View {
+        let goal = WeeklyGoal()
         NavigationStack {
-            Form {
-                Section {
-                    NavigationLink {
-                        BodyMeasurementsView()
-                    } label: {
-                        Label("Body Measurements", systemImage: "figure")
+            ScrollView {
+                VStack(spacing: 12) {
+                    HStack(spacing: 8) {
+                        StatTile(title: "Workouts", value: "\(sessions.count)", identifier: "profile.total")
+                        StatTile(title: "This week", value: "\(goal.workouts(inWeekOf: .now, sessions: sessions))",
+                                 identifier: "profile.thisWeek")
+                        StatTile(title: "Week streak", value: "\(goal.currentStreak(goal: weeklyGoal, sessions: sessions))",
+                                 identifier: "profile.streak")
                     }
-                    .accessibilityIdentifier("profile.body")
-                    NavigationLink {
-                        ProgressPhotosView()
-                    } label: {
-                        Label("Progress Photos", systemImage: "photo.on.rectangle")
-                    }
-                    .accessibilityIdentifier("profile.photos")
-                }
 
-                Section("Data") {
-                    NavigationLink {
-                        DataTransferView()
-                    } label: {
-                        Label("Export & Import", systemImage: "arrow.up.arrow.down.square")
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        tile("Body", subtitle: "Weight and measurements", systemImage: "figure", id: "profile.body") {
+                            BodyMeasurementsView()
+                        }
+                        tile("Photos", subtitle: "Progress pictures", systemImage: "photo.on.rectangle", id: "profile.photos") {
+                            ProgressPhotosView()
+                        }
+                        tile("Tools", subtitle: "Plates and warm-ups", systemImage: "wrench.and.screwdriver", id: "profile.tools") {
+                            ToolsView()
+                        }
+                        tile("Data", subtitle: "Export and import", systemImage: "arrow.up.arrow.down", id: "profile.data") {
+                            DataTransferView()
+                        }
                     }
-                    .accessibilityIdentifier("profile.data")
+
                     NavigationLink {
                         ExerciseImagesView()
                     } label: {
-                        Label("Exercise Images", systemImage: "photo.stack")
-                    }
-                    .accessibilityIdentifier("profile.images")
-                }
-
-                Section("Tools") {
-                    NavigationLink {
-                        PlateCalculatorView()
-                    } label: {
-                        Label("Plate Calculator", systemImage: "scalemass")
-                    }
-                    .accessibilityIdentifier("profile.plates")
-                    NavigationLink {
-                        WarmUpCalculatorView()
-                    } label: {
-                        Label("Warm-up Calculator", systemImage: "flame")
-                    }
-                    .accessibilityIdentifier("profile.warmup")
-                }
-
-                Section {
-                    Picker("Weight", selection: $unit) {
-                        Text("Kilograms (kg)").tag(WeightUnit.kilograms)
-                        Text("Pounds (lb)").tag(WeightUnit.pounds)
-                    }
-                    .accessibilityIdentifier("settings.unit")
-                } header: {
-                    Text("Units")
-                } footer: {
-                    Text("Changes how weights and distances are shown and entered. Your logged sets stay the same.")
-                }
-
-                Section {
-                    Stepper(value: $weeklyGoal, in: WeeklyGoal.range) {
-                        LabeledContent("Workouts per Week", value: "\(weeklyGoal)")
-                    }
-                    .accessibilityIdentifier("settings.goal")
-                } header: {
-                    Text("Weekly Goal")
-                } footer: {
-                    Text("Used for your weekly progress and streak on the Progress tab.")
-                }
-
-                Section {
-                    Picker("Default Rest", selection: $defaultRest) {
-                        ForEach(RestTimer.options, id: \.self) { seconds in
-                            Text(RestTimer.label(seconds: seconds)).tag(seconds)
+                        Block {
+                            BlockHeader("Exercise Images", subtitle: "Download photos for the library",
+                                        image: Image(systemName: "photo.stack")) {
+                                Image(systemName: "chevron.right")
+                                    .foregroundStyle(.tertiary)
+                            }
                         }
                     }
-                    .accessibilityIdentifier("settings.restDefault")
-                    Toggle("Sound When Rest Ends", isOn: $restSound)
-                        .accessibilityIdentifier("settings.restSound")
-                } header: {
-                    Text("Rest Timer")
-                } footer: {
-                    Text("The timer starts when you check off a set. Each exercise can use its own rest from the live workout. If you leave the app, a notification tells you when rest is over.")
-                }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("profile.images")
 
-                Section {
+                    SectionTitle("Settings")
+                    SettingsBlock()
+
                     Label("Everything you log stays on this iPhone.", systemImage: "lock.iphone")
+                        .font(.footnote)
                         .foregroundStyle(.secondary)
+                        .padding(.top, 4)
                 }
+                .padding(16)
             }
+            .blockScreenBackground()
             .navigationTitle(AppTab.profile.title)
         }
+    }
+
+    private func tile<Destination: View>(_ title: String, subtitle: String, systemImage: String, id: String,
+                                         @ViewBuilder destination: @escaping () -> Destination) -> some View {
+        NavigationLink(destination: destination) {
+            VStack(alignment: .leading, spacing: 10) {
+                Image(systemName: systemImage)
+                    .font(.title2)
+                    .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundStyle(Color.primary)
+                    Text(subtitle)
+                        .font(.caption)
+                        .foregroundStyle(Color.secondary)
+                        .lineLimit(2, reservesSpace: true)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(14)
+            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier(id)
+    }
+}
+
+/// The plate and warm-up calculators.
+struct ToolsView: View {
+    var body: some View {
+        List {
+            NavigationLink {
+                PlateCalculatorView()
+            } label: {
+                Label("Plate Calculator", systemImage: "scalemass")
+            }
+            .accessibilityIdentifier("profile.plates")
+            NavigationLink {
+                WarmUpCalculatorView()
+            } label: {
+                Label("Warm-up Calculator", systemImage: "flame")
+            }
+            .accessibilityIdentifier("profile.warmup")
+        }
+        .navigationTitle("Tools")
     }
 }
 
 #Preview {
     ProfileHomeView()
+        .modelContainer(Persistence.makeContainer(inMemory: true))
 }

@@ -11,6 +11,9 @@ final class PlateCalculatorUITests: XCTestCase {
 
         // From Profile > Tools
         app.openTab("Profile")
+        let tools = app.buttons["profile.tools"]
+        XCTAssertTrue(tools.waitForExistence(timeout: 10), "No Tools tile")
+        tools.tap()
         let link = app.buttons["profile.plates"]
         XCTAssertTrue(app.scrollTo(link), "No plate calculator in Profile")
         link.tap()

@@ -29,26 +29,24 @@ struct NoRoutinesSection: View {
     let create: () -> Void
 
     var body: some View {
-        Section {
-            VStack(spacing: 12) {
-                Image(systemName: "list.bullet.clipboard")
-                    .font(.largeTitle)
-                    .foregroundStyle(.secondary)
-                Text("No routines yet")
-                    .font(.headline)
-                Text("Build a routine once, then reuse it every session. Group routines into folders like Push, Pull and Legs.")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
-                Button(action: create) {
-                    Text("New Routine").foregroundStyle(Color.accentForeground)
-                }
-                .buttonStyle(.borderedProminent)
-                .accessibilityIdentifier("workout.emptyNewRoutine")
+        VStack(spacing: 12) {
+            Image(systemName: "list.bullet.clipboard")
+                .font(.largeTitle)
+                .foregroundStyle(.secondary)
+            Text("No routines yet")
+                .font(.headline)
+            Text("Build a routine once, then reuse it every session. Group routines into folders like Push, Pull and Legs.")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+            Button(action: create) {
+                Text("New Routine").foregroundStyle(Color.accentForeground)
             }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .buttonStyle(.borderedProminent)
+            .accessibilityIdentifier("workout.emptyNewRoutine")
         }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 12)
     }
 }
 
