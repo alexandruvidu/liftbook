@@ -20,7 +20,8 @@ jobs:
   build-test-package:
     # Xcode 27 image (macOS 27). See actions/runner-images README.
     runs-on: xcode-27
-    timeout-minutes: 60
+    # The full UI suite at a phase end takes about an hour.
+    timeout-minutes: 120
     permissions:
       contents: write  # publish the rolling "latest-build" release (built-in token only)
     env:
