@@ -11,6 +11,7 @@ struct ProgressionRow: View {
 
     @AppStorage private var rangeText: String
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     init(exercise: WorkoutExercise, info: LibraryExercise, lastWorkingSets: [SetMeasurement], identifier: String) {
         self.exercise = exercise
@@ -24,7 +25,11 @@ struct ProgressionRow: View {
 
     var body: some View {
         if let suggestion = Progression.suggestion(lastSets: lastWorkingSets, exercise: info, range: range, unit: unit) {
-            HStack(alignment: .center, spacing: 10) {
+            // Side by side normally; stacked at accessibility text sizes.
+            let layout = dynamicTypeSize.isAccessibilitySize
+                ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+                : AnyLayout(HStackLayout(alignment: .center, spacing: 10))
+            layout {
                 Image(systemName: suggestion.increasesWeight ? "arrow.up.circle.fill" : "target")
                     .font(.title3)
                     .foregroundStyle(Color.accentColor)
@@ -39,7 +44,7 @@ struct ProgressionRow: View {
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityIdentifier("\(identifier).suggestion")
-                Spacer(minLength: 4)
+                if !dynamicTypeSize.isAccessibilitySize { Spacer(minLength: 4) }
                 Menu {
                     Section("Rep Range") {
                         ForEach(Progression.ranges, id: \.self) { option in

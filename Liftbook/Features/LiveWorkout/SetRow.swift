@@ -25,6 +25,9 @@ struct SetHeaderRow: View {
         .font(.caption.weight(.semibold))
         .foregroundStyle(.secondary)
         .textCase(.uppercase)
+        // Narrow columns: shrink titles rather than break them letter by letter.
+        .lineLimit(1)
+        .minimumScaleFactor(0.5)
         .dynamicTypeSize(...SetRow.largestTextSize)
     }
 }

@@ -35,6 +35,9 @@ struct StartWorkoutSection: View {
                 } label: {
                     Label("Start Empty Workout", systemImage: "play.fill")
                         .font(.headline)
+                        .multilineTextAlignment(.center)
+                        // Wrap at large text sizes instead of clipping.
+                        .fixedSize(horizontal: false, vertical: true)
                         .foregroundStyle(Color.accentForeground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)

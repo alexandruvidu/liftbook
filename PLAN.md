@@ -39,7 +39,7 @@ screenshot looks correct.
 ## Phase 3 — Advanced
 - [x] Plate calculator with configurable bar and plates
 - [x] Warm-up set calculator
-- [ ] Exercise substitution suggestions by muscle group
+- [x] Exercise substitution suggestions by muscle group
 - [x] Progression suggestions (e.g. add weight after hitting the rep target)
 - [x] Export all data to CSV and JSON; import from CSV
 - [ ] Dark mode polish, Dynamic Type, VoiceOver labels

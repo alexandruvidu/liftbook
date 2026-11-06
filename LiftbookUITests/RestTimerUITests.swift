@@ -17,6 +17,7 @@ final class RestTimerUITests: XCTestCase {
         // Default rest is set in Profile
         app.tabBars.buttons["Profile"].tap()
         let twoMinutes = app.buttons["2 min"]
+        XCTAssertTrue(app.scrollTo(app.buttons["settings.restDefault"]), "No default rest setting")
         XCTAssertTrue(app.buttons["settings.restDefault"].openMenu(showing: twoMinutes), "Default rest picker did not open")
         twoMinutes.tap()
         XCTAssertTrue(app.buttons["settings.restDefault"].label.contains("2 min"), "Default rest not saved")
