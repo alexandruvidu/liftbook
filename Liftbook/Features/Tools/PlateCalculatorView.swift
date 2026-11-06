@@ -119,30 +119,42 @@ private struct BarbellSideView: View {
     let heaviest: Double
     let format: (Double) -> String
 
+    private let column: CGFloat = 34
+    private let sleeve: CGFloat = 28
+
     var body: some View {
         GeometryReader { geometry in
-            HStack(alignment: .center, spacing: 3) {
-                Capsule()
-                    .fill(Color.secondary.opacity(0.5))
-                    .frame(width: 28, height: 10)
-                ForEach(Array(plates.enumerated()), id: \.offset) { _, plate in
-                    VStack(spacing: 4) {
+            let plateArea = max(geometry.size.height - 26, 20)
+            VStack(alignment: .leading, spacing: 6) {
+                // Plates centred on the sleeve, taller for heavier plates
+                HStack(alignment: .center, spacing: 0) {
+                    Capsule()
+                        .fill(Color.secondary.opacity(0.5))
+                        .frame(width: sleeve, height: 10)
+                    ForEach(Array(plates.enumerated()), id: \.offset) { _, plate in
                         RoundedRectangle(cornerRadius: 4)
                             .fill(Color.accentColor)
-                            .frame(width: 16, height: max(geometry.size.height - 24, 20) * (0.35 + 0.65 * plate / heaviest))
+                            .frame(width: 18, height: plateArea * (0.35 + 0.65 * plate / heaviest))
+                            .frame(width: column)
+                    }
+                    Capsule()
+                        .fill(Color.secondary.opacity(0.5))
+                        .frame(width: 20, height: 10)
+                }
+                .frame(height: plateArea)
+                // One row of labels, each under its plate
+                HStack(spacing: 0) {
+                    Color.clear.frame(width: sleeve, height: 1)
+                    ForEach(Array(plates.enumerated()), id: \.offset) { _, plate in
                         Text(format(plate))
                             .font(.caption2)
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
-                            .fixedSize()
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                            .frame(width: column)
                     }
                 }
-                Capsule()
-                    .fill(Color.secondary.opacity(0.5))
-                    .frame(width: 20, height: 10)
-                Spacer(minLength: 0)
-            }
-            .frame(maxHeight: .infinity)
         }
     }
 }
