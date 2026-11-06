@@ -64,4 +64,16 @@ enum PlateCalculator {
     /// Settings keys; plates and bar are kept per unit.
     static func barKey(_ unit: WeightUnit) -> String { "plates.bar.\(unit.rawValue)" }
     static func platesKey(_ unit: WeightUnit) -> String { "plates.available.\(unit.rawValue)" }
+
+    /// The bar weight chosen in the plate calculator, or the default.
+    static func savedBar(for unit: WeightUnit, in defaults: UserDefaults) -> Double {
+        let stored = defaults.double(forKey: barKey(unit))
+        return stored > 0 ? stored : defaultBar(for: unit)
+    }
+
+    /// The plates chosen in the plate calculator, or the standard set.
+    static func savedPlates(for unit: WeightUnit, in defaults: UserDefaults) -> [Double] {
+        let stored = defaults.string(forKey: platesKey(unit)).map(decode) ?? []
+        return stored.isEmpty ? standardPlates(for: unit) : stored
+    }
 }

@@ -31,6 +31,12 @@ struct ProfileHomeView: View {
                         Label("Plate Calculator", systemImage: "scalemass")
                     }
                     .accessibilityIdentifier("profile.plates")
+                    NavigationLink {
+                        WarmUpCalculatorView()
+                    } label: {
+                        Label("Warm-up Calculator", systemImage: "flame")
+                    }
+                    .accessibilityIdentifier("profile.warmup")
                 }
 
                 Section {

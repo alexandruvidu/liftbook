@@ -100,6 +100,19 @@ private struct ExerciseOptionsMenu: View {
     let session: WorkoutSession
     let showsPlates: Bool
     let onShowPlates: () -> Void
+    @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Environment(\.modelContext) private var modelContext
+
+    /// Ramps up to the first working set's weight, using the plate settings.
+    private func addWarmUps() {
+        guard let working = exercise.workingWeight else { return }
+        let plates = PlateCalculator.savedPlates(for: unit, in: AppSettings.store)
+        let steps = WarmUpCalculator.steps(working: unit.display(kilograms: working),
+                                           bar: PlateCalculator.savedBar(for: unit, in: AppSettings.store),
+                                           smallestPlate: plates.min() ?? 1.25)
+        exercise.setWarmUps(steps.map { (kilograms: unit.kilograms(fromDisplay: $0.weight), reps: $0.reps) })
+        try? modelContext.save()
+    }
 
     var body: some View {
         Menu {
@@ -113,6 +126,8 @@ private struct ExerciseOptionsMenu: View {
                 }
             }
             if showsPlates {
+                Button("Add Warm-up Sets", systemImage: "flame") { addWarmUps() }
+                    .disabled(exercise.workingWeight == nil)
                 Button("Plate Calculator", systemImage: "scalemass", action: onShowPlates)
             }
             Button("Remove Exercise", systemImage: "trash", role: .destructive) {
