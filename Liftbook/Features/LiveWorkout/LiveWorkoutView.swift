@@ -11,8 +11,10 @@ struct LiveWorkoutView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var customExercises: [CustomExercise]
     @Query(sort: \Machine.createdAt) private var allMachines: [Machine]
-    /// An exercise just added that has machines: its block asks which one.
-    @State private var askMachineFor: ObjectIdentifier?
+    /// An exercise just added that has machines; asked about once the
+    /// exercise picker has closed.
+    @State private var pendingMachinePick: WorkoutExercise?
+    @State private var machinePick: MachinePickTarget?
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }, sort: \WorkoutSession.startedAt, order: .reverse)
     private var finishedSessions: [WorkoutSession]
     @AppStorage(RestTimer.soundKey) private var restSound = true
@@ -64,9 +66,7 @@ struct LiveWorkoutView: View {
                                                                          in: finishedSessions, excluding: session),
                                   isCollapsed: $collapsed.member(exercise.stableID),
                                   machines: machines,
-                                  history: finishedSessions,
-                                  asksForMachine: askMachineFor == exercise.stableID,
-                                  onMachineAsked: { askMachineFor = nil })
+                                  history: finishedSessions)
                 }
 
                 Button {
@@ -134,7 +134,21 @@ struct LiveWorkoutView: View {
         .sheet(isPresented: $isEditingNote) {
             WorkoutNoteSheet(session: session)
         }
-        .sheet(isPresented: $isPicking) {
+        .sheet(item: $machinePick) { target in
+            let exercise = target.exercise
+            MachinePickerSheet(exerciseID: exercise.exerciseID, exerciseName: catalog.name(for: exercise.exerciseID),
+                               type: catalog.exercise(id: exercise.exerciseID)?.type ?? .weightAndReps,
+                               selected: exercise.machineID, history: finishedSessions) { id in
+                exercise.machineID = id
+                exercise.machineConfirmed = true
+                try? modelContext.save()
+            }
+        }
+        .sheet(isPresented: $isPicking, onDismiss: {
+            // Ask which machine only after the exercise picker has closed.
+            machinePick = pendingMachinePick.map(MachinePickTarget.init)
+            pendingMachinePick = nil
+        }) {
             ExercisePickerView(catalog: catalog) { ids in
                 let before = Set(session.exercises.map(\.stableID))
                 session.addExercises(ids)
@@ -145,7 +159,7 @@ struct LiveWorkoutView: View {
                     exercise.machineID = Machine.lastUsed(exerciseID: exercise.exerciseID, in: finishedSessions)
                         .flatMap { id in allMachines.contains { $0.machineID == id } ? id : nil }
                     exercise.machineConfirmed = false
-                    if askMachineFor == nil { askMachineFor = exercise.stableID }
+                    if pendingMachinePick == nil { pendingMachinePick = exercise }
                 }
                 try? modelContext.save()
             }
@@ -190,3 +204,9 @@ struct LiveWorkoutView: View {
     }
 }
 
+/// An exercise whose machine is being chosen, keyed by the object itself (its
+/// SwiftData ID can change on the first save).
+private struct MachinePickTarget: Identifiable {
+    let exercise: WorkoutExercise
+    var id: ObjectIdentifier { exercise.stableID }
+}

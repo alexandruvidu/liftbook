@@ -20,9 +20,6 @@ struct ExerciseBlock: View {
     var machines: [Machine] = []
     /// Finished workouts, for each machine's last sets in the picker.
     var history: [WorkoutSession] = []
-    /// Open the machine picker as soon as the block appears (just added).
-    var asksForMachine = false
-    var onMachineAsked: () -> Void = {}
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
@@ -69,13 +66,6 @@ struct ExerciseBlock: View {
                 exercise.machineID = machine.machineID
                 exercise.machineConfirmed = true
             }
-        }
-        .task {
-            guard asksForMachine else { return }
-            onMachineAsked()
-            // Wait for the exercise picker to finish closing.
-            try? await Task.sleep(for: WorkoutStartController.transitionDelay)
-            isPickingMachine = true
         }
         .sheet(isPresented: $isSwapping) {
             if let info {
