@@ -30,6 +30,9 @@ struct LiveExerciseSection: View {
                 .font(.subheadline)
                 .lineLimit(1...4)
                 .accessibilityIdentifier("\(identifier).notes")
+            if startsRest, let info, let last = previous?.workingSets, !last.isEmpty {
+                ProgressionRow(exercise: exercise, info: info, lastWorkingSets: last, identifier: identifier)
+            }
             SetHeaderRow(type: type)
             let labels = exercise.setLabels
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.stableID) { index, set in

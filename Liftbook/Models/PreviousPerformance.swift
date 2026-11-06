@@ -6,6 +6,8 @@ struct PreviousPerformance: Equatable, Sendable {
     /// Completed sets from that workout, in order.
     let sets: [SetMeasurement]
     let date: Date
+    /// The completed sets that weren't warm-ups.
+    var workingSets: [SetMeasurement] = []
 
     /// The previous set at the same position, if there was one.
     func set(at index: Int) -> SetMeasurement? {
@@ -19,13 +21,13 @@ struct PreviousPerformance: Equatable, Sendable {
             .filter { $0.endedAt != nil && $0.sessionID != current?.sessionID }
             .sorted { $0.startedAt > $1.startedAt }
         for session in finished {
-            let sets = session.orderedExercises
+            let completed = session.orderedExercises
                 .filter { $0.exerciseID == exerciseID }
                 .flatMap(\.orderedSets)
                 .filter(\.isCompleted)
-                .map(\.measurement)
-            if !sets.isEmpty {
-                return PreviousPerformance(sets: sets, date: session.startedAt)
+            if !completed.isEmpty {
+                return PreviousPerformance(sets: completed.map(\.measurement), date: session.startedAt,
+                                           workingSets: completed.filter { $0.kind.isWorkingSet }.map(\.measurement))
             }
         }
         return nil

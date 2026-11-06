@@ -4,3 +4,5 @@
 # CI fails if no screenshots are produced.
 SubstitutionsUITests
 PlateCalculatorUITests
+ProgressionUITests
+PreviousPerformanceUITests
