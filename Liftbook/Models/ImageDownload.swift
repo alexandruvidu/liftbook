@@ -62,10 +62,10 @@ extension URLSession: DataLoader {
 @MainActor
 @Observable
 final class ImageDownloader {
-    static let manifestURL = URL(string: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json")!
-    static let imagesBaseURL = URL(string: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/")!
+    nonisolated static let manifestURL = URL(string: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/dist/exercises.json")!
+    nonisolated static let imagesBaseURL = URL(string: "https://raw.githubusercontent.com/yuhonas/free-exercise-db/main/exercises/")!
     /// Start and end position.
-    static let imagesPerExercise = 2
+    nonisolated static let imagesPerExercise = 2
 
     private(set) var progress: Double = 0
     private(set) var isRunning = false
