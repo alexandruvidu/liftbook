@@ -7,7 +7,7 @@ final class TabBarUITests: XCTestCase {
         ("History", "history.empty"),
         ("Exercises", "exercise.row.ab-wheel-rollout"),
         ("Progress", "progress.empty"),
-        ("Profile", "settings.restDefault"),
+        ("Profile", "profile.body"),
     ]
 
     func testEveryTabOpensInLightMode() {
