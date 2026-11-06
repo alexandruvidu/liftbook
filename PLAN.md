@@ -42,7 +42,7 @@ screenshot looks correct.
 - [x] Exercise substitution suggestions by muscle group
 - [x] Progression suggestions (e.g. add weight after hitting the rep target)
 - [x] Export all data to CSV and JSON; import from CSV
-- [ ] Dark mode polish, Dynamic Type, VoiceOver labels
+- [x] Dark mode polish, Dynamic Type, VoiceOver labels
 
 ## Phase 4 — Optional (may not work when sideloaded through LiveContainer)
 - [ ] Apple Health workout export (HealthKit)
