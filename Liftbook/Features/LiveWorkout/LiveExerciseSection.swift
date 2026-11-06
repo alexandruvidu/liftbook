@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// An exercise in the live workout: its sets and an Add Set button.
@@ -17,6 +18,8 @@ struct LiveExerciseSection: View {
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
     @State private var isShowingPlates = false
+    @State private var isSwapping = false
+    @Query private var customExercises: [CustomExercise]
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
 
@@ -55,11 +58,20 @@ struct LiveExerciseSection: View {
                 }
                 if let session = exercise.session {
                     ExerciseOptionsMenu(exercise: exercise, session: session,
-                                        showsPlates: type == .weightAndReps) { isShowingPlates = true }
+                                        showsPlates: type == .weightAndReps,
+                                        onSwap: info == nil ? nil : { isSwapping = true }) { isShowingPlates = true }
                         .accessibilityIdentifier("\(identifier).options")
                 }
             }
             .buttonStyle(.borderless)
+            .sheet(isPresented: $isSwapping) {
+                if let info {
+                    SwapExerciseView(current: info, catalog: ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))) {
+                        exercise.swap(to: $0)
+                        try? modelContext.save()
+                    }
+                }
+            }
             .sheet(isPresented: $isShowingPlates) {
                 NavigationStack {
                     PlateCalculatorView(initialKilograms: exercise.orderedSets.last(where: { ($0.weight ?? 0) > 0 })?.weight)
@@ -99,6 +111,7 @@ private struct ExerciseOptionsMenu: View {
     let exercise: WorkoutExercise
     let session: WorkoutSession
     let showsPlates: Bool
+    let onSwap: (() -> Void)?
     let onShowPlates: () -> Void
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
     @Environment(\.modelContext) private var modelContext
@@ -124,6 +137,9 @@ private struct ExerciseOptionsMenu: View {
                 Button("Superset with Next Exercise", systemImage: "link") {
                     session.linkWithNext(exercise)
                 }
+            }
+            if let onSwap {
+                Button("Swap Exercise", systemImage: "arrow.triangle.swap", action: onSwap)
             }
             if showsPlates {
                 Button("Add Warm-up Sets", systemImage: "flame") { addWarmUps() }

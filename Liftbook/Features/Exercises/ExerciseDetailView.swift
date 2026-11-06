@@ -48,6 +48,7 @@ private struct ExerciseDetailList: View {
     let exercise: LibraryExercise
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil })
     private var sessions: [WorkoutSession]
+    @Query private var customExercises: [CustomExercise]
 
     var body: some View {
         // Once the exercise has been logged, progress comes first.
@@ -83,8 +84,36 @@ private struct ExerciseDetailList: View {
             }
 
             SetFieldsSection(type: exercise.type)
+
+            alternativesSection
         }
         .listStyle(.insetGrouped)
+    }
+
+    @ViewBuilder private var alternativesSection: some View {
+        let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
+        let alternatives = Substitutions.suggestions(for: exercise, among: catalog.exercises)
+        if !alternatives.isEmpty {
+            Section {
+                ForEach(alternatives) { alternative in
+                    NavigationLink {
+                        ExerciseDetailView(exerciseID: alternative.id)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(alternative.name)
+                            Text(alternative.summary)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    .accessibilityIdentifier("exercise.alternative.\(alternative.id)")
+                }
+            } header: {
+                Text("Alternatives")
+            } footer: {
+                Text("Exercises that train the same main muscles, for when equipment is busy or you want variety.")
+            }
+        }
     }
 
     @ViewBuilder private var progressSections: some View {
