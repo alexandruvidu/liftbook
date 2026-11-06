@@ -8,6 +8,7 @@ struct WorkoutHomeView: View {
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }) private var finished: [WorkoutSession]
     @AppStorage(WeeklyGoal.storageKey) private var goal = WeeklyGoal.defaultGoal
     @State private var collapsedFolders: Set<UUID> = []
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @Environment(WorkoutStartController.self) private var starter
     @State private var editorTarget: RoutineEditorTarget?
@@ -91,8 +92,12 @@ struct WorkoutHomeView: View {
     }
 
     /// A routine as a card that opens its details, with a Start button.
+    /// The button sits beside the link (not inside it) so it gets its own
+    /// taps; at accessibility text sizes it moves below the card.
+    @ViewBuilder
     private func routineCard(_ routine: Routine, catalog: ExerciseCatalog) -> some View {
-        NavigationLink(value: routine) {
+        let large = dynamicTypeSize.isAccessibilitySize
+        let link = NavigationLink(value: routine) {
             Block {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(routine.name)
@@ -101,19 +106,25 @@ struct WorkoutHomeView: View {
                     Text(RoutineRow.summary(of: routine.orderedEntries.map { catalog.name(for: $0.exerciseID) }))
                         .font(.subheadline)
                         .foregroundStyle(Color.secondary)
-                        .lineLimit(2)
+                        .lineLimit(large ? nil : 2)
                 }
-                .padding(.trailing, 80)
+                .padding(.trailing, large ? 0 : 80)
             }
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("routine.row.\(routine.name)")
-        // Beside the link, not inside it, so it gets its own taps.
-        .overlay(alignment: .trailing) {
-            Button("Start") { starter.start(.routine(routine)) }
-                .buttonStyle(.pillProminent)
-                .padding(.trailing, 14)
-                .accessibilityIdentifier("routine.quickStart.\(routine.name)")
+        let start = Button("Start") { starter.start(.routine(routine)) }
+            .buttonStyle(.pillProminent)
+            .accessibilityIdentifier("routine.quickStart.\(routine.name)")
+        if large {
+            VStack(alignment: .leading, spacing: 8) {
+                link
+                start
+            }
+        } else {
+            link.overlay(alignment: .trailing) {
+                start.padding(.trailing, 14)
+            }
         }
     }
 }
