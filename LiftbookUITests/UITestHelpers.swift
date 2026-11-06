@@ -96,3 +96,13 @@ extension XCUIApplication {
     /// The bar above the tab bar that shows a workout in progress.
     var runningBar: XCUIElement { buttons["runningBar"].firstMatch }
 }
+
+extension XCUIApplication {
+    /// Closes the search keyboard if one is showing (its key is "search").
+    @MainActor
+    func dismissKeyboardIfPresent() {
+        guard keyboards.firstMatch.exists else { return }
+        let search = keyboards.buttons["search"]
+        if search.exists { search.tap() } else { swipeDown() }
+    }
+}

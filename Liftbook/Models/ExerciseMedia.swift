@@ -86,11 +86,19 @@ struct MediaStore: Sendable {
         return fileName
     }
 
+    /// Decoded images, so grids and thumbnails don't re-read files while scrolling.
+    private nonisolated(unsafe) static let cache = NSCache<NSString, UIImage>()
+
     func loadImage(_ fileName: String) -> UIImage? {
-        UIImage(contentsOfFile: url(for: fileName).path(percentEncoded: false))
+        let key = url(for: fileName).path(percentEncoded: false) as NSString
+        if let cached = Self.cache.object(forKey: key) { return cached }
+        guard let image = UIImage(contentsOfFile: key as String) else { return nil }
+        Self.cache.setObject(image, forKey: key)
+        return image
     }
 
     func delete(_ fileName: String) {
+        Self.cache.removeObject(forKey: url(for: fileName).path(percentEncoded: false) as NSString)
         try? FileManager.default.removeItem(at: url(for: fileName))
     }
 }

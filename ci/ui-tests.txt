@@ -1,4 +1,10 @@
-ExerciseMediaUITests
-MachinesUITests
+ExerciseImagesUITests
 ExerciseLibraryUITests
-LiveWorkoutLayoutUITests
+ExerciseSearchUITests
+CustomExerciseUITests
+ExerciseTypeUITests
+PersonalRecordsUITests
+SubstitutionsUITests
+MachinesUITests
+ExerciseMediaUITests
+TabBarUITests

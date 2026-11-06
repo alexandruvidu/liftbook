@@ -31,6 +31,12 @@ struct ProfileHomeView: View {
                         Label("Export & Import", systemImage: "arrow.up.arrow.down.square")
                     }
                     .accessibilityIdentifier("profile.data")
+                    NavigationLink {
+                        ExerciseImagesView()
+                    } label: {
+                        Label("Exercise Images", systemImage: "photo.stack")
+                    }
+                    .accessibilityIdentifier("profile.images")
                 }
 
                 Section("Tools") {

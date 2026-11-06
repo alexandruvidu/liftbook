@@ -4,6 +4,8 @@ import SwiftUI
 struct ExercisesHomeView: View {
     var library: ExerciseLibrary = .bundled
     @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
+    @Query private var media: [ExerciseMedia]
+    @Query private var machines: [Machine]
     @Environment(\.modelContext) private var modelContext
     @State private var filter = ExerciseFilter()
     @State private var isCreating = false
@@ -15,30 +17,31 @@ struct ExercisesHomeView: View {
     var body: some View {
         NavigationStack {
             let results = filter.apply(to: allExercises)
-            List {
-                Section {
+            let cover = Dictionary(grouping: media, by: \.exerciseID).compactMapValues { $0.display(for: $0[0].exerciseID).first }
+            let machineCounts = Dictionary(grouping: machines, by: \.exerciseID).mapValues(\.count)
+            ScrollView {
+                VStack(alignment: .leading, spacing: 12) {
                     ExerciseFilterBar(filter: $filter, resultCount: results.count)
-                }
-                .listRowBackground(Color.clear)
-                .listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
-
-                ForEach(ExerciseLibrary.sections(for: results)) { section in
-                    Section(section.letter) {
-                        ForEach(section.exercises) { exercise in
+                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                        ForEach(results) { exercise in
                             NavigationLink(value: exercise) {
-                                ExerciseRow(exercise: exercise)
+                                ExerciseCard(exercise: exercise, cover: cover[exercise.id],
+                                             machineCount: machineCounts[exercise.id] ?? 0)
                             }
+                            .buttonStyle(.plain)
                             .accessibilityIdentifier("exercise.row.\(exercise.id)")
-                            .swipeActions {
+                            .contextMenu {
                                 if exercise.isCustom {
-                                    Button("Delete", role: .destructive) { delete(exercise) }
+                                    Button("Delete", systemImage: "trash", role: .destructive) { delete(exercise) }
                                 }
                             }
                         }
                     }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .listStyle(.insetGrouped)
+            .blockScreenBackground()
             .overlay {
                 if results.isEmpty {
                     NoMatchingExercisesView { filter = ExerciseFilter() }

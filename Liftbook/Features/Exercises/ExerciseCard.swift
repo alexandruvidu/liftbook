@@ -1,0 +1,73 @@
+import SwiftUI
+
+/// An exercise in the library grid: its picture, name, muscle and equipment.
+struct ExerciseCard: View {
+    let exercise: LibraryExercise
+    /// The first photo or video to show, if any.
+    let cover: ExerciseMedia?
+    let machineCount: Int
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Color(.tertiarySystemFill)
+                .frame(height: 132)
+                .overlay { picture }
+                .clipped()
+                .overlay(alignment: .bottomLeading) {
+                    if machineCount > 1 {
+                        Text("\(machineCount) machines")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(.black.opacity(0.6), in: Capsule())
+                            .padding(8)
+                    }
+                }
+                .overlay(alignment: .topTrailing) {
+                    if exercise.isCustom {
+                        Text("Custom")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(Color.accentForeground)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color.accentColor, in: Capsule())
+                            .padding(8)
+                    }
+                }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(exercise.name)
+                    .font(.subheadline.weight(.bold))
+                    .foregroundStyle(Color.primary)
+                    .lineLimit(2, reservesSpace: true)
+                    .multilineTextAlignment(.leading)
+                Text("\(exercise.primaryMuscles.first?.displayName ?? "Full body") · \(exercise.equipment.displayName)")
+                    .font(.caption)
+                    .foregroundStyle(Color.secondary)
+                    .lineLimit(1)
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .background(Color(.secondarySystemGroupedBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .contentShape(RoundedRectangle(cornerRadius: 18))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(exercise.name), \(exercise.summary)")
+    }
+
+    @ViewBuilder
+    private var picture: some View {
+        if let cover, let image = cover.kind == .photo
+            ? MediaStore.standard.loadImage(cover.fileName)
+            : ExerciseThumbnail.frame(of: MediaStore.standard.url(for: cover.fileName)) {
+            Image(uiImage: image)
+                .resizable()
+                .scaledToFill()
+        } else {
+            Image(systemName: exercise.equipment.symbolName)
+                .font(.system(size: 40))
+                .foregroundStyle(.tint)
+        }
+    }
+}
