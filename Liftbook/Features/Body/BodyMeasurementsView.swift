@@ -1,3 +1,4 @@
+import Charts
 import SwiftData
 import SwiftUI
 
@@ -10,44 +11,31 @@ struct BodyMeasurementsView: View {
     @State private var isAddingMetric = false
 
     var body: some View {
-        List {
-            Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
                 ForEach(metrics) { metric in
+                    let history = BodyMetrics.history(of: metric.metricID, in: measurements)
                     NavigationLink {
                         BodyMetricDetailView(metric: metric)
                     } label: {
-                        LabeledContent {
-                            if let latest = BodyMetrics.history(of: metric.metricID, in: measurements).last {
-                                VStack(alignment: .trailing, spacing: 2) {
-                                    Text(metric.kind.formatted(latest.value, unit: unit))
-                                        .monospacedDigit()
-                                        .foregroundStyle(.primary)
-                                    Text(latest.date.formatted(.dateTime.day().month(.abbreviated)))
-                                        .font(.caption)
-                                }
-                            } else {
-                                Text("No entries")
-                            }
-                        } label: {
-                            Text(metric.name)
-                        }
+                        MetricBlock(metric: metric, history: history, unit: unit)
                     }
+                    .buttonStyle(.plain)
                     .accessibilityIdentifier("body.metric.\(metric.name)")
-                }
-                .onDelete { offsets in
-                    for metric in offsets.map({ metrics[$0] }) where !metric.isBuiltIn {
-                        for entry in measurements where entry.metricID == metric.metricID {
-                            modelContext.delete(entry)
+                    .contextMenu {
+                        if !metric.isBuiltIn {
+                            Button("Delete Metric", systemImage: "trash", role: .destructive) { delete(metric) }
                         }
-                        modelContext.delete(metric)
                     }
-                    try? modelContext.save()
                 }
-            } footer: {
-                Text("Track body weight, body fat or anything else, like your waist. Swipe left to delete a metric you added.")
+                Text("Track body weight, body fat or anything else, like your waist. Touch and hold a metric you added to delete it.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .padding(.horizontal, 4)
             }
+            .padding(16)
         }
-        .listStyle(.insetGrouped)
+        .blockScreenBackground()
         .navigationTitle("Body Measurements")
         .toolbar {
             Button("Add Metric", systemImage: "plus") { isAddingMetric = true }
@@ -57,6 +45,62 @@ struct BodyMeasurementsView: View {
             AddBodyMetricView(existing: metrics)
         }
         .task { BodyMetrics.ensureBuiltIns(in: modelContext) }
+    }
+
+    private func delete(_ metric: BodyMetric) {
+        for entry in measurements where entry.metricID == metric.metricID {
+            modelContext.delete(entry)
+        }
+        modelContext.delete(metric)
+        try? modelContext.save()
+    }
+}
+
+/// A metric's latest value, its change, and a small line of its history.
+private struct MetricBlock: View {
+    let metric: BodyMetric
+    let history: [BodyMeasurement]
+    let unit: WeightUnit
+
+    var body: some View {
+        Block {
+            HStack(alignment: .firstTextBaseline) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(metric.name)
+                        .font(.headline)
+                    if let latest = history.last {
+                        Text(latest.date.formatted(.dateTime.day().month(.abbreviated)))
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                Spacer()
+                if let latest = history.last {
+                    Text(metric.kind.formatted(latest.value, unit: unit))
+                        .font(.title3.weight(.bold))
+                        .monospacedDigit()
+                } else {
+                    Text("No entries")
+                        .foregroundStyle(.secondary)
+                }
+                Image(systemName: "chevron.right")
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
+            if history.count > 1 {
+                Chart(history, id: \.date) { entry in
+                    LineMark(x: .value("Date", entry.date), y: .value(metric.name, entry.value))
+                        .interpolationMethod(.monotone)
+                }
+                .chartXAxis(.hidden)
+                .chartYAxis(.hidden)
+                .chartYScale(domain: .automatic(includesZero: false))
+                .foregroundStyle(Color.accentColor)
+                .frame(height: 44)
+                .accessibilityHidden(true)
+            }
+        }
+        .contentShape(Rectangle())
     }
 }
 

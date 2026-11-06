@@ -19,50 +19,50 @@ struct DataTransferView: View {
     }
 
     var body: some View {
-        Form {
-            Section {
-                LabeledContent("Workouts", value: "\(sessions.count)")
-                    .accessibilityIdentifier("data.workoutCount")
-                LabeledContent("Sets", value: "\(sessions.reduce(0) { $0 + $1.exercises.reduce(0) { $0 + $1.sets.count } })")
-            } header: {
-                Text("On This iPhone")
-            }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                HStack(spacing: 8) {
+                    StatTile(title: "Workouts", value: "\(sessions.count)", identifier: "data.workoutCount")
+                    StatTile(title: "Sets", value: "\(sessions.reduce(0) { $0 + $1.exercises.reduce(0) { $0 + $1.sets.count } })",
+                             identifier: "data.setCount")
+                }
 
-            Section {
-                if let csvURL {
-                    ShareLink(item: csvURL) {
-                        Label("Export Workouts (CSV)", systemImage: "tablecells")
+                BlockSection("Export", footer: "CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises, machines and body measurements. Photos and videos aren't included.") {
+                    if let csvURL {
+                        ShareLink(item: csvURL) {
+                            Label("Export Workouts (CSV)", systemImage: "tablecells")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.pill)
+                        .accessibilityIdentifier("data.exportCSV")
                     }
-                    .accessibilityIdentifier("data.exportCSV")
-                }
-                if let jsonURL {
-                    ShareLink(item: jsonURL) {
-                        Label("Export Full Backup (JSON)", systemImage: "curlybraces")
+                    if let jsonURL {
+                        ShareLink(item: jsonURL) {
+                            Label("Export Full Backup (JSON)", systemImage: "curlybraces")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .buttonStyle(.pill)
+                        .accessibilityIdentifier("data.exportJSON")
                     }
-                    .accessibilityIdentifier("data.exportJSON")
+                    if let exportError {
+                        Text(exportError).foregroundStyle(.red)
+                    }
                 }
-                if let exportError {
-                    Text(exportError).foregroundStyle(.red)
-                }
-            } header: {
-                Text("Export")
-            } footer: {
-                Text("CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises and body measurements. Progress photos aren't included.")
-            }
 
-            Section {
-                Button {
-                    isImporting = true
-                } label: {
-                    Label("Import Workouts from CSV", systemImage: "square.and.arrow.down")
+                BlockSection("Import", footer: "Use a CSV in the same format as the export. Workouts already in Liftbook are skipped.") {
+                    Button {
+                        isImporting = true
+                    } label: {
+                        Label("Import Workouts from CSV", systemImage: "square.and.arrow.down")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .buttonStyle(.pill)
+                    .accessibilityIdentifier("data.import")
                 }
-                .accessibilityIdentifier("data.import")
-            } header: {
-                Text("Import")
-            } footer: {
-                Text("Use a CSV in the same format as the export. Workouts already in Liftbook are skipped.")
             }
+            .padding(16)
         }
+        .blockScreenBackground()
         .navigationTitle("Export & Import")
         .navigationBarTitleDisplayMode(.inline)
         .task { prepareExports() }

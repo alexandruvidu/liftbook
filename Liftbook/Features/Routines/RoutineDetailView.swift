@@ -1,3 +1,4 @@
+import SwiftData
 import SwiftUI
 
 /// Read-only view of a routine with Start Workout and Edit.
@@ -8,6 +9,7 @@ struct RoutineDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var isEditing = false
+    @Query private var machines: [Machine]
 
     var body: some View {
         if routine.isDeleted || routine.modelContext == nil {
@@ -18,36 +20,48 @@ struct RoutineDetailView: View {
     }
 
     private var content: some View {
-        List {
-            Section {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
                 Button(action: onStart) {
                     Label("Start Workout", systemImage: "play.fill")
                         .font(.headline)
-                        .foregroundStyle(Color.accentForeground)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
+                        .padding(.vertical, 8)
                 }
-                .buttonStyle(.borderedProminent)
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
+                .buttonStyle(.pillProminent)
                 .accessibilityIdentifier("routine.start")
-            }
 
-            Section("Exercises") {
-                ForEach(routine.orderedEntries) { entry in
-                    LabeledContent(catalog.name(for: entry.exerciseID)) {
-                        Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
+                BlockSection("Exercises") {
+                    ForEach(routine.orderedEntries) { entry in
+                        HStack(spacing: 12) {
+                            ExerciseThumbnail(exerciseID: entry.exerciseID,
+                                              equipment: catalog.exercise(id: entry.exerciseID)?.equipment ?? .other,
+                                              size: 40)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(catalog.name(for: entry.exerciseID))
+                                if let machine = machines.name(for: entry.machineID) {
+                                    Text(machine)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            Spacer()
+                            Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
+                if !routine.notes.isEmpty {
+                    BlockSection("Notes") {
+                        Text(routine.notes)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
-
-            if !routine.notes.isEmpty {
-                Section("Notes") {
-                    Text(routine.notes)
-                }
-            }
+            .padding(16)
         }
-        .listStyle(.insetGrouped)
+        .blockScreenBackground()
         .navigationTitle(routine.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
