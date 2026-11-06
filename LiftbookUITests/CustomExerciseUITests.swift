@@ -12,7 +12,7 @@ final class CustomExerciseUITests: XCTestCase {
     private func createEditDelete(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
-        app.tabBars.buttons["Exercises"].tap()
+        app.openTab("Exercises")
 
         // Create
         app.buttons["exercises.add"].tap()

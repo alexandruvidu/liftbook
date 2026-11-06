@@ -11,7 +11,10 @@ final class StartWorkoutUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
 
-        app.buttons["workout.startEmpty"].tap()
+        app.openTab("Start")
+        XCTAssertTrue(app.buttons["quickStart.empty"].waitForExistence(timeout: 5), "Start sheet did not open")
+        snap("quick-start-\(appearance)")
+        app.buttons["quickStart.empty"].tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
         XCTAssertTrue(app.staticTexts["Add your first exercise to start logging sets."].exists, "No empty hint")
         snap("live-workout-empty-\(appearance)")
@@ -29,13 +32,17 @@ final class StartWorkoutUITests: XCTestCase {
         app.buttons["picker.add"].tap()
         XCTAssertTrue(app.textFields["live.exercise.0.set.0.duration"].waitForExistence(timeout: 5), "Added exercise has no set")
 
-        // Minimize, then resume from the banner
+        // Minimize, then resume from the running bar
         app.buttons["live.minimize"].tap()
-        let resume = app.buttons["workout.resume"]
-        XCTAssertTrue(resume.waitForExistence(timeout: 5), "No resume banner after minimizing")
-        XCTAssertFalse(app.buttons["workout.startEmpty"].exists, "Start button shown while a workout runs")
+        let resume = app.runningBar
+        XCTAssertTrue(resume.waitForExistence(timeout: 5), "No running bar after minimizing")
         snap("workout-resume-\(appearance)")
         resume.tap()
+        XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Running bar did not open the workout")
+
+        // The start button also reopens the running workout
+        app.buttons["live.minimize"].tap()
+        app.openTab("Start")
 
         // Discard (retry the tap once if the cover was still animating in)
         let discard = app.buttons["live.discard"]
@@ -49,7 +56,7 @@ final class StartWorkoutUITests: XCTestCase {
         }
         XCTAssertTrue(confirm.waitForExistence(timeout: 5), "No discard confirmation")
         confirm.tap()
-        XCTAssertTrue(app.buttons["workout.startEmpty"].waitForExistence(timeout: 10), "Discard did not end the workout")
+        XCTAssertTrue(app.runningBar.waitForNonExistence(timeout: 10), "Discard did not end the workout")
     }
 
     private func workoutFromRoutine(appearance: String) {
@@ -83,7 +90,6 @@ final class StartWorkoutUITests: XCTestCase {
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Resume Current did not reopen the workout")
         app.finishWorkout()
         XCTAssertTrue(start.waitForExistence(timeout: 10), "Finish did not close the workout")
-        app.navigationBars.buttons.element(boundBy: 0).tap()
-        XCTAssertTrue(app.buttons["workout.startEmpty"].waitForExistence(timeout: 10), "Workout still active after Finish")
+        XCTAssertTrue(app.runningBar.waitForNonExistence(timeout: 10), "Workout still active after Finish")
     }
 }

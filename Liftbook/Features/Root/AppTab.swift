@@ -1,32 +1,33 @@
 import Foundation
 
-/// The five top-level sections of the app, in tab bar order.
+/// The top-level sections of the app, in tab bar order. `start` isn't a
+/// screen: selecting it opens the quick-start sheet.
 enum AppTab: String, CaseIterable, Identifiable, Hashable {
-    case workout
-    case history
+    case home
     case exercises
-    case progress
+    case activity
     case profile
+    case start
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .workout: "Workout"
-        case .history: "History"
+        case .home: "Home"
         case .exercises: "Exercises"
-        case .progress: "Progress"
+        case .activity: "Activity"
         case .profile: "Profile"
+        case .start: "Start"
         }
     }
 
     var systemImage: String {
         switch self {
-        case .workout: "dumbbell.fill"
-        case .history: "clock.arrow.circlepath"
-        case .exercises: "list.bullet.rectangle"
-        case .progress: "chart.line.uptrend.xyaxis"
+        case .home: "house.fill"
+        case .exercises: "dumbbell.fill"
+        case .activity: "chart.line.uptrend.xyaxis"
         case .profile: "person.crop.circle"
+        case .start: "plus"
         }
     }
 }

@@ -17,7 +17,7 @@ final class HistoryUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
 
-        app.tabBars.buttons["History"].tap()
+        app.openTab("Activity")
         let rows = app.buttons.matching(identifier: "history.row")
         XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 10), "No history rows")
         XCTAssertEqual(rows.count, 3, "Expected the three seeded workouts")
@@ -25,8 +25,8 @@ final class HistoryUITests: XCTestCase {
         XCTAssertTrue(rows.element(boundBy: 0).label.contains("52:00"), "Duration missing")
         snap("history-list-\(appearance)")
 
-        // Calendar: the newest workout's day is selected
-        app.segmentedControls.buttons["Calendar"].tap()
+        // Calendar
+        app.buttons["activity.calendar"].tap()
         let target = dayID(daysAgo: 9)
         let day = app.buttons["calendar.day.\(target.id)"]
         if !day.waitForExistence(timeout: 3) {

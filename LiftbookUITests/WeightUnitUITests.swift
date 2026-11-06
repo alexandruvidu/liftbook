@@ -10,7 +10,7 @@ final class WeightUnitUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedSampleData: true)
 
         // Switch to pounds in Profile
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let pounds = app.buttons["Pounds (lb)"]
         XCTAssertTrue(app.buttons["settings.unit"].openMenu(showing: pounds), "Unit picker did not open")
         pounds.tap()
@@ -18,7 +18,7 @@ final class WeightUnitUITests: XCTestCase {
         snap("settings-units-\(appearance)")
 
         // The live workout takes pounds and the summary shows them
-        app.tabBars.buttons["Workout"].tap()
+        app.openTab("Home")
         let routine = app.buttons["routine.row.Upper Body"]
         XCTAssertTrue(routine.waitForExistence(timeout: 10), "Seeded routine missing")
         routine.tap()

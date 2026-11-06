@@ -9,12 +9,12 @@ final class ExerciseProgressUITests: XCTestCase {
         continueAfterFailure = false
         // Seeded bench press: 60 kg × 8 nine days ago, 62.5 kg × 8 yesterday
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
-        app.tabBars.buttons["Progress"].tap()
-
-        // The exercise list sits below the weekly goal and muscle chart
-        XCTAssertTrue(app.staticTexts["weekly.title"].waitForExistence(timeout: 10), "Progress did not load")
+        app.openTab("Activity")
+        let shortcut = app.buttons["activity.shortcut.exercises"]
+        XCTAssertTrue(shortcut.waitForExistence(timeout: 10), "No Exercises shortcut")
+        shortcut.tap()
         let squat = app.buttons["progress.exercise.back-squat"]
-        XCTAssertTrue(app.scrollTo(squat), "Back squat not listed on Progress")
+        XCTAssertTrue(squat.waitForExistence(timeout: 10), "Back squat not listed")
         let bench = app.buttons["progress.exercise.barbell-bench-press"]
         XCTAssertTrue(bench.exists, "Bench press not listed on Progress")
         snap("progress-exercises-\(appearance)")

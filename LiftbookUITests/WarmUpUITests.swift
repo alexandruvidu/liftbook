@@ -10,7 +10,7 @@ final class WarmUpUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedSampleData: true)
 
         // Profile > Tools > Warm-up Calculator
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let link = app.buttons["profile.warmup"]
         XCTAssertTrue(app.scrollTo(link), "No warm-up calculator in Profile")
         link.tap()
@@ -25,7 +25,7 @@ final class WarmUpUITests: XCTestCase {
         snap("warmup-calculator-\(appearance)")
 
         // In a workout: add warm-ups before the working sets
-        app.tabBars.buttons["Workout"].tap()
+        app.openTab("Home")
         let routine = app.buttons["routine.row.Upper Body"]
         XCTAssertTrue(routine.waitForExistence(timeout: 10), "Seeded routine missing")
         routine.tap()

@@ -6,7 +6,7 @@ struct WorkoutHomeView: View {
     @Query(sort: \Routine.name) private var routines: [Routine]
     @Query private var customExercises: [CustomExercise]
 
-    @State private var starter = WorkoutStartController()
+    @Environment(WorkoutStartController.self) private var starter
     @State private var editorTarget: RoutineEditorTarget?
     @State private var folderAction: FolderAction?
 
@@ -15,8 +15,6 @@ struct WorkoutHomeView: View {
         NavigationStack {
             let unfiled = routines.filter { $0.folder == nil }
             List {
-                StartWorkoutSection(starter: starter)
-
                 if routines.isEmpty && folders.isEmpty {
                     NoRoutinesSection { editorTarget = .new }
                 }
@@ -41,7 +39,7 @@ struct WorkoutHomeView: View {
                 }
             }
             .listStyle(.insetGrouped)
-            .navigationTitle(AppTab.workout.title)
+            .navigationTitle(AppTab.home.title)
             .navigationDestination(for: Routine.self) { routine in
                 RoutineDetailView(routine: routine, catalog: catalog) { starter.start(.routine(routine)) }
             }
@@ -61,9 +59,6 @@ struct WorkoutHomeView: View {
             }
             .folderActions($folderAction, folderCount: folders.count)
         }
-        // Attached to the stack (not its root list) so the alert and the live
-        // workout cover still present while a routine's detail page is pushed.
-        .workoutStarting(starter, offersLeftover: true)
     }
 
     private func routineLink(_ routine: Routine, catalog: ExerciseCatalog) -> some View {
@@ -76,5 +71,6 @@ struct WorkoutHomeView: View {
 
 #Preview {
     WorkoutHomeView()
+        .environment(WorkoutStartController())
         .modelContainer(Persistence.makeContainer(inMemory: true))
 }

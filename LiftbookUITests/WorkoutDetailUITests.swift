@@ -12,7 +12,7 @@ final class WorkoutDetailUITests: XCTestCase {
     private func workoutDetail(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
-        app.tabBars.buttons["History"].tap()
+        app.openTab("Activity")
         let rows = app.buttons.matching(identifier: "history.row")
         XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 10), "No history rows")
 

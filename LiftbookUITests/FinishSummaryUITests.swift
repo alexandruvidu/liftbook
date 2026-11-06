@@ -52,6 +52,6 @@ final class FinishSummaryUITests: XCTestCase {
         // Back on the routine, with no workout in progress
         XCTAssertTrue(app.buttons["routine.start"].waitForExistence(timeout: 10), "Summary did not close")
         app.navigationBars.buttons.element(boundBy: 0).tap()
-        XCTAssertTrue(app.buttons["workout.startEmpty"].waitForExistence(timeout: 10), "Workout still in progress")
+        XCTAssertTrue(app.runningBar.waitForNonExistence(timeout: 10), "Workout still in progress")
     }
 }

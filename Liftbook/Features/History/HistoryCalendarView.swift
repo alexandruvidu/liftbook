@@ -27,7 +27,12 @@ struct HistoryCalendarView: View {
                         Text("No workout on this day.")
                             .foregroundStyle(.secondary)
                     }
-                    ForEach(onDay) { HistoryLink(session: $0, catalog: catalog) }
+                    ForEach(onDay) { session in
+                        NavigationLink(value: session) {
+                            CalendarDayRow(session: session, catalog: catalog)
+                        }
+                        .accessibilityIdentifier("history.row")
+                    }
                 }
             }
         }
@@ -100,5 +105,22 @@ struct HistoryCalendarView: View {
         .accessibilityLabel(day.formatted(date: .complete, time: .omitted) + (hasWorkout ? ", workout logged" : ""))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
         .accessibilityIdentifier("calendar.day.\(history.dayID(day))")
+    }
+}
+
+/// A workout on the selected calendar day.
+private struct CalendarDayRow: View {
+    let session: WorkoutSession
+    let catalog: ExerciseCatalog
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(session.name)
+                .font(.headline)
+            Text(session.orderedExercises.map { catalog.name(for: $0.exerciseID) }.joined(separator: ", "))
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+        }
     }
 }

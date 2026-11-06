@@ -44,6 +44,11 @@ final class WorkoutStartController {
         pending = request
     }
 
+    /// Starts once a sheet that asked for it has finished closing.
+    func startAfterDismiss(_ request: WorkoutStartRequest) {
+        afterTransition { self.pending = request }
+    }
+
     func resume(_ session: WorkoutSession) {
         presented = session
     }
@@ -56,7 +61,7 @@ private struct PresentedWorkout: Identifiable {
 
 private struct WorkoutStartingModifier: ViewModifier {
     @Bindable var starter: WorkoutStartController
-    /// Only one screen (the Workout tab) should offer to resume at launch.
+    /// Only one place (the root view) should offer to resume at launch.
     let offersLeftover: Bool
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)

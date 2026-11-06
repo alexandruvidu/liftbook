@@ -67,3 +67,32 @@ extension XCUIApplication {
         done.tap()
     }
 }
+
+extension XCUIApplication {
+    /// Opens a tab by title. On iOS 26 the start button (a search-role tab)
+    /// may sit outside `tabBars`, so it falls back to any button.
+    @MainActor
+    func openTab(_ title: String) {
+        let inBar = tabBars.buttons[title]
+        if inBar.waitForExistence(timeout: 10) {
+            inBar.tap()
+        } else {
+            let anywhere = buttons[title].firstMatch
+            XCTAssertTrue(anywhere.waitForExistence(timeout: 5), "No tab \(title)")
+            anywhere.tap()
+        }
+    }
+
+    /// Opens the start sheet and starts an empty workout.
+    @MainActor
+    func startEmptyWorkout() {
+        openTab("Start")
+        let empty = buttons["quickStart.empty"]
+        XCTAssertTrue(empty.waitForExistence(timeout: 5), "Start sheet did not open")
+        empty.tap()
+        XCTAssertTrue(buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
+    }
+
+    /// The bar above the tab bar that shows a workout in progress.
+    var runningBar: XCUIElement { buttons["runningBar"].firstMatch }
+}

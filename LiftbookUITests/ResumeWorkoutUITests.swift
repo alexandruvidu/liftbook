@@ -46,8 +46,8 @@ final class ResumeWorkoutUITests: XCTestCase {
         app = XCUIApplication.launchLiftbook(appearance: appearance, seedSampleData: true, storeFile: store)
         XCTAssertTrue(prompt.waitForExistence(timeout: 10), "No resume prompt on the second relaunch")
         prompt.buttons["Discard Workout"].tap()
-        XCTAssertTrue(app.buttons["workout.startEmpty"].waitForExistence(timeout: 10), "Discard left a workout running")
-        XCTAssertFalse(app.buttons["workout.resume"].exists, "Resume banner still showing")
+        XCTAssertTrue(app.buttons["routine.row.Upper Body"].waitForExistence(timeout: 10), "Home did not load")
+        XCTAssertTrue(app.runningBar.waitForNonExistence(timeout: 10), "Discard left a workout running")
         XCTAssertEqual(app.buttons.matching(identifier: "routine.row.Upper Body").count, 1, "Routine was seeded twice")
     }
 }

@@ -19,24 +19,24 @@ final class AccessibilityUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: "dark", seedSampleData: true, seedHistory: true,
                                                  textSize: "UICTContentSizeCategoryAccessibilityL")
 
-        XCTAssertTrue(app.buttons["routine.row.Upper Body"].waitForExistence(timeout: 10), "Workout tab did not load")
+        XCTAssertTrue(app.buttons["routine.row.Upper Body"].waitForExistence(timeout: 10), "Home tab did not load")
         snap("accessibility-workout-dark")
-        try audit("Workout", in: app)
+        try audit("Home", in: app)
 
-        app.tabBars.buttons["History"].tap()
+        app.openTab("Activity")
         XCTAssertTrue(app.buttons.matching(identifier: "history.row").firstMatch.waitForExistence(timeout: 5))
         snap("accessibility-history-dark")
-        try audit("History", in: app)
+        try audit("Activity", in: app)
 
-        app.tabBars.buttons["Progress"].tap()
+        app.buttons["activity.shortcut.muscles"].tap()
         XCTAssertTrue(app.staticTexts["weekly.title"].waitForExistence(timeout: 5))
-        try audit("Progress", in: app)
+        try audit("Muscles", in: app)
 
-        app.tabBars.buttons["Exercises"].tap()
+        app.openTab("Exercises")
         XCTAssertTrue(app.searchFields.firstMatch.waitForExistence(timeout: 5))
         try audit("Exercises", in: app)
 
-        app.tabBars.buttons["Workout"].tap()
+        app.openTab("Home")
         app.buttons["routine.row.Upper Body"].tap()
         app.buttons["routine.start"].tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")

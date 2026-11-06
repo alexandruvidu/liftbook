@@ -10,7 +10,7 @@ final class SubstitutionsUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedSampleData: true)
 
         // Alternatives on an exercise page
-        app.tabBars.buttons["Exercises"].tap()
+        app.openTab("Exercises")
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 10), "No search field")
         search.enter("barbell bench")
@@ -22,7 +22,7 @@ final class SubstitutionsUITests: XCTestCase {
         snap("exercise-alternatives-\(appearance)")
 
         // Swap during a workout
-        app.tabBars.buttons["Workout"].tap()
+        app.openTab("Home")
         let routine = app.buttons["routine.row.Upper Body"]
         XCTAssertTrue(routine.waitForExistence(timeout: 10), "Seeded routine missing")
         routine.tap()

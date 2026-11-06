@@ -8,7 +8,7 @@ final class DataTransferUITests: XCTestCase {
     private func dataTransfer(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let link = app.buttons["profile.data"]
         XCTAssertTrue(app.scrollTo(link), "No export & import link")
         link.tap()

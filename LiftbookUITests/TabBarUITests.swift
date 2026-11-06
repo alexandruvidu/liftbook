@@ -3,10 +3,9 @@ import XCTest
 @MainActor
 final class TabBarUITests: XCTestCase {
     private static let tabs: [(title: String, contentID: String)] = [
-        ("Workout", "workout.emptyNewRoutine"),
-        ("History", "history.empty"),
+        ("Home", "workout.emptyNewRoutine"),
         ("Exercises", "exercise.row.ab-wheel-rollout"),
-        ("Progress", "progress.empty"),
+        ("Activity", "activity.week"),
         ("Profile", "profile.body"),
     ]
 
@@ -23,12 +22,14 @@ final class TabBarUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
 
         for tab in Self.tabs {
-            let button = app.tabBars.buttons[tab.title]
-            XCTAssertTrue(button.waitForExistence(timeout: 15), "Missing tab \(tab.title)")
-            button.tap()
+            app.openTab(tab.title)
             XCTAssertTrue(app.navigationBars[tab.title].waitForExistence(timeout: 5), "No title for \(tab.title)")
-            XCTAssertTrue(app.descendants(matching: .any)[tab.contentID].exists, "No content on \(tab.title)")
+            XCTAssertTrue(app.descendants(matching: .any)[tab.contentID].waitForExistence(timeout: 5), "No content on \(tab.title)")
             snap("tab-\(tab.title.lowercased())-\(appearance)")
         }
+
+        // The start button opens the quick-start sheet without leaving the tab
+        app.openTab("Start")
+        XCTAssertTrue(app.buttons["quickStart.empty"].waitForExistence(timeout: 5), "Start sheet did not open")
     }
 }

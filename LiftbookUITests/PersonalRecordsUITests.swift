@@ -9,7 +9,7 @@ final class PersonalRecordsUITests: XCTestCase {
         continueAfterFailure = false
         // Seeded bench press: 60 kg × 8 nine days ago, 62.5 kg × 8 yesterday
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
-        app.tabBars.buttons["Exercises"].tap()
+        app.openTab("Exercises")
         let search = app.searchFields.firstMatch
         XCTAssertTrue(search.waitForExistence(timeout: 10), "No search field")
         search.enter("bench press")

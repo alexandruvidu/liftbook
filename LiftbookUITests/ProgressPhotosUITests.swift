@@ -7,7 +7,7 @@ final class ProgressPhotosUITests: XCTestCase {
 
     func testEmptyState() {
         let app = XCUIApplication.launchLiftbook()
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let link = app.buttons["profile.photos"]
         XCTAssertTrue(link.waitForExistence(timeout: 10), "No progress photos link")
         link.tap()
@@ -18,7 +18,7 @@ final class ProgressPhotosUITests: XCTestCase {
     private func progressPhotos(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedPhotos: true)
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let link = app.buttons["profile.photos"]
         XCTAssertTrue(link.waitForExistence(timeout: 10), "No progress photos link")
         link.tap()

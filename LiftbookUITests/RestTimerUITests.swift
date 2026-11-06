@@ -15,7 +15,7 @@ final class RestTimerUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedSampleData: true)
 
         // Default rest is set in Profile
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let twoMinutes = app.buttons["2 min"]
         XCTAssertTrue(app.scrollTo(app.buttons["settings.restDefault"]), "No default rest setting")
         XCTAssertTrue(app.buttons["settings.restDefault"].openMenu(showing: twoMinutes), "Default rest picker did not open")
@@ -23,7 +23,7 @@ final class RestTimerUITests: XCTestCase {
         XCTAssertTrue(app.buttons["settings.restDefault"].label.contains("2 min"), "Default rest not saved")
         snap("settings-rest-\(appearance)")
 
-        app.tabBars.buttons["Workout"].tap()
+        app.openTab("Home")
         let routine = app.buttons["routine.row.Upper Body"]
         XCTAssertTrue(routine.waitForExistence(timeout: 10), "Seeded routine missing")
         routine.tap()

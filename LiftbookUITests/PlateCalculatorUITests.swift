@@ -10,7 +10,7 @@ final class PlateCalculatorUITests: XCTestCase {
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedSampleData: true)
 
         // From Profile > Tools
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let link = app.buttons["profile.plates"]
         XCTAssertTrue(app.scrollTo(link), "No plate calculator in Profile")
         link.tap()
@@ -33,7 +33,7 @@ final class PlateCalculatorUITests: XCTestCase {
         XCTAssertTrue(perSide.label.contains("20 kg, 20 kg, 1.25 kg"), "Per side without 25s was \(perSide.label)")
 
         // From a live workout, prefilled with the set's weight
-        app.tabBars.buttons["Workout"].tap()
+        app.openTab("Home")
         let routine = app.buttons["routine.row.Upper Body"]
         XCTAssertTrue(routine.waitForExistence(timeout: 10), "Seeded routine missing")
         routine.tap()

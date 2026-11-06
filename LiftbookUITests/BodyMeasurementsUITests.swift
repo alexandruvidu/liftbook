@@ -17,7 +17,7 @@ final class BodyMeasurementsUITests: XCTestCase {
     private func bodyMeasurements(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
-        app.tabBars.buttons["Profile"].tap()
+        app.openTab("Profile")
         let body = app.buttons["profile.body"]
         XCTAssertTrue(body.waitForExistence(timeout: 10), "No body measurements link")
         body.tap()

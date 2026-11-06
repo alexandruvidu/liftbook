@@ -14,7 +14,7 @@ final class ExerciseLibraryUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
 
-        app.tabBars.buttons["Exercises"].tap()
+        app.openTab("Exercises")
         XCTAssertTrue(app.navigationBars["Exercises"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.buttons["exercise.row.ab-wheel-rollout"].waitForExistence(timeout: 5))
         let list = app.collectionViews.firstMatch

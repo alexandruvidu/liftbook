@@ -18,7 +18,7 @@ final class ExerciseTypeUITests: XCTestCase {
         continueAfterFailure = false
         for item in items {
             let app = XCUIApplication.launchLiftbook(appearance: appearance)
-            app.tabBars.buttons["Exercises"].tap()
+            app.openTab("Exercises")
 
             let search = app.searchFields.firstMatch
             XCTAssertTrue(search.waitForExistence(timeout: 10))

@@ -9,7 +9,10 @@ final class WeeklyMusclesUITests: XCTestCase {
         continueAfterFailure = false
         // Seeded workouts 1, 2 and 9 days ago
         let app = XCUIApplication.launchLiftbook(appearance: appearance, seedHistory: true)
-        app.tabBars.buttons["Progress"].tap()
+        app.openTab("Activity")
+        let muscles = app.buttons["activity.shortcut.muscles"]
+        XCTAssertTrue(muscles.waitForExistence(timeout: 10), "No Muscles shortcut")
+        muscles.tap()
 
         let title = app.staticTexts["weekly.title"]
         XCTAssertTrue(title.waitForExistence(timeout: 10), "No weekly chart section")
