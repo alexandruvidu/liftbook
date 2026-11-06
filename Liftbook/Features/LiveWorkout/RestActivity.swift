@@ -12,8 +12,8 @@ enum RestActivity {
         // Stale once the rest is over, so the widget can say so even if the
         // app is suspended and can't end it right away.
         let content = ActivityContent(state: state, staleDate: state.endsAt)
-        if !Activity<RestActivityAttributes>.activities.isEmpty {
-            Task { await update(to: content) }
+        if let current = Activity<RestActivityAttributes>.activities.first {
+            Task { await current.update(content) }
         } else {
             _ = try? Activity<RestActivityAttributes>.request(
                 attributes: RestActivityAttributes(workoutName: workoutName),
@@ -23,20 +23,8 @@ enum RestActivity {
 
     /// Removes the rest Live Activity, if any.
     static func end() {
-        Task { await endAll() }
-    }
-
-    // Activities are looked up off the main actor, where they're awaited,
-    // so Swift 6 doesn't see them crossing actors.
-    private nonisolated static func update(to content: ActivityContent<RestActivityAttributes.ContentState>) async {
         for activity in Activity<RestActivityAttributes>.activities {
-            await activity.update(content)
-        }
-    }
-
-    private nonisolated static func endAll() async {
-        for activity in Activity<RestActivityAttributes>.activities {
-            await activity.end(nil, dismissalPolicy: .immediate)
+            Task { await activity.end(nil, dismissalPolicy: .immediate) }
         }
     }
 }
