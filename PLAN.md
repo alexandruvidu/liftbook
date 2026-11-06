@@ -44,7 +44,7 @@ screenshot looks correct.
 - [x] Export all data to CSV and JSON; import from CSV
 - [x] Dark mode polish, Dynamic Type, VoiceOver labels
 
-## Phase 4 — Optional (needs a direct SideStore install; inside LiveContainer these do nothing)
+## Phase 4 — Optional (skipped: widgets, Live Activities and HealthKit don't work inside LiveContainer)
 - [ ] Apple Health workout export (HealthKit)
 - [ ] Live Activity for the rest timer
 - [ ] Home screen widget for streak and last workout

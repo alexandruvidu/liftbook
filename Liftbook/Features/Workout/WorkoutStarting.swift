@@ -95,7 +95,6 @@ private struct WorkoutStartingModifier: ViewModifier {
                     .accessibilityIdentifier("leftover.resume")
                 Button("Discard Workout", role: .destructive) {
                     RestAlerts.cancel()
-                    RestActivity.end()
                     modelContext.delete(session)
                     try? modelContext.save()
                 }

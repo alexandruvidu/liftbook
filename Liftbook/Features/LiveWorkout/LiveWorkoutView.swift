@@ -113,7 +113,6 @@ struct LiveWorkoutView: View {
         .confirmationDialog("Discard this workout?", isPresented: $isConfirmingDiscard, titleVisibility: .visible) {
             Button("Discard Workout", role: .destructive) {
                 RestAlerts.cancel()
-                RestActivity.end()
                 onDiscard()
             }
                 .accessibilityIdentifier("live.confirmDiscard")
@@ -124,7 +123,6 @@ struct LiveWorkoutView: View {
 
     private func finish(catalog: ExerciseCatalog) {
         RestAlerts.cancel()
-        RestActivity.end()
         session.finish()
         try? modelContext.save()
         summary = WorkoutSummary(session: session, history: finishedSessions) {
@@ -135,14 +133,11 @@ struct LiveWorkoutView: View {
     /// Schedules the end-of-rest notification, then waits for the rest to end
     /// to play the sound and hide the timer. Restarted whenever the end changes.
     private func runRestTimer(catalog: ExerciseCatalog) async {
-        let exerciseName = session.restExerciseID.map { catalog.name(for: $0) }
-        RestActivity.sync(workoutName: session.name,
-                          state: .init(session: session, exerciseName: exerciseName))
         guard let end = session.restEndsAt else {
             RestAlerts.cancel()
             return
         }
-        let name = exerciseName ?? "your workout"
+        let name = session.restExerciseID.map { catalog.name(for: $0) } ?? "your workout"
         RestAlerts.schedule(at: end, exerciseName: name, sound: restSound)
         let delay = end.timeIntervalSinceNow
         if delay > 0 {
