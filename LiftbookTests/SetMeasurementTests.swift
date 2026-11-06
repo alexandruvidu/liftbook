@@ -84,6 +84,17 @@ struct SetMeasurementTests {
         #expect(SetMeasurement.decimal(100) == "100")
     }
 
+    @Test func volumeTextIsWholeNumberWithUnit() {
+        // Grouping separators depend on the locale, so compare digits only.
+        let digits = { (text: String) in text.filter(\.isNumber) }
+        let kilograms = WeightUnit.kilograms.volumeText(kilograms: 3000.4)
+        #expect(digits(kilograms) == "3000")
+        #expect(kilograms.hasSuffix(" kg"))
+        let pounds = WeightUnit.pounds.volumeText(kilograms: 100)
+        #expect(digits(pounds) == "220")
+        #expect(pounds.hasSuffix(" lb"))
+    }
+
     @Test func measurementIsCodable() throws {
         let original = SetMeasurement(weight: 42.5, reps: 7, duration: 30, distance: 100)
         let decoded = try JSONDecoder().decode(SetMeasurement.self, from: JSONEncoder().encode(original))

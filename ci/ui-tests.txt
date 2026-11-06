@@ -1,1 +1,5 @@
-LaunchUITests
+WeeklyMusclesUITests
+HistoryUITests
+WorkoutDetailUITests
+FinishSummaryUITests
+WeightUnitUITests

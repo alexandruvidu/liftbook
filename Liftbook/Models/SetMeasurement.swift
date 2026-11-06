@@ -24,6 +24,11 @@ enum WeightUnit: String, Codable, CaseIterable, Identifiable, Sendable {
     func display(metres: Double) -> Double {
         self == .kilograms ? metres / 1000 : metres / 1609.344
     }
+
+    /// Total lifted weight in this unit, whole numbers only, e.g. "3,000 kg".
+    func volumeText(kilograms: Double) -> String {
+        "\(display(kilograms: kilograms).formatted(.number.precision(.fractionLength(0)))) \(symbol)"
+    }
 }
 
 /// One of the values a set can record.

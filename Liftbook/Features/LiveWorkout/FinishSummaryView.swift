@@ -27,7 +27,7 @@ struct FinishSummaryView: View {
 
                 HStack(spacing: 12) {
                     StatTile(title: "Duration", value: SetMeasurement.clock(summary.duration), identifier: "summary.duration")
-                    StatTile(title: "Volume", value: volumeText, identifier: "summary.volume")
+                    StatTile(title: "Volume", value: unit.volumeText(kilograms: summary.volume), identifier: "summary.volume")
                     StatTile(title: "Sets", value: "\(summary.setCount)", identifier: "summary.sets")
                 }
 
@@ -82,11 +82,6 @@ struct FinishSummaryView: View {
             .accessibilityIdentifier("summary.done")
         }
         .background(Color(.systemGroupedBackground))
-    }
-
-    private var volumeText: String {
-        let value = unit.display(kilograms: summary.volume)
-        return "\(value.formatted(.number.precision(.fractionLength(0)))) \(unit.symbol)"
     }
 
     private func recordValue(_ record: WorkoutSummary.Record) -> String {

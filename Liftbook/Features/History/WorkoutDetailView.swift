@@ -19,7 +19,7 @@ struct WorkoutDetailView: View {
             Section {
                 HStack(spacing: 12) {
                     StatTile(title: "Duration", value: SetMeasurement.clock(summary.duration), identifier: "detail.duration")
-                    StatTile(title: "Volume", value: volumeText(summary.volume), identifier: "detail.volume")
+                    StatTile(title: "Volume", value: unit.volumeText(kilograms: summary.volume), identifier: "detail.volume")
                     StatTile(title: "Sets", value: "\(summary.setCount)", identifier: "detail.sets")
                 }
                 .listRowInsets(EdgeInsets())
@@ -76,10 +76,6 @@ struct WorkoutDetailView: View {
 
     private func type(of exerciseID: String) -> ExerciseType {
         catalog.exercise(id: exerciseID)?.type ?? .weightAndReps
-    }
-
-    private func volumeText(_ kilograms: Double) -> String {
-        "\(unit.display(kilograms: kilograms).formatted(.number.precision(.fractionLength(0)))) \(unit.symbol)"
     }
 
     private func exerciseSection(_ exercise: WorkoutExercise, index: Int) -> some View {

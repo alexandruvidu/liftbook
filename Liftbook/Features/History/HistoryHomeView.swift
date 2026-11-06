@@ -110,7 +110,7 @@ struct HistoryRow: View {
                 Label(SetMeasurement.clock(summary.duration), systemImage: "clock")
                 Label("\(summary.setCount) sets", systemImage: "checkmark.circle")
                 if summary.volume > 0 {
-                    Label("\(unit.display(kilograms: summary.volume).formatted(.number.precision(.fractionLength(0)))) \(unit.symbol)",
+                    Label(unit.volumeText(kilograms: summary.volume),
                           systemImage: "scalemass")
                 }
             }

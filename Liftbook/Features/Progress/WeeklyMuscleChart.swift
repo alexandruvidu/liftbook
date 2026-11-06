@@ -69,7 +69,7 @@ struct WeeklyMuscleChart: View {
     private func label(_ entry: MuscleVolume.Entry) -> String {
         measure == .sets
             ? "\(entry.sets)"
-            : "\(unit.display(kilograms: entry.volume).formatted(.number.precision(.fractionLength(0)))) \(unit.symbol)"
+            : unit.volumeText(kilograms: entry.volume)
     }
 
     private func chart(_ entries: [MuscleVolume.Entry]) -> some View {
