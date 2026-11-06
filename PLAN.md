@@ -52,8 +52,8 @@ screenshot looks correct.
 ## Phase 5 — Redesign (spec: docs/superpowers/specs/2026-11-06-redesign-design.md, plan: docs/superpowers/plans/2026-11-06-redesign.md)
 - [x] New tab bar with start button and workout-running bar; Activity tab (History + Progress)
 - [x] Live workout screen redesign (blocks, stat strip, last-time column, pre-fill, collapse)
-- [ ] Machines per exercise: picker with photos, per-machine last time and pre-fill
-- [ ] Per-machine charts and records with combined view; machine in history and summary
+- [x] Machines per exercise: picker with photos, per-machine last time and pre-fill
+- [x] Per-machine charts and records with combined view; machine in history and summary
 - [ ] Own exercise photos and videos; exercise page gallery
 - [ ] Download exercise images; library as a photo grid
 - [ ] Export a single workout as CSV

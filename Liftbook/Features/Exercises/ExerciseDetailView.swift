@@ -52,11 +52,31 @@ private struct ExerciseDetailList: View {
     @Query(sort: \Machine.createdAt) private var allMachines: [Machine]
     /// Which machine's charts and records to show.
     @State private var machineFilter: MachineFilter = .all
+    @Query private var allMedia: [ExerciseMedia]
+    @State private var isEditingMedia = false
 
     var body: some View {
         // Once the exercise has been logged, progress comes first.
         let logged = !PersonalRecords.loggedSets(of: exercise.id, in: sessions).isEmpty
+        let media = allMedia.display(for: exercise.id)
         List {
+            Section {
+                if !media.isEmpty {
+                    MediaGallery(media: media)
+                        .listRowInsets(EdgeInsets())
+                }
+                HStack {
+                    AddMediaButton(exerciseID: exercise.id)
+                    Spacer()
+                    if media.contains(where: { $0.source == .own }) {
+                        Button("Edit") { isEditingMedia = true }
+                            .accessibilityIdentifier("media.edit")
+                    }
+                }
+                .buttonStyle(.borderless)
+            }
+            .listRowBackground(media.isEmpty ? nil : Color.clear)
+
             if logged {
                 progressSections
             }
@@ -93,6 +113,9 @@ private struct ExerciseDetailList: View {
             alternativesSection
         }
         .listStyle(.insetGrouped)
+        .sheet(isPresented: $isEditingMedia) {
+            EditMediaView(exerciseID: exercise.id)
+        }
     }
 
     @ViewBuilder private var alternativesSection: some View {

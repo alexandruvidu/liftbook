@@ -16,6 +16,7 @@ enum Persistence {
         BodyMeasurement.self,
         ProgressPhoto.self,
         Machine.self,
+        ExerciseMedia.self,
     ])
 
     static func makeContainer(inMemory: Bool) -> ModelContainer {
@@ -137,5 +138,18 @@ enum Persistence {
             ctx.fill(CGRect(x: 120, y: 260, width: 360, height: 40))
             ctx.fill(CGRect(x: 280, y: 100, width: 40, height: 180))
         }
+    }
+
+    /// Two drawn photos of your own for bench press. Used by UI tests via
+    /// `-uiTestSeedMedia YES` (the system photo picker can't be scripted).
+    @MainActor
+    static func seedMedia(in context: ModelContext, store: MediaStore = .standard) {
+        guard ((try? context.fetchCount(FetchDescriptor<ExerciseMedia>())) ?? 0) == 0 else { return }
+        for (index, color) in [UIColor.systemTeal, .systemIndigo].enumerated() {
+            guard let name = try? store.savePhoto(drawnPhoto(color: color)) else { continue }
+            context.insert(ExerciseMedia(exerciseID: "barbell-bench-press", kind: .photo, source: .own,
+                                         fileName: name, position: index))
+        }
+        try? context.save()
     }
 }

@@ -31,6 +31,7 @@ struct LiftbookApp: App {
                 .task {
                     if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
                     if UITestOverrides.seedMachines { Persistence.seedMachines(in: container.mainContext) }
+                    if UITestOverrides.seedMedia { Persistence.seedMedia(in: container.mainContext) }
                 }
         }
         .modelContainer(container)
@@ -67,6 +68,11 @@ enum UITestOverrides {
     /// `-uiTestSeedMachines YES` adds three bench press machines and a workout on one.
     static var seedMachines: Bool {
         UserDefaults.standard.bool(forKey: "uiTestSeedMachines")
+    }
+
+    /// `-uiTestSeedMedia YES` adds two drawn photos to bench press.
+    static var seedMedia: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestSeedMedia")
     }
 
     /// `-uiTestSeedHistory YES` adds a few finished workouts from the past days.

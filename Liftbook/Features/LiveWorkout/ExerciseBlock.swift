@@ -92,12 +92,8 @@ struct ExerciseBlock: View {
                 withAnimation(.snappy) { isCollapsed.toggle() }
             } label: {
                 HStack(spacing: 12) {
-                    Image(systemName: (info?.equipment ?? .other).symbolName)
-                        .font(.title3)
-                        .foregroundStyle(.tint)
-                        .frame(width: 48, height: 48)
-                        .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
-                        .accessibilityHidden(true)
+                    ExerciseThumbnail(exerciseID: exercise.exerciseID, equipment: info?.equipment ?? .other,
+                                      machinePhoto: machines.first { $0.machineID == exercise.machineID }?.photoFileName)
                     VStack(alignment: .leading, spacing: 2) {
                         if let letter = exercise.session?.supersetLetter(for: exercise) {
                             Label("Superset \(letter)", systemImage: "link")

@@ -38,6 +38,8 @@ targets:
         INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_NSCameraUsageDescription: "Take photos and videos of exercises and machines."
+        INFOPLIST_KEY_NSMicrophoneUsageDescription: "Record sound with exercise videos."
 
   LiftbookTests:
     type: bundle.unit-test

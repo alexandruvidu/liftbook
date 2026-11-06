@@ -1,6 +1,4 @@
+ExerciseMediaUITests
 MachinesUITests
-PersonalRecordsUITests
-ExerciseProgressUITests
-FinishSummaryUITests
-WorkoutDetailUITests
-ActivityUITests
+ExerciseLibraryUITests
+LiveWorkoutLayoutUITests
