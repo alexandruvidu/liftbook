@@ -155,6 +155,8 @@ private struct BarbellSideView: View {
                             .frame(width: column)
                     }
                 }
+            }
+            .frame(maxHeight: .infinity)
         }
     }
 }
