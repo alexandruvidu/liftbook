@@ -1,1 +1,2 @@
-LaunchUITests
+LiveActivityUITests
+RestTimerUITests

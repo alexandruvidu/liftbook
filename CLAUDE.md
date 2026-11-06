@@ -24,6 +24,9 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   - `Liftbook/Features/<Feature>/` — views and view logic per feature
   - `Liftbook/Models/` — SwiftData models and domain logic
   - `Liftbook/Resources/` — assets, bundled JSON
+  - `LiftbookWidgets/` — widget extension (Live Activity); only works when
+    the app is installed directly with SideStore, not inside LiveContainer
+  - `LiftbookShared/` — code compiled into both the app and the extension
   - `LiftbookTests/` — unit tests (Swift Testing)
   - `LiftbookUITests/` — UI tests; use `snap("<name>")` from `Snapshot.swift`
 
