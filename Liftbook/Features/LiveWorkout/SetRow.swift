@@ -58,9 +58,11 @@ struct SetRow: View {
                 Button {
                     set.measurement = previous
                 } label: {
-                    Label("Last time: \(previous.formatted(for: type, unit: unit))",
-                          systemImage: "clock.arrow.circlepath")
+                    // Inline icon, so it wraps with the text at large sizes
+                // instead of overlapping it.
+                Text("\(Image(systemName: "clock.arrow.circlepath")) Last time: \(previous.formatted(for: type, unit: unit))")
                         .font(.caption)
+                        .multilineTextAlignment(.leading)
                         // Buttons tint their label; keep this a quiet gray.
                         .foregroundStyle(Color.secondary)
                         .padding(.leading, SetColumns.number + 8)

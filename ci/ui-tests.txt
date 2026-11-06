@@ -1,1 +1,3 @@
 TabBarUITests
+AccessibilityUITests
+PreviousPerformanceUITests
