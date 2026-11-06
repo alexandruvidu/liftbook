@@ -8,20 +8,24 @@ enum Substitutions {
     static func suggestions(for exercise: LibraryExercise, among candidates: [LibraryExercise],
                             limit: Int = 6) -> [LibraryExercise] {
         let primary = Set(exercise.primaryMuscles)
-        let secondary = Set(exercise.secondaryMuscles)
-        return candidates
+        let scored: [(exercise: LibraryExercise, score: Int)] = candidates
             .filter { $0.id != exercise.id && !primary.isDisjoint(with: $0.primaryMuscles) }
-            .map { candidate -> (LibraryExercise, Int) in
-                let sharedPrimary = primary.intersection(candidate.primaryMuscles).count
-                let sharedSecondary = secondary.intersection(candidate.secondaryMuscles).count
-                let sameType = candidate.type == exercise.type ? 1 : 0
-                let differentEquipment = candidate.equipment != exercise.equipment ? 1 : 0
-                // Variety: among equal matches, prefer different equipment
-                return (candidate, sharedPrimary * 10 + sameType * 4 + sharedSecondary * 2 + differentEquipment)
-            }
-            .sorted { $0.1 != $1.1 ? $0.1 > $1.1 : $0.0.name < $1.0.name }
-            .prefix(limit)
-            .map(\.0)
+            .map { (exercise: $0, score: Self.score($0, against: exercise)) }
+        let sorted = scored.sorted { lhs, rhs in
+            lhs.score != rhs.score ? lhs.score > rhs.score : lhs.exercise.name < rhs.exercise.name
+        }
+        return sorted.prefix(limit).map(\.exercise)
+    }
+
+    /// Shared primary muscles count most, then the same logging type, then
+    /// shared secondary muscles; among equal matches, different equipment
+    /// wins for variety.
+    static func score(_ candidate: LibraryExercise, against exercise: LibraryExercise) -> Int {
+        let sharedPrimary: Int = Set(exercise.primaryMuscles).intersection(candidate.primaryMuscles).count
+        let sharedSecondary: Int = Set(exercise.secondaryMuscles).intersection(candidate.secondaryMuscles).count
+        let sameType: Int = candidate.type == exercise.type ? 1 : 0
+        let differentEquipment: Int = candidate.equipment != exercise.equipment ? 1 : 0
+        return sharedPrimary * 10 + sameType * 4 + sharedSecondary * 2 + differentEquipment
     }
 }
 

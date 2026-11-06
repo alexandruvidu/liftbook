@@ -6,3 +6,4 @@ SubstitutionsUITests
 PlateCalculatorUITests
 ProgressionUITests
 PreviousPerformanceUITests
+DataTransferUITests
