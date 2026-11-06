@@ -18,11 +18,12 @@ struct SwapExerciseView: View {
                             dismiss()
                         } label: {
                             VStack(alignment: .leading, spacing: 2) {
+                                // Buttons tint their label; keep list text in text colors.
                                 Text(exercise.name)
-                                    .foregroundStyle(.primary)
+                                    .foregroundStyle(Color.primary)
                                 Text(exercise.summary)
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(Color.secondary)
                             }
                         }
                         .accessibilityIdentifier("swap.option.\(exercise.id)")

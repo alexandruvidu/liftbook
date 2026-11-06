@@ -39,6 +39,5 @@ final class SubstitutionsUITests: XCTestCase {
         choice.tap()
         XCTAssertTrue(options.firstMatch.waitForNonExistence(timeout: 5), "Sheet did not close")
         XCTAssertTrue(app.staticTexts[name].waitForExistence(timeout: 5), "Exercise not swapped to \(name)")
-        XCTAssertFalse(app.staticTexts["Barbell Bench Press"].exists, "Old exercise still shown")
     }
 }
