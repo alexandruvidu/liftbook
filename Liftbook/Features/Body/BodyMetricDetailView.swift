@@ -129,6 +129,7 @@ private struct AddBodyMeasurementView: View {
                         .accessibilityIdentifier("body.date")
                 }
             }
+            .keyboardDoneButton()
             .navigationTitle("Log \(metric.name)")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

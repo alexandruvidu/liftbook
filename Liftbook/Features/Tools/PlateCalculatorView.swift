@@ -51,6 +51,8 @@ struct PlateCalculatorView: View {
         }
         .navigationTitle("Plate Calculator")
         .navigationBarTitleDisplayMode(.inline)
+        .scrollDismissesKeyboard(.interactively)
+        .keyboardDoneButton()
         .onAppear(perform: load)
         .onChange(of: bar) { save() }
         .onChange(of: available) { save() }
@@ -96,11 +98,8 @@ struct PlateCalculatorView: View {
     private func load() {
         guard !loaded else { return }
         loaded = true
-        let defaults = AppSettings.store
-        let storedBar = defaults.double(forKey: PlateCalculator.barKey(unit))
-        bar = storedBar > 0 ? storedBar : PlateCalculator.defaultBar(for: unit)
-        let storedPlates = defaults.string(forKey: PlateCalculator.platesKey(unit)).map(PlateCalculator.decode) ?? []
-        available = storedPlates.isEmpty ? PlateCalculator.standardPlates(for: unit) : storedPlates
+        bar = PlateCalculator.savedBar(for: unit, in: AppSettings.store)
+        available = PlateCalculator.savedPlates(for: unit, in: AppSettings.store)
         if let initialKilograms, targetText.isEmpty {
             targetText = format((unit.display(kilograms: initialKilograms) * 100).rounded() / 100)
         }

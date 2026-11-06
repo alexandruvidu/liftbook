@@ -19,7 +19,7 @@ extension XCUIApplication {
     /// this just checks nothing is left open.
     @MainActor
     func dismissKeyboard() {
-        let done = buttons["live.keyboardDone"]
+        let done = buttons["keyboard.done"]
         if done.waitForExistence(timeout: 2) { done.tap() }
         XCTAssertTrue(keyboards.firstMatch.waitForNonExistence(timeout: 5), "Keyboard did not close")
     }

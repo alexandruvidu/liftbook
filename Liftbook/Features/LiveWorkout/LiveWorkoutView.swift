@@ -68,6 +68,7 @@ struct LiveWorkoutView: View {
         }
         .listStyle(.insetGrouped)
         .scrollDismissesKeyboard(.interactively)
+        .keyboardDoneButton()
         .safeAreaInset(edge: .bottom) {
             if session.restEndsAt != nil {
                 RestTimerBar(session: session,
@@ -97,13 +98,6 @@ struct LiveWorkoutView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Minimize", systemImage: "chevron.down") { dismiss() }
                     .accessibilityIdentifier("live.minimize")
-            }
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") {
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                }
-                .accessibilityIdentifier("live.keyboardDone")
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Finish") { finish(catalog: catalog) }

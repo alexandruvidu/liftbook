@@ -43,6 +43,7 @@ struct EditWorkoutView: View {
             }
             .listStyle(.insetGrouped)
             .scrollDismissesKeyboard(.interactively)
+            .keyboardDoneButton()
             .navigationTitle("Edit Workout")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -54,13 +55,6 @@ struct EditWorkoutView: View {
                         dismiss()
                     }
                     .accessibilityIdentifier("edit.done")
-                }
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                    }
-                    .accessibilityIdentifier("live.keyboardDone")
                 }
             }
             .sheet(isPresented: $isPicking) {
