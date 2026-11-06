@@ -33,11 +33,11 @@ struct StartWorkoutSection: View {
                 Button {
                     starter.start(.empty)
                 } label: {
-                    Label("Start Empty Workout", systemImage: "play.fill")
+                    // The icon is inline so the text wraps at large sizes
+                    // instead of being clipped beside it.
+                    Text("\(Image(systemName: "play.fill"))  Start Empty Workout")
                         .font(.headline)
                         .multilineTextAlignment(.center)
-                        // Wrap at large text sizes instead of clipping.
-                        .fixedSize(horizontal: false, vertical: true)
                         .foregroundStyle(Color.accentForeground)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)

@@ -87,19 +87,26 @@ struct HistoryRow: View {
     let session: WorkoutSession
     let catalog: ExerciseCatalog
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
+        // Side by side normally; stacked at accessibility text sizes.
+        let stacked = dynamicTypeSize.isAccessibilitySize
+        let rowLayout = stacked ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+                                : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
+        let statsLayout = stacked ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+                                  : AnyLayout(HStackLayout(spacing: 16))
         let summary = WorkoutSummary(session: session, history: []) { catalog.exercise(id: $0)?.type ?? .weightAndReps }
         VStack(alignment: .leading, spacing: 6) {
-            HStack(alignment: .firstTextBaseline) {
+            rowLayout {
                 Text(session.name)
                     .font(.headline)
-                Spacer()
+                if !stacked { Spacer() }
                 Text(session.startedAt.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated)))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
-            HStack(spacing: 16) {
+            statsLayout {
                 Label(SetMeasurement.clock(summary.duration), systemImage: "clock")
                 Label("\(summary.setCount) sets", systemImage: "checkmark.circle")
                 if summary.volume > 0 {
