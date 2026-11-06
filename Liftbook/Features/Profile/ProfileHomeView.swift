@@ -24,6 +24,15 @@ struct ProfileHomeView: View {
                     .accessibilityIdentifier("profile.photos")
                 }
 
+                Section("Data") {
+                    NavigationLink {
+                        DataTransferView()
+                    } label: {
+                        Label("Export & Import", systemImage: "arrow.up.arrow.down.square")
+                    }
+                    .accessibilityIdentifier("profile.data")
+                }
+
                 Section("Tools") {
                     NavigationLink {
                         PlateCalculatorView()
