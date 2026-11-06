@@ -55,7 +55,9 @@ final class Routine {
             context.delete(entry)
         }
         entries = draft.entries.enumerated().map { index, entry in
-            RoutineEntry(exerciseID: entry.exerciseID, position: index, setCount: entry.setCount)
+            let saved = RoutineEntry(exerciseID: entry.exerciseID, position: index, setCount: entry.setCount)
+            saved.machineID = entry.machineID
+            return saved
         }
     }
 }
@@ -66,6 +68,8 @@ final class RoutineEntry {
     var exerciseID: String
     var position: Int
     var setCount: Int
+    /// The machine to use when starting the routine; nil = whichever was used last.
+    var machineID: UUID? = nil
     var routine: Routine?
 
     init(exerciseID: String, position: Int, setCount: Int) {

@@ -10,6 +10,9 @@ struct LiveWorkoutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query private var customExercises: [CustomExercise]
+    @Query(sort: \Machine.createdAt) private var allMachines: [Machine]
+    /// An exercise just added that has machines: its block asks which one.
+    @State private var askMachineFor: ObjectIdentifier?
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }, sort: \WorkoutSession.startedAt, order: .reverse)
     private var finishedSessions: [WorkoutSession]
     @AppStorage(RestTimer.soundKey) private var restSound = true
@@ -48,15 +51,22 @@ struct LiveWorkoutView: View {
                 }
 
                 ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
+                    let machines = allMachines.of(exercise.exerciseID)
                     ExerciseBlock(exercise: exercise,
                                   info: catalog.exercise(id: exercise.exerciseID),
                                   fallbackName: catalog.name(for: exercise.exerciseID),
                                   identifier: "live.exercise.\(index)",
+                                  // With machines, last time is that machine's (or no machine's).
                                   previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
+                                                                     machine: machines.isEmpty ? .all : MachineFilter(exercise.machineID),
                                                                      in: finishedSessions, excluding: session),
                                   previousNote: PreviousPerformance.note(exerciseID: exercise.exerciseID,
                                                                          in: finishedSessions, excluding: session),
-                                  isCollapsed: $collapsed.member(exercise.stableID))
+                                  isCollapsed: $collapsed.member(exercise.stableID),
+                                  machines: machines,
+                                  history: finishedSessions,
+                                  asksForMachine: askMachineFor == exercise.stableID,
+                                  onMachineAsked: { askMachineFor = nil })
                 }
 
                 Button {
@@ -125,8 +135,18 @@ struct LiveWorkoutView: View {
             WorkoutNoteSheet(session: session)
         }
         .sheet(isPresented: $isPicking) {
-            ExercisePickerView(catalog: catalog) {
-                session.addExercises($0)
+            ExercisePickerView(catalog: catalog) { ids in
+                let before = Set(session.exercises.map(\.stableID))
+                session.addExercises(ids)
+                // Exercises with machines start on the one used last; the
+                // first of them asks which machine it is.
+                let added = session.orderedExercises.filter { !before.contains($0.stableID) }
+                for exercise in added where !allMachines.of(exercise.exerciseID).isEmpty {
+                    exercise.machineID = Machine.lastUsed(exerciseID: exercise.exerciseID, in: finishedSessions)
+                        .flatMap { id in allMachines.contains { $0.machineID == id } ? id : nil }
+                    exercise.machineConfirmed = false
+                    if askMachineFor == nil { askMachineFor = exercise.stableID }
+                }
                 try? modelContext.save()
             }
         }

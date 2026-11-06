@@ -55,6 +55,11 @@ final class WorkoutExercise {
     var restSeconds: Int? = nil
     /// Exercises in the same session with the same group form a superset.
     var supersetGroup: UUID? = nil
+    /// The machine used, if the exercise has machines; nil = no specific one.
+    var machineID: UUID? = nil
+    /// False while the machine was picked automatically (from the routine or
+    /// last time) and the user hasn't confirmed it yet.
+    var machineConfirmed: Bool = true
     var session: WorkoutSession?
     @Relationship(deleteRule: .cascade, inverse: \WorkoutSet.exercise)
     var sets: [WorkoutSet] = []

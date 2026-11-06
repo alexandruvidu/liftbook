@@ -9,6 +9,7 @@ struct RoutineEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @Query(sort: \RoutineFolder.sortIndex) private var folders: [RoutineFolder]
     @Query private var customExercises: [CustomExercise]
+    @Query(sort: \Machine.createdAt) private var machines: [Machine]
     @State private var draft: RoutineDraft
     @State private var isPicking = false
     @State private var isConfirmingDelete = false
@@ -35,7 +36,10 @@ struct RoutineEditorView: View {
 
                 Section {
                     ForEach($draft.entries) { $entry in
-                        RoutineEntryRow(name: catalog.name(for: entry.exerciseID), setCount: $entry.setCount)
+                        let index = draft.entries.firstIndex { $0.id == entry.id } ?? 0
+                        RoutineEntryRow(name: catalog.name(for: entry.exerciseID), setCount: $entry.setCount,
+                                        machines: machines.of(entry.exerciseID), machineID: $entry.machineID,
+                                        identifier: "routine.entry.\(index)")
                     }
                     .onMove { draft.move(from: $0, to: $1) }
                     .onDelete { draft.remove(at: $0) }
@@ -108,6 +112,9 @@ struct RoutineEditorView: View {
 private struct RoutineEntryRow: View {
     let name: String
     @Binding var setCount: Int
+    let machines: [Machine]
+    @Binding var machineID: UUID?
+    let identifier: String
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -116,6 +123,14 @@ private struct RoutineEntryRow: View {
                 Text(setCount == 1 ? "1 set" : "\(setCount) sets")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+            }
+            if !machines.isEmpty {
+                Picker("Machine", selection: $machineID) {
+                    Text("Last used").tag(UUID?.none)
+                    ForEach(machines) { Text($0.name).tag(Optional($0.machineID)) }
+                }
+                .font(.subheadline)
+                .accessibilityIdentifier("\(identifier).machine")
             }
         }
     }

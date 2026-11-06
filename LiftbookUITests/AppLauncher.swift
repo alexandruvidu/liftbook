@@ -9,7 +9,8 @@ extension XCUIApplication {
     @MainActor
     static func launchLiftbook(appearance: String = "light", seedSampleData: Bool = false,
                                storeFile: String? = nil, seedHistory: Bool = false,
-                               seedPhotos: Bool = false, textSize: String? = nil) -> XCUIApplication {
+                               seedPhotos: Bool = false, seedMachines: Bool = false,
+                               textSize: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments += ["-uiTestAppearance", appearance]
         if let storeFile {
@@ -27,6 +28,11 @@ extension XCUIApplication {
         if seedPhotos {
             // Two drawn photos: today and 30 days ago.
             app.launchArguments += ["-uiTestSeedPhotos", "YES"]
+        }
+        if seedMachines {
+            // Bench press machines "Flat bench A", "Flat bench B" and "Smith";
+            // a finished workout on A two days ago (50 kg × 10).
+            app.launchArguments += ["-uiTestSeedMachines", "YES"]
         }
         if let textSize {
             // e.g. "UICTContentSizeCategoryAccessibilityL"

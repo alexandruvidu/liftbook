@@ -15,6 +15,7 @@ enum Persistence {
         BodyMetric.self,
         BodyMeasurement.self,
         ProgressPhoto.self,
+        Machine.self,
     ])
 
     static func makeContainer(inMemory: Bool) -> ModelContainer {
@@ -95,5 +96,46 @@ enum Persistence {
             context.insert(ProgressPhoto(date: .now.addingTimeInterval(TimeInterval(-daysAgo) * 86_400), fileName: fileName))
         }
         try? context.save()
+    }
+
+    /// Three bench press machines with drawn photos, and one finished workout
+    /// on "Flat bench A" (50 kg × 10, two days ago). Used by UI tests via
+    /// `-uiTestSeedMachines YES`.
+    @MainActor
+    static func seedMachines(in context: ModelContext, store: PhotoStore = .machines, now: Date = .now) {
+        guard ((try? context.fetchCount(FetchDescriptor<Machine>())) ?? 0) == 0 else { return }
+        let colors: [UIColor] = [.systemTeal, .systemOrange, .systemPurple]
+        var machines: [Machine] = []
+        for (index, name) in ["Flat bench A", "Flat bench B", "Smith"].enumerated() {
+            let machine = Machine(exerciseID: "barbell-bench-press", name: name,
+                                  createdAt: now.addingTimeInterval(TimeInterval(index - 10)))
+            machine.photoFileName = try? store.save(drawnPhoto(color: colors[index]))
+            context.insert(machine)
+            machines.append(machine)
+        }
+        let start = now.addingTimeInterval(-2 * 86_400)
+        let session = WorkoutSession(name: "Bench Day", startedAt: start)
+        context.insert(session)
+        session.addExercises(["barbell-bench-press"], setCount: 1)
+        let exercise = session.exercises[0]
+        exercise.machineID = machines[0].machineID
+        exercise.sets[0].measurement = SetMeasurement(weight: 50, reps: 10)
+        exercise.sets[0].toggleCompleted(for: .weightAndReps, at: start)
+        session.finish(at: start.addingTimeInterval(45 * 60))
+        try? context.save()
+    }
+
+    /// A plain drawn picture standing in for a real photo in UI tests.
+    @MainActor
+    static func drawnPhoto(color: UIColor) -> UIImage {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        return UIGraphicsImageRenderer(size: CGSize(width: 600, height: 450), format: format).image { ctx in
+            color.setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: 600, height: 450))
+            UIColor.white.withAlphaComponent(0.5).setFill()
+            ctx.fill(CGRect(x: 120, y: 260, width: 360, height: 40))
+            ctx.fill(CGRect(x: 280, y: 100, width: 40, height: 180))
+        }
     }
 }

@@ -16,13 +16,15 @@ struct PreviousPerformance: Equatable, Sendable {
 
     /// Looks through finished sessions (newest first wins) for the most recent
     /// one that has completed sets of the exercise.
-    static func find(exerciseID: String, in sessions: [WorkoutSession], excluding current: WorkoutSession? = nil) -> PreviousPerformance? {
+    /// - Parameter machine: which machine's history to look at.
+    static func find(exerciseID: String, machine: MachineFilter = .all, in sessions: [WorkoutSession],
+                     excluding current: WorkoutSession? = nil) -> PreviousPerformance? {
         let finished = sessions
             .filter { $0.endedAt != nil && $0.sessionID != current?.sessionID }
             .sorted { $0.startedAt > $1.startedAt }
         for session in finished {
             let completed = session.orderedExercises
-                .filter { $0.exerciseID == exerciseID }
+                .filter { $0.exerciseID == exerciseID && machine.matches($0) }
                 .flatMap(\.orderedSets)
                 .filter(\.isCompleted)
             if !completed.isEmpty {

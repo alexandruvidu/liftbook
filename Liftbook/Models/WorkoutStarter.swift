@@ -8,10 +8,23 @@ enum WorkoutStarter {
     }
 
     /// A session pre-filled with the routine's exercises, order and set counts.
-    static func workout(from routine: Routine, at date: Date = .now) -> WorkoutSession {
+    /// - Parameters:
+    ///   - machines: every machine, to check the routine's choices still exist.
+    ///   - history: finished workouts, for the machine used last time.
+    static func workout(from routine: Routine, at date: Date = .now,
+                        machines: [Machine] = [], history: [WorkoutSession] = []) -> WorkoutSession {
         let session = WorkoutSession(name: routine.name, startedAt: date, routineID: routine.routineID)
         for entry in routine.orderedEntries {
             session.addExercises([entry.exerciseID], setCount: entry.setCount)
+            let exercise = session.orderedExercises.last!
+            let known = Set(machines.of(entry.exerciseID).map(\.machineID))
+            if let chosen = entry.machineID, known.contains(chosen) {
+                exercise.machineID = chosen
+            } else if let last = Machine.lastUsed(exerciseID: entry.exerciseID, in: history), known.contains(last) {
+                // A guess: shown as unconfirmed until the user checks it.
+                exercise.machineID = last
+                exercise.machineConfirmed = false
+            }
         }
         return session
     }
@@ -24,6 +37,7 @@ enum WorkoutStarter {
         for (index, old) in past.orderedExercises.enumerated() {
             let exercise = WorkoutExercise(exerciseID: old.exerciseID, position: index)
             exercise.restSeconds = old.restSeconds
+            exercise.machineID = old.machineID
             exercise.supersetGroup = old.supersetGroup.map { group in
                 if let mapped = groups[group] { return mapped }
                 let fresh = UUID()

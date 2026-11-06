@@ -66,6 +66,8 @@ private struct WorkoutStartingModifier: ViewModifier {
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)
     private var active: [WorkoutSession]
+    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }) private var finished: [WorkoutSession]
+    @Query private var machines: [Machine]
     /// Whether this launch already offered to resume a leftover workout.
     @State private var checkedForLeftover = false
     @State private var leftover: WorkoutSession?
@@ -143,7 +145,7 @@ private struct WorkoutStartingModifier: ViewModifier {
     private func begin(_ request: WorkoutStartRequest, fromAlert: Bool = false) {
         let session = switch request {
         case .empty: WorkoutStarter.emptyWorkout()
-        case .routine(let routine): WorkoutStarter.workout(from: routine)
+        case .routine(let routine): WorkoutStarter.workout(from: routine, machines: machines, history: finished)
         case .repeating(let past): WorkoutStarter.repeating(past)
         }
         modelContext.insert(session)

@@ -6,11 +6,14 @@ struct RoutineDraft: Equatable, Sendable {
         let id: UUID
         var exerciseID: String
         var setCount: Int
+        /// The machine to start on; nil = whichever was used last.
+        var machineID: UUID?
 
-        init(exerciseID: String, setCount: Int = RoutineDraft.defaultSetCount) {
+        init(exerciseID: String, setCount: Int = RoutineDraft.defaultSetCount, machineID: UUID? = nil) {
             id = UUID()
             self.exerciseID = exerciseID
             self.setCount = setCount
+            self.machineID = machineID
         }
     }
 
@@ -40,7 +43,7 @@ struct RoutineDraft: Equatable, Sendable {
         name = routine.name
         notes = routine.notes
         folderID = routine.folder?.folderID
-        entries = routine.orderedEntries.map { Entry(exerciseID: $0.exerciseID, setCount: $0.setCount) }
+        entries = routine.orderedEntries.map { Entry(exerciseID: $0.exerciseID, setCount: $0.setCount, machineID: $0.machineID) }
     }
 
     var trimmedName: String {

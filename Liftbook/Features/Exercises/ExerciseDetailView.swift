@@ -83,6 +83,8 @@ private struct ExerciseDetailList: View {
                 progressSections
             }
 
+            MachinesSection(exerciseID: exercise.id)
+
             SetFieldsSection(type: exercise.type)
 
             alternativesSection

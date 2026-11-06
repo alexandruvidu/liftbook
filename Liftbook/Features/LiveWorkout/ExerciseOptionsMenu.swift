@@ -22,6 +22,8 @@ struct ExerciseOptionsMenu: View {
     let session: WorkoutSession
     let showsPlates: Bool
     let onSwap: (() -> Void)?
+    /// Offered for exercises that have no machines yet.
+    var onAddMachine: (() -> Void)?
     let onShowPlates: () -> Void
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
     @Environment(\.modelContext) private var modelContext
@@ -50,6 +52,9 @@ struct ExerciseOptionsMenu: View {
             }
             if let onSwap {
                 Button("Swap Exercise", systemImage: "arrow.triangle.swap", action: onSwap)
+            }
+            if let onAddMachine {
+                Button("Add Machine", systemImage: "gearshape.2", action: onAddMachine)
             }
             if showsPlates {
                 Button("Add Warm-up Sets", systemImage: "flame") { addWarmUps() }

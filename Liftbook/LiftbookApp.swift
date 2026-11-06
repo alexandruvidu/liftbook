@@ -30,6 +30,7 @@ struct LiftbookApp: App {
                 // window exists, made the app lose its accent color.
                 .task {
                     if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
+                    if UITestOverrides.seedMachines { Persistence.seedMachines(in: container.mainContext) }
                 }
         }
         .modelContainer(container)
@@ -61,6 +62,11 @@ enum UITestOverrides {
     /// `-uiTestSeedPhotos YES` adds two drawn progress photos.
     static var seedPhotos: Bool {
         UserDefaults.standard.bool(forKey: "uiTestSeedPhotos")
+    }
+
+    /// `-uiTestSeedMachines YES` adds three bench press machines and a workout on one.
+    static var seedMachines: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestSeedMachines")
     }
 
     /// `-uiTestSeedHistory YES` adds a few finished workouts from the past days.

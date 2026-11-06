@@ -57,6 +57,57 @@ struct WorkoutStarterTests {
         #expect(session.orderedExercises[0].orderedSets.map(\.position) == [0, 1, 2])
     }
 
+    // MARK: Machines
+
+    private func benchRoutine() throws -> (Routine, Machine, Machine) {
+        Persistence.seedSampleData(in: context)
+        let routine = try #require(try context.fetch(FetchDescriptor<Routine>()).first)
+        let a = Machine(exerciseID: "barbell-bench-press", name: "A")
+        let b = Machine(exerciseID: "barbell-bench-press", name: "B")
+        context.insert(a)
+        context.insert(b)
+        return (routine, a, b)
+    }
+
+    @Test func routineMachineWins() throws {
+        let (routine, a, b) = try benchRoutine()
+        routine.orderedEntries[0].machineID = a.machineID
+        let history = [MachineTests.session(daysAgo: 1, machine: b.machineID, weight: 50, reps: 8, now: date(hour: 18))]
+        let session = WorkoutStarter.workout(from: routine, machines: [a, b], history: history)
+        let bench = session.orderedExercises[0]
+        #expect(bench.machineID == a.machineID)
+        #expect(bench.machineConfirmed)
+    }
+
+    @Test func fallsBackToLastUsedUnconfirmed() throws {
+        let (routine, a, b) = try benchRoutine()
+        let history = [MachineTests.session(daysAgo: 1, machine: b.machineID, weight: 50, reps: 8, now: date(hour: 18))]
+        let session = WorkoutStarter.workout(from: routine, machines: [a, b], history: history)
+        let bench = session.orderedExercises[0]
+        #expect(bench.machineID == b.machineID)
+        #expect(!bench.machineConfirmed)
+    }
+
+    @Test func deletedRoutineMachineIsIgnored() throws {
+        let (routine, a, _) = try benchRoutine()
+        routine.orderedEntries[0].machineID = UUID()
+        let session = WorkoutStarter.workout(from: routine, machines: [a], history: [])
+        #expect(session.orderedExercises[0].machineID == nil)
+    }
+
+    @Test func noMachinesLeavesNil() throws {
+        Persistence.seedSampleData(in: context)
+        let routine = try #require(try context.fetch(FetchDescriptor<Routine>()).first)
+        let session = WorkoutStarter.workout(from: routine, machines: [], history: [])
+        #expect(session.orderedExercises.allSatisfy { $0.machineID == nil && $0.machineConfirmed })
+    }
+
+    @Test func repeatingKeepsTheMachine() {
+        let id = UUID()
+        let past = MachineTests.session(daysAgo: 1, machine: id, weight: 50, reps: 8, now: date(hour: 18))
+        #expect(WorkoutStarter.repeating(past).orderedExercises[0].machineID == id)
+    }
+
     @Test func addExercisesAppendsAfterExisting() {
         let session = WorkoutStarter.emptyWorkout()
         context.insert(session)

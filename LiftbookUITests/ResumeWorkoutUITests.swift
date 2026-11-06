@@ -12,6 +12,23 @@ final class ResumeWorkoutUITests: XCTestCase {
         app.terminate()
     }
 
+    /// Finished workouts are still there after quitting and relaunching.
+    func testHistorySurvivesRelaunch() {
+        continueAfterFailure = false
+        let store = "history-\(UUID().uuidString)"
+        var app = XCUIApplication.launchLiftbook(appearance: "light", storeFile: store, seedHistory: true)
+        app.openTab("Activity")
+        let cards = app.buttons.matching(identifier: "history.row")
+        XCTAssertTrue(cards.firstMatch.waitForExistence(timeout: 10), "No workouts before relaunch")
+        XCTAssertEqual(cards.count, 3)
+        quit(app)
+
+        app = XCUIApplication.launchLiftbook(appearance: "light", storeFile: store)
+        app.openTab("Activity")
+        XCTAssertTrue(cards.firstMatch.waitForExistence(timeout: 10), "Workouts lost after relaunch")
+        XCTAssertEqual(app.buttons.matching(identifier: "history.row").count, 3)
+    }
+
     private func resumeAfterRelaunch(appearance: String) {
         continueAfterFailure = false
         let store = "resume-\(appearance)-\(UUID().uuidString)"

@@ -63,3 +63,33 @@ struct PreviousPerformanceTests {
         #expect(performance.set(at: 1) == nil)
     }
 }
+
+struct PreviousPerformanceMachineTests {
+    private let now = Date(timeIntervalSince1970: 1_793_880_000)
+    private let a = UUID(), b = UUID()
+
+    private var sessions: [WorkoutSession] {
+        [MachineTests.session(daysAgo: 3, machine: a, weight: 40, reps: 10, now: now),
+         MachineTests.session(daysAgo: 1, machine: b, weight: 55, reps: 8, now: now),
+         MachineTests.session(daysAgo: 5, machine: nil, weight: 30, reps: 12, now: now)]
+    }
+
+    @Test func perMachineIgnoresOtherMachines() {
+        let found = PreviousPerformance.find(exerciseID: "barbell-bench-press", machine: .machine(a), in: sessions)
+        #expect(found?.sets == [SetMeasurement(weight: 40, reps: 10)])
+    }
+
+    @Test func noMachineUsesOnlyNilHistory() {
+        let found = PreviousPerformance.find(exerciseID: "barbell-bench-press", machine: .none, in: sessions)
+        #expect(found?.sets == [SetMeasurement(weight: 30, reps: 12)])
+    }
+
+    @Test func allUsesTheNewest() {
+        let found = PreviousPerformance.find(exerciseID: "barbell-bench-press", in: sessions)
+        #expect(found?.sets == [SetMeasurement(weight: 55, reps: 8)])
+    }
+
+    @Test func newMachineHasNoHistory() {
+        #expect(PreviousPerformance.find(exerciseID: "barbell-bench-press", machine: .machine(UUID()), in: sessions) == nil)
+    }
+}

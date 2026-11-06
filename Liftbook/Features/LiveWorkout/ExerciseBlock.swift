@@ -16,12 +16,21 @@ struct ExerciseBlock: View {
     /// False when editing a finished workout: checking a set starts no timer.
     var startsRest = true
     @Binding var isCollapsed: Bool
+    /// This exercise's machines.
+    var machines: [Machine] = []
+    /// Finished workouts, for each machine's last sets in the picker.
+    var history: [WorkoutSession] = []
+    /// Open the machine picker as soon as the block appears (just added).
+    var asksForMachine = false
+    var onMachineAsked: () -> Void = {}
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
     @State private var isShowingPlates = false
     @State private var isSwapping = false
     @State private var isNoteOpen = false
+    @State private var isPickingMachine = false
+    @State private var isAddingMachine = false
     @Query private var customExercises: [CustomExercise]
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
@@ -46,6 +55,27 @@ struct ExerciseBlock: View {
                 .buttonStyle(.pill)
                 .accessibilityIdentifier("\(identifier).addSet")
             }
+        }
+        .sheet(isPresented: $isPickingMachine) {
+            MachinePickerSheet(exerciseID: exercise.exerciseID, exerciseName: info?.name ?? fallbackName, type: type,
+                               selected: exercise.machineID, history: history) { id in
+                exercise.machineID = id
+                exercise.machineConfirmed = true
+                try? modelContext.save()
+            }
+        }
+        .sheet(isPresented: $isAddingMachine) {
+            MachineEditorView(exerciseID: exercise.exerciseID) { machine in
+                exercise.machineID = machine.machineID
+                exercise.machineConfirmed = true
+            }
+        }
+        .task {
+            guard asksForMachine else { return }
+            onMachineAsked()
+            // Wait for the exercise picker to finish closing.
+            try? await Task.sleep(for: WorkoutStartController.transitionDelay)
+            isPickingMachine = true
         }
         .sheet(isPresented: $isSwapping) {
             if let info {
@@ -111,7 +141,10 @@ struct ExerciseBlock: View {
             if let session = exercise.session {
                 ExerciseOptionsMenu(exercise: exercise, session: session,
                                     showsPlates: type == .weightAndReps,
-                                    onSwap: info == nil ? nil : { isSwapping = true }) { isShowingPlates = true }
+                                    onSwap: info == nil ? nil : { isSwapping = true },
+                                    onAddMachine: machines.isEmpty && startsRest ? { isAddingMachine = true } : nil) {
+                    isShowingPlates = true
+                }
                     .accessibilityIdentifier("\(identifier).options")
             }
         }
@@ -119,6 +152,12 @@ struct ExerciseBlock: View {
 
     private var pills: some View {
         HStack(spacing: 8) {
+            if !machines.isEmpty {
+                MachineChip(name: machines.name(for: exercise.machineID), isConfirmed: exercise.machineConfirmed) {
+                    isPickingMachine = true
+                }
+                .accessibilityIdentifier("\(identifier).machine")
+            }
             if startsRest {
                 RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
                     .accessibilityIdentifier("\(identifier).rest")
@@ -156,6 +195,8 @@ struct ExerciseBlock: View {
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
                        identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index),
                        onRemove: exercise.sets.count > 1 ? { exercise.removeSet(set) } : nil) {
+                    // Checking off a set confirms a guessed machine.
+                    exercise.machineConfirmed = true
                     guard startsRest, let session = exercise.session else { return }
                     session.startRest(seconds: session.restSeconds(after: exercise, default: defaultRest),
                                       for: exercise.exerciseID)

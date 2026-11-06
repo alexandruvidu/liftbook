@@ -25,6 +25,8 @@ struct PhotoStore: Sendable {
     static let jpegQuality: CGFloat = 0.82
 
     static let standard = PhotoStore(directory: URL.applicationSupportDirectory.appending(path: "ProgressPhotos", directoryHint: .isDirectory))
+    /// Photos of machines.
+    static let machines = PhotoStore(directory: URL.applicationSupportDirectory.appending(path: "MachinePhotos", directoryHint: .isDirectory))
 
     func url(for fileName: String) -> URL {
         directory.appending(path: fileName)
