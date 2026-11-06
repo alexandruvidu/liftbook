@@ -33,11 +33,14 @@ final class WorkoutDetailUITests: XCTestCase {
         // Close the share sheet
         let close = app.buttons.matching(NSPredicate(format: "label == 'Close' OR identifier == 'Close'")).firstMatch
         if close.exists { close.tap() } else { app.swipeDown(velocity: .fast) }
+        _ = app.otherElements["ActivityListView"].waitForNonExistence(timeout: 5)
         XCTAssertTrue(app.buttons["detail.edit"].waitForExistence(timeout: 5), "Share sheet did not close")
 
         // Edit the name and length
-        app.buttons["detail.edit"].tap()
+        // Retry once: the first tap can land while the share sheet is still closing.
         let name = app.textFields["edit.name"]
+        app.buttons["detail.edit"].tap()
+        if !name.waitForExistence(timeout: 4) { app.buttons["detail.edit"].tap() }
         XCTAssertTrue(name.waitForExistence(timeout: 5), "Editor did not open")
         name.enter(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20) + "Heavy Upper")
         app.dismissKeyboard()
