@@ -1,13 +1,12 @@
 import Foundation
 
-/// The top-level sections of the app, in tab bar order. `start` isn't a
-/// screen: selecting it opens the quick-start sheet.
+/// The top-level sections of the app, in tab bar order. Starting a workout
+/// is the floating button beside the bar, not a tab.
 enum AppTab: String, CaseIterable, Identifiable, Hashable {
     case home
     case exercises
     case activity
     case profile
-    case start
 
     var id: String { rawValue }
 
@@ -17,7 +16,6 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
         case .exercises: "Exercises"
         case .activity: "Activity"
         case .profile: "Profile"
-        case .start: "Start"
         }
     }
 
@@ -27,7 +25,6 @@ enum AppTab: String, CaseIterable, Identifiable, Hashable {
         case .exercises: "dumbbell.fill"
         case .activity: "chart.line.uptrend.xyaxis"
         case .profile: "person.crop.circle"
-        case .start: "plus"
         }
     }
 }

@@ -1,1 +1,6 @@
-TabVariantUITests
+TabBarUITests
+StartWorkoutUITests
+ResumeWorkoutUITests
+FinishSummaryUITests
+MachinesUITests
+LiveWorkoutLayoutUITests

@@ -4,8 +4,8 @@ import Testing
 
 struct AppTabTests {
     @Test func tabsAreInExpectedOrder() {
-        #expect(AppTab.allCases == [.home, .exercises, .activity, .profile, .start])
-        #expect(AppTab.allCases.map(\.title) == ["Home", "Exercises", "Activity", "Profile", "Start"])
+        #expect(AppTab.allCases == [.home, .exercises, .activity, .profile])
+        #expect(AppTab.allCases.map(\.title) == ["Home", "Exercises", "Activity", "Profile"])
     }
 
     @Test func tabsHaveUniqueIDsAndIcons() {

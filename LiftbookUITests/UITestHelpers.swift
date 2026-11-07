@@ -69,10 +69,15 @@ extension XCUIApplication {
 }
 
 extension XCUIApplication {
-    /// Opens a tab by title. On iOS 26 the start button (a search-role tab)
-    /// may sit outside `tabBars`, so it falls back to any button.
+    /// Opens a tab by title; "Start" taps the floating start button.
     @MainActor
     func openTab(_ title: String) {
+        if title == "Start" {
+            let start = buttons["startButton"]
+            XCTAssertTrue(start.waitForExistence(timeout: 10), "No start button")
+            start.tap()
+            return
+        }
         let inBar = tabBars.buttons[title]
         if inBar.waitForExistence(timeout: 10) {
             inBar.tap()

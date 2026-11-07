@@ -71,11 +71,6 @@ enum UITestOverrides {
         UserDefaults.standard.bool(forKey: "uiTestSeedMachines")
     }
 
-    /// `-uiTestTabVariant N` (experiment) picks how the start tab is declared.
-    static var tabVariant: Int {
-        UserDefaults.standard.integer(forKey: "uiTestTabVariant")
-    }
-
     /// `-uiTestSeedMedia YES` adds two drawn photos to bench press.
     static var seedMedia: Bool {
         UserDefaults.standard.bool(forKey: "uiTestSeedMedia")

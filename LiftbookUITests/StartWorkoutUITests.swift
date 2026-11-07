@@ -40,9 +40,11 @@ final class StartWorkoutUITests: XCTestCase {
         resume.tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Running bar did not open the workout")
 
-        // The start button also reopens the running workout
+        // While a workout runs, the start button gives way to the running bar
         app.buttons["live.minimize"].tap()
-        app.openTab("Start")
+        XCTAssertTrue(app.runningBar.waitForExistence(timeout: 5), "No running bar")
+        XCTAssertFalse(app.buttons["startButton"].exists, "Start button shown during a workout")
+        app.runningBar.tap()
 
         // Discard (retry the tap once if the cover was still animating in)
         let discard = app.buttons["live.discard"]
