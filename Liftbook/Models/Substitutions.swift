@@ -35,6 +35,9 @@ extension WorkoutExercise {
     func swap(to exerciseID: String) {
         guard exerciseID != self.exerciseID else { return }
         self.exerciseID = exerciseID
+        // A machine belongs to one exercise, so it doesn't carry over.
+        machineID = nil
+        machineConfirmed = true
         for set in sets where !set.isCompleted {
             set.measurement = SetMeasurement()
             set.rpe = nil

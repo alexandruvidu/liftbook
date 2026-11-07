@@ -102,10 +102,46 @@ struct WorkoutStarterTests {
         #expect(session.orderedExercises.allSatisfy { $0.machineID == nil && $0.machineConfirmed })
     }
 
-    @Test func repeatingKeepsTheMachine() {
-        let id = UUID()
-        let past = MachineTests.session(daysAgo: 1, machine: id, weight: 50, reps: 8, now: date(hour: 18))
-        #expect(WorkoutStarter.repeating(past).orderedExercises[0].machineID == id)
+    @Test func repeatingKeepsTheMachineUnconfirmed() {
+        let machine = Machine(exerciseID: "barbell-bench-press", name: "A")
+        let past = MachineTests.session(daysAgo: 1, machine: machine.machineID, weight: 50, reps: 8, now: date(hour: 18))
+        let bench = WorkoutStarter.repeating(past, machines: [machine]).orderedExercises[0]
+        #expect(bench.machineID == machine.machineID)
+        #expect(!bench.machineConfirmed)
+    }
+
+    @Test func repeatingDropsADeletedMachine() {
+        let past = MachineTests.session(daysAgo: 1, machine: UUID(), weight: 50, reps: 8, now: date(hour: 18))
+        let bench = WorkoutStarter.repeating(past, machines: []).orderedExercises[0]
+        #expect(bench.machineID == nil)
+        #expect(bench.machineConfirmed)
+    }
+
+    @Test func deletingAMachineKeepsItsSetsAsNoMachine() throws {
+        let machine = Machine(exerciseID: "barbell-bench-press", name: "A")
+        context.insert(machine)
+        let past = MachineTests.session(daysAgo: 1, machine: machine.machineID, weight: 50, reps: 8, now: date(hour: 18))
+        context.insert(past)
+        Persistence.seedSampleData(in: context)
+        let routine = try #require(try context.fetch(FetchDescriptor<Routine>()).first)
+        routine.orderedEntries[0].machineID = machine.machineID
+        try context.save()
+
+        try Machine.delete(machine, in: context)
+        #expect(past.exercises[0].machineID == nil)
+        #expect(routine.orderedEntries[0].machineID == nil)
+        #expect(try context.fetch(FetchDescriptor<Machine>()).isEmpty)
+        let found = PreviousPerformance.find(exerciseID: "barbell-bench-press", machine: .none, in: [past])
+        #expect(found?.sets == [SetMeasurement(weight: 50, reps: 8)])
+    }
+
+    @Test func swappingDropsTheMachine() {
+        let exercise = WorkoutExercise(exerciseID: "barbell-bench-press", position: 0)
+        exercise.machineID = UUID()
+        exercise.machineConfirmed = false
+        exercise.swap(to: "incline-barbell-bench-press")
+        #expect(exercise.machineID == nil)
+        #expect(exercise.machineConfirmed)
     }
 
     @Test func addExercisesAppendsAfterExisting() {

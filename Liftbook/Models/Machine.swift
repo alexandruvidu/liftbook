@@ -102,3 +102,22 @@ extension WorkoutSession {
         return firstWithMachines
     }
 }
+
+extension Machine {
+    /// Deletes the machine and its photo. Workouts and routines that used it
+    /// keep their sets, now as "no specific machine".
+    @MainActor
+    static func delete(_ machine: Machine, in context: ModelContext, photos: PhotoStore = .machines) throws {
+        let id: UUID? = machine.machineID
+        for exercise in try context.fetch(FetchDescriptor<WorkoutExercise>(predicate: #Predicate { $0.machineID == id })) {
+            exercise.machineID = nil
+            exercise.machineConfirmed = true
+        }
+        for entry in try context.fetch(FetchDescriptor<RoutineEntry>(predicate: #Predicate { $0.machineID == id })) {
+            entry.machineID = nil
+        }
+        if let file = machine.photoFileName { photos.delete(file) }
+        context.delete(machine)
+        try context.save()
+    }
+}

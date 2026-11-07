@@ -1,1 +1,8 @@
-ALL
+AppIconUITests
+MachinesUITests
+ExerciseImagesUITests
+SubstitutionsUITests
+WorkoutDetailUITests
+StartWorkoutUITests
+RoutineUITests
+AccessibilityUITests

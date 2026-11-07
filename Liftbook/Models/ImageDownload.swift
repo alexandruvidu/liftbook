@@ -70,6 +70,8 @@ final class ImageDownloader {
     private(set) var progress: Double = 0
     private(set) var isRunning = false
     private(set) var error: String?
+    /// Images that couldn't be fetched or read in the last run (skipped).
+    private(set) var skipped = 0
 
     func run(context: ModelContext, catalog: [LibraryExercise], store: MediaStore = .standard,
              loader: DataLoader = URLSession.shared) async {
@@ -78,19 +80,32 @@ final class ImageDownloader {
         error = nil
         progress = 0
         defer { isRunning = false }
+        skipped = 0
         do {
             let dataset = try JSONDecoder().decode([DatasetExercise].self, from: try await loader.load(Self.manifestURL))
-            let have = Set(downloaded(in: context).map(\.exerciseID))
+            // Positions already saved per exercise; a run cut off midway
+            // fills in only what's missing.
+            var saved: [String: Set<Int>] = [:]
+            for item in downloaded(in: context) { saved[item.exerciseID, default: []].insert(item.position) }
             let todo = ImageMatching.match(catalog: catalog, dataset: dataset)
-                .filter { !have.contains($0.key) }
-                .sorted { $0.key < $1.key }
-            for (index, (exerciseID, entry)) in todo.enumerated() {
-                for (position, path) in entry.images.prefix(Self.imagesPerExercise).enumerated() {
-                    let data = try await loader.load(Self.imagesBaseURL.appending(path: path))
-                    let name = try store.saveImageData(data)
-                    context.insert(ExerciseMedia(exerciseID: exerciseID, kind: .photo, source: .downloaded,
-                                                 fileName: name, position: position))
-                    try context.save()
+                .map { ($0.key, Array($0.value.images.prefix(Self.imagesPerExercise).enumerated())) }
+                .map { id, images in (id, images.filter { !(saved[id]?.contains($0.offset) ?? false) }) }
+                .filter { !$0.1.isEmpty }
+                .sorted { $0.0 < $1.0 }
+            for (index, (exerciseID, images)) in todo.enumerated() {
+                for (position, path) in images {
+                    do {
+                        let data = try await loader.load(Self.imagesBaseURL.appending(path: path))
+                        let name = try store.saveImageData(data)
+                        context.insert(ExerciseMedia(exerciseID: exerciseID, kind: .photo, source: .downloaded,
+                                                     fileName: name, position: position))
+                        try context.save()
+                    } catch let error as URLError where Self.isConnectionProblem(error) {
+                        throw error
+                    } catch {
+                        // One missing or broken image doesn't stop the rest.
+                        skipped += 1
+                    }
                 }
                 progress = Double(index + 1) / Double(todo.count)
             }
@@ -98,6 +113,13 @@ final class ImageDownloader {
         } catch {
             self.error = "The download stopped. Photos already saved are kept; try again to get the rest."
         }
+    }
+
+    /// Being offline or losing the connection ends the run; anything else
+    /// (a missing file, a server error) only skips that image.
+    nonisolated static func isConnectionProblem(_ error: URLError) -> Bool {
+        [.notConnectedToInternet, .networkConnectionLost, .timedOut, .cannotFindHost,
+         .cannotConnectToHost, .dataNotAllowed, .internationalRoamingOff].contains(error.code)
     }
 
     /// Deletes every downloaded photo; the user's own media stays.

@@ -7,10 +7,12 @@ import Testing
 private struct FakeLoader: DataLoader {
     let manifest: Data
     var failing: Set<String> = []
+    /// What the failing URLs throw: offline by default.
+    var failure: URLError.Code = .notConnectedToInternet
 
     func load(_ url: URL) async throws -> Data {
         if failing.contains(url.lastPathComponent) || failing.contains(url.deletingLastPathComponent().lastPathComponent + "/" + url.lastPathComponent) {
-            throw URLError(.notConnectedToInternet)
+            throw URLError(failure)
         }
         if url == ImageDownloader.manifestURL { return manifest }
         return Data([0xFF, 0xD8, 0xFF, 0xE0])
@@ -110,5 +112,27 @@ struct ImageDownloadTests {
         downloader.removeAll(context: context, store: store)
         let left = try media()
         #expect(left.map(\.fileName) == ["mine.jpg"])
+    }
+
+    @Test func missingImageIsSkippedNotFatal() async throws {
+        // A 404-style failure on one image: the rest still download.
+        let downloader = ImageDownloader()
+        let loader = FakeLoader(manifest: try manifest(), failing: ["Air_Bike/0.jpg"], failure: .badServerResponse)
+        await downloader.run(context: context, catalog: catalog, store: store, loader: loader)
+        #expect(downloader.error == nil)
+        #expect(downloader.skipped == 1)
+        #expect(try media().count == 3)
+    }
+
+    @Test func retryFillsInAPartlyDownloadedExercise() async throws {
+        let downloader = ImageDownloader()
+        let cutOff = FakeLoader(manifest: try manifest(), failing: ["Barbell_Bench_Press_-_Medium_Grip/1.jpg"])
+        await downloader.run(context: context, catalog: catalog, store: store, loader: cutOff)
+        #expect(try media().filter { $0.exerciseID == "barbell-bench-press" }.count == 1)
+
+        await downloader.run(context: context, catalog: catalog, store: store, loader: FakeLoader(manifest: try manifest()))
+        let bench = try media().filter { $0.exerciseID == "barbell-bench-press" }
+        #expect(bench.map(\.position).sorted() == [0, 1])
+        #expect(try media().count == 4)
     }
 }

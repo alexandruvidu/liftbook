@@ -6,7 +6,7 @@ final class AppIconUITests: XCTestCase {
     func testAppIconOnHomeScreen() {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook()
-        XCTAssertTrue(app.navigationBars["Workout"].waitForExistence(timeout: 15))
+        XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 15))
 
         XCUIDevice.shared.press(.home)
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")

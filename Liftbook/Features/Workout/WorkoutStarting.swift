@@ -146,7 +146,7 @@ private struct WorkoutStartingModifier: ViewModifier {
         let session = switch request {
         case .empty: WorkoutStarter.emptyWorkout()
         case .routine(let routine): WorkoutStarter.workout(from: routine, machines: machines, history: finished)
-        case .repeating(let past): WorkoutStarter.repeating(past)
+        case .repeating(let past): WorkoutStarter.repeating(past, machines: machines)
         }
         modelContext.insert(session)
         // Save now so the new models get permanent identifiers before any view

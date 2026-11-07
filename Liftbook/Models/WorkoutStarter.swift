@@ -31,13 +31,18 @@ enum WorkoutStarter {
 
     /// A new session with the same exercises, set types and values as a past
     /// one, ready to check off again. Supersets and rest times carry over.
-    static func repeating(_ past: WorkoutSession, at date: Date = .now) -> WorkoutSession {
+    /// - Parameter machines: every machine; a machine that was deleted since
+    ///   isn't carried over, and one that is shows as unconfirmed.
+    static func repeating(_ past: WorkoutSession, at date: Date = .now, machines: [Machine] = []) -> WorkoutSession {
         let session = WorkoutSession(name: past.name, startedAt: date, routineID: past.routineID)
         var groups: [UUID: UUID] = [:]
         for (index, old) in past.orderedExercises.enumerated() {
             let exercise = WorkoutExercise(exerciseID: old.exerciseID, position: index)
             exercise.restSeconds = old.restSeconds
-            exercise.machineID = old.machineID
+            if let id = old.machineID, machines.contains(where: { $0.machineID == id }) {
+                exercise.machineID = id
+                exercise.machineConfirmed = false
+            }
             exercise.supersetGroup = old.supersetGroup.map { group in
                 if let mapped = groups[group] { return mapped }
                 let fresh = UUID()

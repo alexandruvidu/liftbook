@@ -114,9 +114,7 @@ struct MachineEditorView: View {
 
     private func delete() {
         guard let machine else { return }
-        if let file = machine.photoFileName { PhotoStore.machines.delete(file) }
-        modelContext.delete(machine)
-        try? modelContext.save()
+        try? Machine.delete(machine, in: modelContext)
         dismiss()
     }
 }
