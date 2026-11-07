@@ -5,7 +5,7 @@ import XCTest
 @MainActor
 final class TabVariantUITests: XCTestCase {
     func testTabVariants() {
-        for variant in 0...2 {
+        for variant in 2...4 {
             let app = XCUIApplication()
             app.launchArguments += ["-uiTestAppearance", "light", "-uiTestInMemoryStore", "YES",
                                     "-uiTestTabVariant", "\(variant)"]

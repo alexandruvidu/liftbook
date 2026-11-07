@@ -41,16 +41,24 @@ struct RootView: View {
             }
             // The search role puts this in its own round button at the end of
             // the iOS 26 tab bar; on iOS 18 it's a normal tab item.
-            Tab(AppTab.start.title, systemImage: AppTab.start.systemImage, value: AppTab.start, role: .search) {
-                if variant >= 2 {
-                    NavigationStack {
-                        Color.clear.searchable(text: $searchText)
+            if variant == 4 {
+                // The system's own search label (no custom title or icon).
+                Tab(value: AppTab.start, role: .search) {
+                    NavigationStack { Color.clear.searchable(text: $searchText) }
+                }
+            } else {
+                Tab(AppTab.start.title, systemImage: AppTab.start.systemImage, value: AppTab.start, role: .search) {
+                    if variant >= 2 {
+                        NavigationStack {
+                            Color.clear.searchable(text: $searchText)
+                        }
+                    } else {
+                        Color.clear
                     }
-                } else {
-                    Color.clear
                 }
             }
         }
+        .modifier(TabStyleExperiment(adaptable: variant == 3))
         // Variants 1+: a plain selection binding; picking Start bounces back.
         .onChange(of: selection) { old, new in
             guard variant >= 1, new == .start else { return }
@@ -75,4 +83,17 @@ struct RootView: View {
 #Preview {
     RootView()
         .modelContainer(Persistence.makeContainer(inMemory: true))
+}
+
+/// UI-test experiment: the adaptable tab view style.
+private struct TabStyleExperiment: ViewModifier {
+    let adaptable: Bool
+
+    func body(content: Content) -> some View {
+        if adaptable {
+            content.tabViewStyle(.sidebarAdaptable)
+        } else {
+            content
+        }
+    }
 }

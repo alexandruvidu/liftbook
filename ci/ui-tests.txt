@@ -1,4 +1,1 @@
 TabVariantUITests
-ExerciseMediaUITests
-ExerciseLibraryUITests
-TabBarUITests

@@ -56,7 +56,8 @@ struct ExerciseMediaTests {
 @MainActor
 struct DownloadedMediaCleanupTests {
     @Test func removesDownloadedKeepsOwn() throws {
-        let context = Persistence.makeContainer(inMemory: true).mainContext
+        let container = Persistence.makeContainer(inMemory: true)
+        let context = container.mainContext
         let store = MediaStore(directory: URL.temporaryDirectory.appending(path: "clean-\(UUID().uuidString)", directoryHint: .isDirectory))
         let downloaded = try store.saveImageData(Data([0xFF, 0xD8]))
         context.insert(ExerciseMedia(exerciseID: "x", kind: .photo, source: .downloaded, fileName: downloaded, position: 0))
