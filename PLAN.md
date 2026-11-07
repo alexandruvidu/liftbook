@@ -59,6 +59,6 @@ screenshot looks correct.
 - [x] Export a single workout as CSV
 - [x] Restyle Home, Profile, exercise and workout screens
 - [x] Restyle body tracking, tools, data and editors
-- [ ] Phase 5 cleanup and full UI run
+- [x] Phase 5 cleanup and full UI run
 
 Out of scope: social feed, followers, cloud sync, accounts.

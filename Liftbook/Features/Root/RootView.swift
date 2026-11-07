@@ -5,6 +5,10 @@ struct RootView: View {
     @State private var selection: AppTab = .home
     @State private var starter = WorkoutStartController()
     @State private var isQuickStarting = false
+    @State private var searchText = ""
+    /// UI-test experiment (`-uiTestTabVariant N`): ways of declaring the
+    /// start tab, to find the one iOS shows as a separate button.
+    private let variant = UITestOverrides.tabVariant
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)
     private var active: [WorkoutSession]
 
@@ -22,7 +26,7 @@ struct RootView: View {
     }
 
     var body: some View {
-        TabView(selection: tabSelection) {
+        TabView(selection: variant >= 1 ? $selection : tabSelection) {
             Tab(AppTab.home.title, systemImage: AppTab.home.systemImage, value: AppTab.home) {
                 WorkoutHomeView()
             }
@@ -38,8 +42,20 @@ struct RootView: View {
             // The search role puts this in its own round button at the end of
             // the iOS 26 tab bar; on iOS 18 it's a normal tab item.
             Tab(AppTab.start.title, systemImage: AppTab.start.systemImage, value: AppTab.start, role: .search) {
-                Color.clear
+                if variant >= 2 {
+                    NavigationStack {
+                        Color.clear.searchable(text: $searchText)
+                    }
+                } else {
+                    Color.clear
+                }
             }
+        }
+        // Variants 1+: a plain selection binding; picking Start bounces back.
+        .onChange(of: selection) { old, new in
+            guard variant >= 1, new == .start else { return }
+            selection = old
+            if let session = active.last { starter.resume(session) } else { isQuickStarting = true }
         }
         .workoutRunningAccessory(session: active.last) { starter.resume($0) }
         // Set explicitly: some system views (e.g. the photo picker button)

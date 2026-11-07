@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 import Testing
 import UIKit
 @testable import Liftbook
@@ -49,5 +50,21 @@ struct ExerciseMediaTests {
         let item = ExerciseMedia(exerciseID: "x", kind: .video, source: .downloaded, fileName: "f", position: 0)
         #expect(item.kind == .video)
         #expect(item.source == .downloaded)
+    }
+}
+
+@MainActor
+struct DownloadedMediaCleanupTests {
+    @Test func removesDownloadedKeepsOwn() throws {
+        let context = Persistence.makeContainer(inMemory: true).mainContext
+        let store = MediaStore(directory: URL.temporaryDirectory.appending(path: "clean-\(UUID().uuidString)", directoryHint: .isDirectory))
+        let downloaded = try store.saveImageData(Data([0xFF, 0xD8]))
+        context.insert(ExerciseMedia(exerciseID: "x", kind: .photo, source: .downloaded, fileName: downloaded, position: 0))
+        context.insert(ExerciseMedia(exerciseID: "x", kind: .photo, source: .own, fileName: "mine.jpg", position: 0))
+        try context.save()
+
+        ExerciseMedia.removeDownloaded(in: context, store: store)
+        #expect(try context.fetch(FetchDescriptor<ExerciseMedia>()).map(\.fileName) == ["mine.jpg"])
+        #expect(!FileManager.default.fileExists(atPath: store.url(for: downloaded).path(percentEncoded: false)))
     }
 }

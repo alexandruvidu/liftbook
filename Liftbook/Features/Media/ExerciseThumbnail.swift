@@ -41,7 +41,9 @@ struct ExerciseThumbnail: View {
 
     private var image: UIImage? {
         if let machinePhoto, let photo = PhotoStore.machines.load(machinePhoto) { return photo }
-        guard let first = media.display(for: exerciseID).first else { return nil }
+        guard let first = media.display(for: exerciseID).first else {
+            return ExerciseAnimation.url(for: exerciseID).flatMap(ExerciseAnimation.firstFrame)
+        }
         switch first.kind {
         case .photo: return MediaStore.standard.loadImage(first.fileName)
         case .video: return Self.frame(of: MediaStore.standard.url(for: first.fileName))

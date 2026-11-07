@@ -61,8 +61,9 @@ private struct ExerciseDetailList: View {
         let media = allMedia.display(for: exercise.id)
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                if !media.isEmpty {
-                    MediaGallery(media: media)
+                let animation = ExerciseAnimation.url(for: exercise.id)
+                if !media.isEmpty || animation != nil {
+                    MediaGallery(media: media, animation: animation)
                 }
                 HStack {
                     AddMediaButton(exerciseID: exercise.id)

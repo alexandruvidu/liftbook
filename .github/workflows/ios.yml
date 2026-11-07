@@ -46,6 +46,17 @@ jobs:
           sudo xcode-select -s "$LATEST/Contents/Developer"
           xcodebuild -version
 
+      # Exercise animations are bundled into the app but not committed: they
+      # are fetched here (cached between runs) from the IDs in the mapping.
+      - name: Cache exercise animations
+        uses: actions/cache@v4
+        with:
+          path: Liftbook/Resources/ExerciseGIFs
+          key: exercise-gifs-${{ hashFiles('Liftbook/Resources/exercise-animations.json') }}
+
+      - name: Fetch exercise animations
+        run: python3 scripts/fetch_exercise_gifs.py
+
       - name: Install XcodeGen and generate project
         run: |
           brew install xcodegen

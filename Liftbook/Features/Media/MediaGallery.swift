@@ -1,19 +1,26 @@
 import SwiftUI
 
-/// An exercise's photos and videos, one page each. Two downloaded photos
-/// (start and end position) alternate on a single page like a short clip.
+/// An exercise's own photos and videos, one page each, then its bundled
+/// animation (if it has one) on the last page.
 struct MediaGallery: View {
     let media: [ExerciseMedia]
+    /// The bundled animation, if any.
+    var animation: URL?
     var store: MediaStore = .standard
 
     var body: some View {
         let pages = Self.pages(for: media)
+        let count = pages.count + (animation == nil ? 0 : 1)
         TabView {
             ForEach(pages, id: \.first!.mediaID) { page in
                 pageView(page)
             }
+            if let animation {
+                AnimatedExerciseView(url: animation)
+                    .background(Color.white)
+            }
         }
-        .tabViewStyle(.page(indexDisplayMode: pages.count > 1 ? .always : .never))
+        .tabViewStyle(.page(indexDisplayMode: count > 1 ? .always : .never))
         .aspectRatio(4 / 3, contentMode: .fit)
         .background(Color(.tertiarySystemFill))
         .clipShape(RoundedRectangle(cornerRadius: 18))

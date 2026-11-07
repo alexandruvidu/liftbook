@@ -64,6 +64,13 @@ struct ExerciseCard: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
+        } else if let url = ExerciseAnimation.url(for: exercise.id), let frame = ExerciseAnimation.firstFrame(url) {
+            // Bundled animations have a white background; show it whole.
+            Color.white.overlay {
+                Image(uiImage: frame)
+                    .resizable()
+                    .scaledToFit()
+            }
         } else {
             Image(systemName: exercise.equipment.symbolName)
                 .font(.system(size: 40))

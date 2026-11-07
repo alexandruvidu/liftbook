@@ -25,6 +25,12 @@ targets:
     platform: iOS
     sources:
       - path: Liftbook
+        excludes:
+          - Resources/ExerciseGIFs
+      # Fetched by CI (scripts/fetch_exercise_gifs.py), not committed.
+      - path: Liftbook/Resources/ExerciseGIFs
+        type: folder
+        optional: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.alexandruvidu.liftbook

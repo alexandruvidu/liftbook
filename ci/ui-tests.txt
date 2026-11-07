@@ -1,8 +1,4 @@
-AppIconUITests
-MachinesUITests
-ExerciseImagesUITests
-SubstitutionsUITests
-WorkoutDetailUITests
-StartWorkoutUITests
-RoutineUITests
-AccessibilityUITests
+TabVariantUITests
+ExerciseMediaUITests
+ExerciseLibraryUITests
+TabBarUITests

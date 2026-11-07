@@ -35,20 +35,6 @@ struct ProfileHomeView: View {
                         }
                     }
 
-                    NavigationLink {
-                        ExerciseImagesView()
-                    } label: {
-                        Block {
-                            BlockHeader("Exercise Images", subtitle: "Download photos for the library",
-                                        image: Image(systemName: "photo.stack")) {
-                                Image(systemName: "chevron.right")
-                                    .foregroundStyle(.tertiary)
-                            }
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .accessibilityIdentifier("profile.images")
-
                     SectionTitle("Settings")
                     SettingsBlock()
 

@@ -102,3 +102,19 @@ struct MediaStore: Sendable {
         try? FileManager.default.removeItem(at: url(for: fileName))
     }
 }
+
+extension ExerciseMedia {
+    /// Removes photos an earlier build downloaded from free-exercise-db; the
+    /// bundled animations replace them. The user's own media stays.
+    @MainActor
+    static func removeDownloaded(in context: ModelContext, store: MediaStore = .standard) {
+        let source = MediaSource.downloaded.rawValue
+        let old = (try? context.fetch(FetchDescriptor<ExerciseMedia>(predicate: #Predicate { $0.sourceID == source }))) ?? []
+        guard !old.isEmpty else { return }
+        for item in old {
+            store.delete(item.fileName)
+            context.delete(item)
+        }
+        try? context.save()
+    }
+}

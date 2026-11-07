@@ -29,6 +29,7 @@ struct LiftbookApp: App {
                 // Seeded after launch: drawing with UIKit in init, before any
                 // window exists, made the app lose its accent color.
                 .task {
+                    ExerciseMedia.removeDownloaded(in: container.mainContext)
                     if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
                     if UITestOverrides.seedMachines { Persistence.seedMachines(in: container.mainContext) }
                     if UITestOverrides.seedMedia { Persistence.seedMedia(in: container.mainContext) }
@@ -68,6 +69,11 @@ enum UITestOverrides {
     /// `-uiTestSeedMachines YES` adds three bench press machines and a workout on one.
     static var seedMachines: Bool {
         UserDefaults.standard.bool(forKey: "uiTestSeedMachines")
+    }
+
+    /// `-uiTestTabVariant N` (experiment) picks how the start tab is declared.
+    static var tabVariant: Int {
+        UserDefaults.standard.integer(forKey: "uiTestTabVariant")
     }
 
     /// `-uiTestSeedMedia YES` adds two drawn photos to bench press.
