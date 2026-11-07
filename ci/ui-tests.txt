@@ -1,6 +1,5 @@
-TabBarUITests
-StartWorkoutUITests
-ResumeWorkoutUITests
-FinishSummaryUITests
-MachinesUITests
+ExerciseLibraryUITests
+ExerciseMediaUITests
 LiveWorkoutLayoutUITests
+WorkoutDetailUITests
+MachinesUITests
