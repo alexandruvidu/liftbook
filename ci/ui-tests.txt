@@ -1,5 +1,1 @@
-ExerciseLibraryUITests
-ExerciseMediaUITests
-LiveWorkoutLayoutUITests
-WorkoutDetailUITests
-MachinesUITests
+LaunchUITests
