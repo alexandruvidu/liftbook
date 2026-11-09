@@ -2,7 +2,8 @@ import Testing
 @testable import Liftbook
 
 struct ExerciseFilterTests {
-    private let all = ExerciseLibrary.bundled.exercises
+    // The hand-written exercises, so results are exact.
+    private let all = ExerciseLibrary.handWritten.exercises
 
     private func ids(_ filter: ExerciseFilter) -> Set<String> {
         Set(filter.apply(to: all).map(\.id))

@@ -52,7 +52,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: Liftbook/Resources/ExerciseArt
-          key: exercise-art-${{ hashFiles('Liftbook/Resources/exercise-illustrations.json', 'Liftbook/Resources/exercise-animations.json') }}
+          key: exercise-art-${{ hashFiles('Liftbook/Resources/exercise-illustrations.json', 'Liftbook/Resources/exercise-animations.json', 'Liftbook/Resources/exercises-more.json') }}
 
       - name: Fetch exercise pictures
         run: python3 scripts/fetch_exercise_art.py

@@ -19,3 +19,6 @@ ci-screenshots/
 
 # Exercise pictures, fetched by CI at build time
 Liftbook/Resources/ExerciseArt/
+
+# Downloads for scripts/build_catalog.py
+.catalog-cache/

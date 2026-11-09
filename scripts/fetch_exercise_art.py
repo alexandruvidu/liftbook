@@ -9,6 +9,10 @@ Two sources, both fetched at build time and never committed:
 - Liftbook/Resources/exercise-animations.json maps the exercises RepDB
   doesn't cover to ExerciseDB V1 animations. Saved as <catalog ID>.gif.
 
+- Liftbook/Resources/exercises-more.json marks exercises whose description is
+  RepDB's ("repdbID"): their text goes to repdb-descriptions.json, since
+  RepDB's license forbids committing it.
+
 Everything goes to Liftbook/Resources/ExerciseArt. Files already there (from
 the CI cache) are kept. A missing picture only prints a warning: the app
 falls back to an equipment symbol.
@@ -25,6 +29,7 @@ OUT = RESOURCES / "ExerciseArt"
 # Pinned so a change upstream can't silently change the app's pictures.
 REPDB = "https://raw.githubusercontent.com/RepDB/exercise-dataset/66c4298af8d99b9dc397dad6699e508fb871d249/{}"
 EXERCISEDB = "https://static.exercisedb.dev/media/{}.gif"
+DESCRIPTIONS = "repdb-descriptions.json"
 
 
 def looks_valid(data: bytes, extension: str) -> bool:
@@ -45,6 +50,25 @@ def fetch(url: str, dest: pathlib.Path) -> bool:
     return False
 
 
+def write_descriptions(dest: pathlib.Path) -> int:
+    """RepDB's text for the exercises that use it, keyed by catalog ID."""
+    wanted = {e["repdbID"]: e["id"] for e in json.loads((RESOURCES / "exercises-more.json").read_text())
+              if "repdbID" in e}
+    result = subprocess.run(["curl", "-sfL", "-m", "60", REPDB.format("exercises.json")], capture_output=True)
+    if result.returncode != 0:
+        print("::warning::Could not fetch RepDB descriptions")
+        return 0
+    texts = {}
+    for exercise in json.loads(result.stdout)["exercises"]:
+        if exercise["id"] in wanted:
+            steps = exercise.get("instructions_en")
+            text = " ".join(steps) if isinstance(steps, list) else (steps or exercise.get("description_en") or "")
+            if text:
+                texts[wanted[exercise["id"]]] = text.strip()
+    dest.write_text(json.dumps(texts, ensure_ascii=False))
+    return len(texts)
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     illustrations = json.loads((RESOURCES / "exercise-illustrations.json").read_text())
@@ -58,8 +82,11 @@ def main() -> int:
 
     # Drop leftovers from an older mapping so the app never shows a stale picture.
     for stale in OUT.iterdir():
-        if stale.name not in wanted:
+        if stale.name not in wanted and stale.name != DESCRIPTIONS:
             stale.unlink()
+
+    described = write_descriptions(OUT / DESCRIPTIONS)
+    print(f"{described} RepDB exercise descriptions ready")
 
     missing = [name for name, url in sorted(wanted.items()) if not fetch(url, OUT / name)]
     print(f"{len(wanted) - len(missing)} of {len(wanted)} exercise pictures ready "

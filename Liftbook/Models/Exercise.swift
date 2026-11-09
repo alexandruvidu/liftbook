@@ -93,6 +93,12 @@ struct LibraryExercise: Codable, Identifiable, Hashable, Sendable {
         case details = "description"
     }
 
+    /// The same exercise with another description.
+    func withDetails(_ text: String) -> LibraryExercise {
+        LibraryExercise(id: id, name: name, primaryMuscles: primaryMuscles, secondaryMuscles: secondaryMuscles,
+                        equipment: equipment, type: type, details: text)
+    }
+
     /// Short line for list rows, e.g. "Chest · Barbell".
     var summary: String {
         let muscles = primaryMuscles.map(\.displayName).joined(separator: ", ")

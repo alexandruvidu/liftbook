@@ -19,7 +19,14 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   the visible "Exercise data by RepDB (repdb.co)" link in Profile and
   forbids republishing the files), and ExerciseDB V1 GIFs only for the
   exercises RepDB doesn't cover (`exercise-animations.json`).
-- Write all text, exercise descriptions, and designs from scratch.
+- The exercise catalog is the hand-written `Resources/exercises.json` (its
+  IDs never change: workouts point at them) plus `exercises-more.json`,
+  merged by `scripts/build_catalog.py` from ExerciseDB, RepDB,
+  free-exercise-db and wger. The owner chose to use the source databases'
+  descriptions there; RepDB text is added by CI at build time
+  (`ExerciseArt/repdb-descriptions.json`), never committed. Unit tests that
+  need exact results use `ExerciseLibrary.handWritten`.
+- Write all other text and designs from scratch.
 
 ## Stack
 - Swift 6, SwiftUI, SwiftData, Swift Charts. No third-party dependencies unless
