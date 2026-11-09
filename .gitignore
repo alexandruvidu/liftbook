@@ -17,5 +17,5 @@ ci-screenshots/
 # macOS
 .DS_Store
 
-# Exercise animations, fetched by CI at build time
-Liftbook/Resources/ExerciseGIFs/
+# Exercise pictures, fetched by CI at build time
+Liftbook/Resources/ExerciseArt/

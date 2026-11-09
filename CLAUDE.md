@@ -12,10 +12,13 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 ## Originality
 - This is an original app. Do not use names, logos, icons, UI copy or
   screenshots from any existing commercial app.
-- Exercise animations come from the ExerciseDB V1 dataset: the owner chose
-  to bundle them into the IPA. They are fetched by CI at build time
-  (`scripts/fetch_exercise_gifs.py`, IDs in
-  `Liftbook/Resources/exercise-animations.json`) and never committed.
+- Exercise pictures are bundled into the IPA, fetched by CI at build time
+  (`scripts/fetch_exercise_art.py` into `Resources/ExerciseArt`) and never
+  committed: RepDB free-tier illustrations (start/peak poses, IDs in
+  `Liftbook/Resources/exercise-illustrations.json`; their license requires
+  the visible "Exercise data by RepDB (repdb.co)" link in Profile and
+  forbids republishing the files), and ExerciseDB V1 GIFs only for the
+  exercises RepDB doesn't cover (`exercise-animations.json`).
 - Write all text, exercise descriptions, and designs from scratch.
 
 ## Stack

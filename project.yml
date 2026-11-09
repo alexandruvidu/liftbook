@@ -26,9 +26,9 @@ targets:
     sources:
       - path: Liftbook
         excludes:
-          - Resources/ExerciseGIFs
-      # Fetched by CI (scripts/fetch_exercise_gifs.py), not committed.
-      - path: Liftbook/Resources/ExerciseGIFs
+          - Resources/ExerciseArt
+      # Fetched by CI (scripts/fetch_exercise_art.py), not committed.
+      - path: Liftbook/Resources/ExerciseArt
         type: folder
         optional: true
     settings:

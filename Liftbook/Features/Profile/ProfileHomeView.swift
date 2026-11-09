@@ -42,6 +42,13 @@ struct ProfileHomeView: View {
                         .font(.footnote)
                         .foregroundStyle(.secondary)
                         .padding(.top, 4)
+
+                    // Required by the RepDB free tier: a visible link in the app.
+                    Link(destination: URL(string: "https://repdb.co")!) {
+                        Text("Exercise data by RepDB (repdb.co)")
+                            .font(.footnote)
+                    }
+                    .accessibilityIdentifier("profile.credits")
                 }
                 .padding(16)
             }

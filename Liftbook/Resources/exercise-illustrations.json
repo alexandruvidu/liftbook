@@ -1,0 +1,756 @@
+{
+  "ab-wheel-rollout": {
+    "peak": "images/flat/ab-wheel-rollout-peak.webp",
+    "start": "images/flat/ab-wheel-rollout-start.webp"
+  },
+  "air-bike": {
+    "main": "images/flat/air-bike-main.webp"
+  },
+  "assisted-dip": {
+    "peak": "images/flat/assisted-dips-peak.webp",
+    "start": "images/flat/assisted-dips-start.webp"
+  },
+  "assisted-pull-up": {
+    "peak": "images/flat/assisted-pull-ups-peak.webp",
+    "start": "images/flat/assisted-pull-ups-start.webp"
+  },
+  "back-extension": {
+    "peak": "images/flat/back-extension-peak.webp",
+    "start": "images/flat/back-extension-start.webp"
+  },
+  "back-squat": {
+    "peak": "images/flat/squat-peak.webp",
+    "start": "images/flat/squat-start.webp"
+  },
+  "band-curl": {
+    "peak": "images/flat/banded-standing-curl-peak.webp",
+    "start": "images/flat/banded-standing-curl-start.webp"
+  },
+  "band-face-pull": {
+    "peak": "images/flat/face-pull-peak.webp",
+    "start": "images/flat/face-pull-start.webp"
+  },
+  "band-good-morning": {
+    "peak": "images/flat/banded-good-morning-peak.webp",
+    "start": "images/flat/banded-good-morning-start.webp"
+  },
+  "band-pull-apart": {
+    "peak": "images/flat/band-pull-apart-peak.webp",
+    "start": "images/flat/band-pull-apart-start.webp"
+  },
+  "band-pushdown": {
+    "peak": "images/flat/tricep-pushdown-peak.webp",
+    "start": "images/flat/tricep-pushdown-start.webp"
+  },
+  "barbell-bench-press": {
+    "peak": "images/flat/bench-press-peak.webp",
+    "start": "images/flat/bench-press-start.webp"
+  },
+  "barbell-curl": {
+    "peak": "images/flat/barbell-curl-peak.webp",
+    "start": "images/flat/barbell-curl-start.webp"
+  },
+  "barbell-shrug": {
+    "peak": "images/flat/shrug-peak.webp",
+    "start": "images/flat/shrug-start.webp"
+  },
+  "battle-ropes": {
+    "main": "images/flat/battle-ropes-main.webp"
+  },
+  "bear-crawl": {
+    "peak": "images/flat/bear-crawl-peak.webp",
+    "start": "images/flat/bear-crawl-start.webp"
+  },
+  "bench-dip": {
+    "peak": "images/flat/bench-dips-peak.webp",
+    "start": "images/flat/bench-dips-start.webp"
+  },
+  "bent-over-barbell-row": {
+    "peak": "images/flat/barbell-row-peak.webp",
+    "start": "images/flat/barbell-row-start.webp"
+  },
+  "bent-over-reverse-fly": {
+    "peak": "images/flat/dumbbell-reverse-fly-peak.webp",
+    "start": "images/flat/dumbbell-reverse-fly-start.webp"
+  },
+  "bicycle-crunch": {
+    "peak": "images/flat/bicycle-crunch-peak.webp",
+    "start": "images/flat/bicycle-crunch-start.webp"
+  },
+  "bird-dog": {
+    "peak": "images/flat/bird-dog-peak.webp",
+    "start": "images/flat/bird-dog-start.webp"
+  },
+  "bodyweight-squat": {
+    "peak": "images/flat/bodyweight-squat-peak.webp",
+    "start": "images/flat/bodyweight-squat-start.webp"
+  },
+  "box-jump": {
+    "peak": "images/flat/box-jump-peak.webp",
+    "start": "images/flat/box-jump-start.webp"
+  },
+  "box-squat": {
+    "peak": "images/flat/barbell-box-squat-peak.webp",
+    "start": "images/flat/barbell-box-squat-start.webp"
+  },
+  "bulgarian-split-squat": {
+    "peak": "images/flat/bulgarian-split-squat-peak.webp",
+    "start": "images/flat/bulgarian-split-squat-start.webp"
+  },
+  "burpee": {
+    "main": "images/flat/burpees-main.webp"
+  },
+  "cable-crossover": {
+    "peak": "images/flat/cable-fly-peak.webp",
+    "start": "images/flat/cable-fly-start.webp"
+  },
+  "cable-crunch": {
+    "peak": "images/flat/cable-crunch-peak.webp",
+    "start": "images/flat/cable-crunch-start.webp"
+  },
+  "cable-curl": {
+    "peak": "images/flat/cable-curl-peak.webp",
+    "start": "images/flat/cable-curl-start.webp"
+  },
+  "cable-glute-abduction": {
+    "peak": "images/flat/standing-hip-abduction-peak.webp",
+    "start": "images/flat/standing-hip-abduction-start.webp"
+  },
+  "cable-hammer-curl": {
+    "peak": "images/flat/cable-hammer-curl-peak.webp",
+    "start": "images/flat/cable-hammer-curl-start.webp"
+  },
+  "cable-kickback": {
+    "peak": "images/flat/cable-kickback-peak.webp",
+    "start": "images/flat/cable-kickback-start.webp"
+  },
+  "cable-lateral-raise": {
+    "peak": "images/flat/cable-lateral-raise-peak.webp",
+    "start": "images/flat/cable-lateral-raise-start.webp"
+  },
+  "cable-pull-through": {
+    "peak": "images/flat/cable-pull-through-peak.webp",
+    "start": "images/flat/cable-pull-through-start.webp"
+  },
+  "cable-rear-delt-fly": {
+    "peak": "images/flat/cable-reverse-fly-peak.webp",
+    "start": "images/flat/cable-reverse-fly-start.webp"
+  },
+  "chest-dip": {
+    "peak": "images/flat/dips-peak.webp",
+    "start": "images/flat/dips-start.webp"
+  },
+  "chest-supported-dumbbell-row": {
+    "peak": "images/flat/chest-supported-db-row-peak.webp",
+    "start": "images/flat/chest-supported-db-row-start.webp"
+  },
+  "chin-up": {
+    "peak": "images/flat/chin-ups-peak.webp",
+    "start": "images/flat/chin-ups-start.webp"
+  },
+  "clamshell": {
+    "peak": "images/flat/clamshells-peak.webp",
+    "start": "images/flat/clamshells-start.webp"
+  },
+  "clean-and-jerk": {
+    "peak": "images/flat/clean-and-jerk-peak.webp",
+    "start": "images/flat/clean-and-jerk-start.webp"
+  },
+  "close-grip-bench-press": {
+    "peak": "images/flat/close-grip-bench-press-peak.webp",
+    "start": "images/flat/close-grip-bench-press-start.webp"
+  },
+  "close-grip-lat-pulldown": {
+    "peak": "images/flat/close-grip-lat-pulldown-peak.webp",
+    "start": "images/flat/close-grip-lat-pulldown-start.webp"
+  },
+  "concentration-curl": {
+    "peak": "images/flat/concentration-curl-peak.webp",
+    "start": "images/flat/concentration-curl-start.webp"
+  },
+  "cossack-squat": {
+    "peak": "images/flat/cossack-squat-peak.webp",
+    "start": "images/flat/cossack-squat-start.webp"
+  },
+  "crunch": {
+    "peak": "images/flat/crunches-peak.webp",
+    "start": "images/flat/crunches-start.webp"
+  },
+  "cycling": {
+    "main": "images/flat/cycling-main.webp"
+  },
+  "dead-bug": {
+    "peak": "images/flat/dead-bug-peak.webp",
+    "start": "images/flat/dead-bug-start.webp"
+  },
+  "dead-hang": {
+    "main": "images/flat/dead-hang-main.webp"
+  },
+  "deadlift": {
+    "peak": "images/flat/deadlift-peak.webp",
+    "start": "images/flat/deadlift-start.webp"
+  },
+  "decline-barbell-bench-press": {
+    "peak": "images/flat/decline-bench-press-barbell-peak.webp",
+    "start": "images/flat/decline-bench-press-barbell-start.webp"
+  },
+  "decline-push-up": {
+    "peak": "images/flat/decline-push-up-peak.webp",
+    "start": "images/flat/decline-push-up-start.webp"
+  },
+  "diamond-push-up": {
+    "peak": "images/flat/diamond-push-ups-peak.webp",
+    "start": "images/flat/diamond-push-ups-start.webp"
+  },
+  "dumbbell-bench-press": {
+    "peak": "images/flat/db-bench-press-peak.webp",
+    "start": "images/flat/db-bench-press-start.webp"
+  },
+  "dumbbell-calf-raise": {
+    "peak": "images/flat/dumbbell-calf-raise-peak.webp",
+    "start": "images/flat/dumbbell-calf-raise-start.webp"
+  },
+  "dumbbell-curl": {
+    "peak": "images/flat/bicep-curl-peak.webp",
+    "start": "images/flat/bicep-curl-start.webp"
+  },
+  "dumbbell-fly": {
+    "peak": "images/flat/db-fly-peak.webp",
+    "start": "images/flat/db-fly-start.webp"
+  },
+  "dumbbell-front-raise": {
+    "peak": "images/flat/dumbbell-front-raise-peak.webp",
+    "start": "images/flat/dumbbell-front-raise-start.webp"
+  },
+  "dumbbell-lateral-raise": {
+    "peak": "images/flat/lateral-raise-peak.webp",
+    "start": "images/flat/lateral-raise-start.webp"
+  },
+  "dumbbell-lying-triceps-extension": {
+    "peak": "images/flat/lying-tricep-extension-peak.webp",
+    "start": "images/flat/lying-tricep-extension-start.webp"
+  },
+  "dumbbell-pullover": {
+    "peak": "images/flat/db-pullover-peak.webp",
+    "start": "images/flat/db-pullover-start.webp"
+  },
+  "dumbbell-romanian-deadlift": {
+    "peak": "images/flat/dumbbell-romanian-deadlift-peak.webp",
+    "start": "images/flat/dumbbell-romanian-deadlift-start.webp"
+  },
+  "dumbbell-shrug": {
+    "peak": "images/flat/db-shrug-peak.webp",
+    "start": "images/flat/db-shrug-start.webp"
+  },
+  "dumbbell-snatch": {
+    "peak": "images/flat/dumbbell-snatch-peak.webp",
+    "start": "images/flat/dumbbell-snatch-start.webp"
+  },
+  "dumbbell-upright-row": {
+    "peak": "images/flat/dumbbell-upright-row-peak.webp",
+    "start": "images/flat/dumbbell-upright-row-start.webp"
+  },
+  "elliptical": {
+    "main": "images/flat/elliptical-trainer-main.webp"
+  },
+  "ez-bar-curl": {
+    "peak": "images/flat/ez-bar-curl-peak.webp",
+    "start": "images/flat/ez-bar-curl-start.webp"
+  },
+  "face-pull": {
+    "peak": "images/flat/face-pull-peak.webp",
+    "start": "images/flat/face-pull-start.webp"
+  },
+  "farmers-carry": {
+    "main": "images/flat/dumbbell-farmers-walk-main.webp"
+  },
+  "front-squat": {
+    "peak": "images/flat/front-squat-peak.webp",
+    "start": "images/flat/front-squat-start.webp"
+  },
+  "glute-bridge": {
+    "peak": "images/flat/glute-bridge-peak.webp",
+    "start": "images/flat/glute-bridge-start.webp"
+  },
+  "goblet-squat": {
+    "peak": "images/flat/db-goblet-squat-peak.webp",
+    "start": "images/flat/db-goblet-squat-start.webp"
+  },
+  "good-morning": {
+    "peak": "images/flat/good-morning-peak.webp",
+    "start": "images/flat/good-morning-start.webp"
+  },
+  "hack-squat": {
+    "peak": "images/flat/hack-squat-peak.webp",
+    "start": "images/flat/hack-squat-start.webp"
+  },
+  "hammer-curl": {
+    "peak": "images/flat/hammer-curl-peak.webp",
+    "start": "images/flat/hammer-curl-start.webp"
+  },
+  "handstand-push-up": {
+    "peak": "images/flat/handstand-push-ups-peak.webp",
+    "start": "images/flat/handstand-push-ups-start.webp"
+  },
+  "hang-clean": {
+    "peak": "images/flat/hang-clean-peak.webp",
+    "start": "images/flat/hang-clean-start.webp"
+  },
+  "hanging-knee-raise": {
+    "peak": "images/flat/hanging-knee-raise-peak.webp",
+    "start": "images/flat/hanging-knee-raise-start.webp"
+  },
+  "hanging-leg-raise": {
+    "peak": "images/flat/hanging-leg-raise-peak.webp",
+    "start": "images/flat/hanging-leg-raise-start.webp"
+  },
+  "hiking": {
+    "main": "images/flat/walking-main.webp"
+  },
+  "hip-abduction-machine": {
+    "peak": "images/flat/hip-abduction-peak.webp",
+    "start": "images/flat/hip-abduction-start.webp"
+  },
+  "hip-adduction-machine": {
+    "peak": "images/flat/hip-adduction-peak.webp",
+    "start": "images/flat/hip-adduction-start.webp"
+  },
+  "hip-thrust": {
+    "peak": "images/flat/hip-thrust-peak.webp",
+    "start": "images/flat/hip-thrust-start.webp"
+  },
+  "hollow-body-hold": {
+    "main": "images/flat/hollow-body-hold-main.webp"
+  },
+  "incline-barbell-bench-press": {
+    "peak": "images/flat/incline-bench-press-peak.webp",
+    "start": "images/flat/incline-bench-press-start.webp"
+  },
+  "incline-dumbbell-curl": {
+    "peak": "images/flat/incline-db-curl-peak.webp",
+    "start": "images/flat/incline-db-curl-start.webp"
+  },
+  "incline-dumbbell-fly": {
+    "peak": "images/flat/incline-dumbbell-fly-peak.webp",
+    "start": "images/flat/incline-dumbbell-fly-start.webp"
+  },
+  "incline-dumbbell-press": {
+    "peak": "images/flat/incline-db-press-peak.webp",
+    "start": "images/flat/incline-db-press-start.webp"
+  },
+  "incline-push-up": {
+    "peak": "images/flat/incline-push-ups-peak.webp",
+    "start": "images/flat/incline-push-ups-start.webp"
+  },
+  "incline-treadmill-walk": {
+    "main": "images/flat/incline-treadmill-walk-main.webp"
+  },
+  "inverted-row": {
+    "peak": "images/flat/inverted-row-peak.webp",
+    "start": "images/flat/inverted-row-start.webp"
+  },
+  "jump-rope": {
+    "main": "images/flat/jump-rope-main.webp"
+  },
+  "jump-squat": {
+    "peak": "images/flat/jump-squat-peak.webp",
+    "start": "images/flat/jump-squat-start.webp"
+  },
+  "jumping-jack": {
+    "peak": "images/flat/jumping-jacks-peak.webp",
+    "start": "images/flat/jumping-jacks-start.webp"
+  },
+  "kettlebell-deadlift": {
+    "peak": "images/flat/kettlebell-deadlift-peak.webp",
+    "start": "images/flat/kettlebell-deadlift-start.webp"
+  },
+  "kettlebell-goblet-squat": {
+    "peak": "images/flat/goblet-squat-peak.webp",
+    "start": "images/flat/goblet-squat-start.webp"
+  },
+  "kettlebell-halo": {
+    "peak": "images/flat/kettlebell-halo-peak.webp",
+    "start": "images/flat/kettlebell-halo-start.webp"
+  },
+  "kettlebell-press": {
+    "peak": "images/flat/one-arm-kettlebell-shoulder-press-peak.webp",
+    "start": "images/flat/one-arm-kettlebell-shoulder-press-start.webp"
+  },
+  "kettlebell-row": {
+    "peak": "images/flat/one-arm-kettlebell-row-peak.webp",
+    "start": "images/flat/one-arm-kettlebell-row-start.webp"
+  },
+  "kettlebell-swing": {
+    "peak": "images/flat/kettlebell-swing-peak.webp",
+    "start": "images/flat/kettlebell-swing-start.webp"
+  },
+  "landmine-press": {
+    "peak": "images/flat/landmine-press-peak.webp",
+    "start": "images/flat/landmine-press-start.webp"
+  },
+  "lat-pulldown": {
+    "peak": "images/flat/lat-pulldown-peak.webp",
+    "start": "images/flat/lat-pulldown-start.webp"
+  },
+  "lateral-band-walk": {
+    "peak": "images/flat/banded-lateral-walk-peak.webp",
+    "start": "images/flat/banded-lateral-walk-start.webp"
+  },
+  "leg-extension": {
+    "peak": "images/flat/leg-extension-peak.webp",
+    "start": "images/flat/leg-extension-start.webp"
+  },
+  "leg-press": {
+    "peak": "images/flat/leg-press-peak.webp",
+    "start": "images/flat/leg-press-start.webp"
+  },
+  "lying-leg-curl": {
+    "peak": "images/flat/leg-curl-peak.webp",
+    "start": "images/flat/leg-curl-start.webp"
+  },
+  "lying-leg-raise": {
+    "peak": "images/flat/lying-leg-raise-peak.webp",
+    "start": "images/flat/lying-leg-raise-start.webp"
+  },
+  "lying-triceps-extension": {
+    "peak": "images/flat/ez-bar-lying-tricep-extension-peak.webp",
+    "start": "images/flat/ez-bar-lying-tricep-extension-start.webp"
+  },
+  "machine-chest-press": {
+    "peak": "images/flat/chest-press-machine-peak.webp",
+    "start": "images/flat/chest-press-machine-start.webp"
+  },
+  "machine-crunch": {
+    "peak": "images/flat/machine-seated-crunch-peak.webp",
+    "start": "images/flat/machine-seated-crunch-start.webp"
+  },
+  "machine-hip-thrust": {
+    "peak": "images/flat/plate-loaded-glute-drive-peak.webp",
+    "start": "images/flat/plate-loaded-glute-drive-start.webp"
+  },
+  "machine-lateral-raise": {
+    "peak": "images/flat/plate-loaded-lateral-raise-peak.webp",
+    "start": "images/flat/plate-loaded-lateral-raise-start.webp"
+  },
+  "machine-preacher-curl": {
+    "peak": "images/flat/machine-preacher-curl-peak.webp",
+    "start": "images/flat/machine-preacher-curl-start.webp"
+  },
+  "machine-row": {
+    "peak": "images/flat/chest-supported-machine-row-peak.webp",
+    "start": "images/flat/chest-supported-machine-row-start.webp"
+  },
+  "machine-shoulder-press": {
+    "peak": "images/flat/machine-shoulder-press-peak.webp",
+    "start": "images/flat/machine-shoulder-press-start.webp"
+  },
+  "machine-triceps-extension": {
+    "peak": "images/flat/machine-triceps-extension-peak.webp",
+    "start": "images/flat/machine-triceps-extension-start.webp"
+  },
+  "medicine-ball-slam": {
+    "peak": "images/flat/medicine-ball-slam-peak.webp",
+    "start": "images/flat/medicine-ball-slam-start.webp"
+  },
+  "mountain-climber": {
+    "peak": "images/flat/mountain-climbers-peak.webp",
+    "start": "images/flat/mountain-climbers-start.webp"
+  },
+  "neutral-grip-pull-up": {
+    "peak": "images/flat/neutral-grip-pull-ups-peak.webp",
+    "start": "images/flat/neutral-grip-pull-ups-start.webp"
+  },
+  "nordic-hamstring-curl": {
+    "peak": "images/flat/nordic-hamstring-curl-peak.webp",
+    "start": "images/flat/nordic-hamstring-curl-start.webp"
+  },
+  "one-arm-dumbbell-row": {
+    "peak": "images/flat/single-arm-db-row-peak.webp",
+    "start": "images/flat/single-arm-db-row-start.webp"
+  },
+  "overhead-cable-triceps-extension": {
+    "peak": "images/flat/cable-overhead-tricep-extension-peak.webp",
+    "start": "images/flat/cable-overhead-tricep-extension-start.webp"
+  },
+  "overhead-dumbbell-triceps-extension": {
+    "peak": "images/flat/overhead-tricep-extension-peak.webp",
+    "start": "images/flat/overhead-tricep-extension-start.webp"
+  },
+  "overhead-press": {
+    "peak": "images/flat/ohp-peak.webp",
+    "start": "images/flat/ohp-start.webp"
+  },
+  "pallof-press": {
+    "peak": "images/flat/cable-pallof-press-peak.webp",
+    "start": "images/flat/cable-pallof-press-start.webp"
+  },
+  "pec-deck": {
+    "peak": "images/flat/pec-deck-peak.webp",
+    "start": "images/flat/pec-deck-start.webp"
+  },
+  "pendlay-row": {
+    "peak": "images/flat/pendlay-row-peak.webp",
+    "start": "images/flat/pendlay-row-start.webp"
+  },
+  "pike-push-up": {
+    "peak": "images/flat/pike-push-ups-peak.webp",
+    "start": "images/flat/pike-push-ups-start.webp"
+  },
+  "pistol-squat": {
+    "peak": "images/flat/pistol-squat-peak.webp",
+    "start": "images/flat/pistol-squat-start.webp"
+  },
+  "plank": {
+    "main": "images/flat/plank-main.webp"
+  },
+  "plate-pinch": {
+    "peak": "images/flat/plate-pinch-peak.webp",
+    "start": "images/flat/plate-pinch-start.webp"
+  },
+  "preacher-curl": {
+    "peak": "images/flat/preacher-curl-peak.webp",
+    "start": "images/flat/preacher-curl-start.webp"
+  },
+  "pull-up": {
+    "peak": "images/flat/pull-up-peak.webp",
+    "start": "images/flat/pull-up-start.webp"
+  },
+  "push-press": {
+    "peak": "images/flat/push-press-peak.webp",
+    "start": "images/flat/push-press-start.webp"
+  },
+  "push-up": {
+    "peak": "images/flat/push-up-peak.webp",
+    "start": "images/flat/push-up-start.webp"
+  },
+  "rack-pull": {
+    "peak": "images/flat/rack-pull-peak.webp",
+    "start": "images/flat/rack-pull-start.webp"
+  },
+  "renegade-row": {
+    "peak": "images/flat/renegade-row-peak.webp",
+    "start": "images/flat/renegade-row-start.webp"
+  },
+  "reverse-curl": {
+    "peak": "images/flat/ez-bar-reverse-curl-peak.webp",
+    "start": "images/flat/ez-bar-reverse-curl-start.webp"
+  },
+  "reverse-lunge": {
+    "peak": "images/flat/reverse-lunge-peak.webp",
+    "start": "images/flat/reverse-lunge-start.webp"
+  },
+  "reverse-pec-deck": {
+    "peak": "images/flat/machine-reverse-fly-peak.webp",
+    "start": "images/flat/machine-reverse-fly-start.webp"
+  },
+  "reverse-wrist-curl": {
+    "peak": "images/flat/db-reverse-wrist-curl-peak.webp",
+    "start": "images/flat/db-reverse-wrist-curl-start.webp"
+  },
+  "romanian-deadlift": {
+    "peak": "images/flat/romanian-deadlift-peak.webp",
+    "start": "images/flat/romanian-deadlift-start.webp"
+  },
+  "rope-pushdown": {
+    "peak": "images/flat/tricep-pushdown-peak.webp",
+    "start": "images/flat/tricep-pushdown-start.webp"
+  },
+  "rowing-machine": {
+    "peak": "images/flat/rowing-machine-peak.webp",
+    "start": "images/flat/rowing-machine-start.webp"
+  },
+  "running": {
+    "main": "images/flat/running-main.webp"
+  },
+  "russian-twist": {
+    "peak": "images/flat/russian-twist-peak.webp",
+    "start": "images/flat/russian-twist-start.webp"
+  },
+  "seated-barbell-shoulder-press": {
+    "peak": "images/flat/seated-barbell-overhead-press-peak.webp",
+    "start": "images/flat/seated-barbell-overhead-press-start.webp"
+  },
+  "seated-cable-row": {
+    "peak": "images/flat/seated-cable-row-peak.webp",
+    "start": "images/flat/seated-cable-row-start.webp"
+  },
+  "seated-calf-raise": {
+    "peak": "images/flat/seated-calf-raise-peak.webp",
+    "start": "images/flat/seated-calf-raise-start.webp"
+  },
+  "seated-dumbbell-curl": {
+    "peak": "images/flat/seated-dumbbell-curl-peak.webp",
+    "start": "images/flat/seated-dumbbell-curl-start.webp"
+  },
+  "seated-dumbbell-shoulder-press": {
+    "peak": "images/flat/seated-db-press-peak.webp",
+    "start": "images/flat/seated-db-press-start.webp"
+  },
+  "seated-leg-curl": {
+    "peak": "images/flat/seated-leg-curl-peak.webp",
+    "start": "images/flat/seated-leg-curl-start.webp"
+  },
+  "side-plank": {
+    "main": "images/flat/side-plank-main.webp"
+  },
+  "single-arm-cable-pushdown": {
+    "peak": "images/flat/single-arm-tricep-pushdown-peak.webp",
+    "start": "images/flat/single-arm-tricep-pushdown-start.webp"
+  },
+  "single-arm-lat-pulldown": {
+    "peak": "images/flat/one-arm-lat-pulldown-peak.webp",
+    "start": "images/flat/one-arm-lat-pulldown-start.webp"
+  },
+  "single-leg-calf-raise": {
+    "peak": "images/flat/single-leg-calf-raise-peak.webp",
+    "start": "images/flat/single-leg-calf-raise-start.webp"
+  },
+  "single-leg-glute-bridge": {
+    "peak": "images/flat/single-leg-glute-bridge-peak.webp",
+    "start": "images/flat/single-leg-glute-bridge-start.webp"
+  },
+  "single-leg-romanian-deadlift": {
+    "peak": "images/flat/single-leg-romanian-deadlift-peak.webp",
+    "start": "images/flat/single-leg-romanian-deadlift-start.webp"
+  },
+  "sit-up": {
+    "peak": "images/flat/sit-ups-peak.webp",
+    "start": "images/flat/sit-ups-start.webp"
+  },
+  "ski-machine": {
+    "peak": "images/flat/ski-erg-peak.webp",
+    "start": "images/flat/ski-erg-start.webp"
+  },
+  "sled-push": {
+    "main": "images/flat/sled-push-main.webp"
+  },
+  "smith-machine-bench-press": {
+    "peak": "images/flat/smith-machine-bench-press-peak.webp",
+    "start": "images/flat/smith-machine-bench-press-start.webp"
+  },
+  "smith-machine-calf-raise": {
+    "peak": "images/flat/smith-machine-calf-raise-peak.webp",
+    "start": "images/flat/smith-machine-calf-raise-start.webp"
+  },
+  "smith-machine-incline-press": {
+    "peak": "images/flat/smith-machine-incline-bench-press-peak.webp",
+    "start": "images/flat/smith-machine-incline-bench-press-start.webp"
+  },
+  "smith-machine-shoulder-press": {
+    "peak": "images/flat/smith-machine-shoulder-press-peak.webp",
+    "start": "images/flat/smith-machine-shoulder-press-start.webp"
+  },
+  "smith-machine-squat": {
+    "peak": "images/flat/smith-machine-squat-peak.webp",
+    "start": "images/flat/smith-machine-squat-start.webp"
+  },
+  "snatch": {
+    "peak": "images/flat/snatch-peak.webp",
+    "start": "images/flat/snatch-start.webp"
+  },
+  "spider-curl": {
+    "peak": "images/flat/spider-curl-peak.webp",
+    "start": "images/flat/spider-curl-start.webp"
+  },
+  "split-squat": {
+    "peak": "images/flat/dumbbell-split-squat-peak.webp",
+    "start": "images/flat/dumbbell-split-squat-start.webp"
+  },
+  "stair-climber": {
+    "main": "images/flat/stair-climber-main.webp"
+  },
+  "standing-calf-raise": {
+    "peak": "images/flat/standing-calf-raise-peak.webp",
+    "start": "images/flat/standing-calf-raise-start.webp"
+  },
+  "standing-dumbbell-shoulder-press": {
+    "peak": "images/flat/dumbbell-shoulder-press-peak.webp",
+    "start": "images/flat/dumbbell-shoulder-press-start.webp"
+  },
+  "stationary-bike": {
+    "main": "images/flat/stationary-bike-main.webp"
+  },
+  "step-up": {
+    "peak": "images/flat/step-ups-peak.webp",
+    "start": "images/flat/step-ups-start.webp"
+  },
+  "stiff-leg-deadlift": {
+    "peak": "images/flat/stiff-leg-deadlift-peak.webp",
+    "start": "images/flat/stiff-leg-deadlift-start.webp"
+  },
+  "straight-arm-pulldown": {
+    "peak": "images/flat/straight-arm-pulldown-peak.webp",
+    "start": "images/flat/straight-arm-pulldown-start.webp"
+  },
+  "suitcase-carry": {
+    "main": "images/flat/suitcase-carry-main.webp"
+  },
+  "sumo-deadlift": {
+    "peak": "images/flat/sumo-deadlift-peak.webp",
+    "start": "images/flat/sumo-deadlift-start.webp"
+  },
+  "superman-hold": {
+    "peak": "images/flat/superman-peak.webp",
+    "start": "images/flat/superman-start.webp"
+  },
+  "t-bar-row": {
+    "peak": "images/flat/t-bar-row-peak.webp",
+    "start": "images/flat/t-bar-row-start.webp"
+  },
+  "thruster": {
+    "peak": "images/flat/thruster-peak.webp",
+    "start": "images/flat/thruster-start.webp"
+  },
+  "trap-bar-deadlift": {
+    "peak": "images/flat/hex-bar-deadlift-peak.webp",
+    "start": "images/flat/hex-bar-deadlift-start.webp"
+  },
+  "treadmill-run": {
+    "main": "images/flat/treadmill-running-main.webp"
+  },
+  "triceps-dip": {
+    "peak": "images/flat/bench-dips-peak.webp",
+    "start": "images/flat/bench-dips-start.webp"
+  },
+  "triceps-kickback": {
+    "peak": "images/flat/tricep-kickback-peak.webp",
+    "start": "images/flat/tricep-kickback-start.webp"
+  },
+  "triceps-pushdown": {
+    "peak": "images/flat/tricep-pushdown-peak.webp",
+    "start": "images/flat/tricep-pushdown-start.webp"
+  },
+  "turkish-get-up": {
+    "peak": "images/flat/kettlebell-turkish-get-ups-peak.webp",
+    "start": "images/flat/kettlebell-turkish-get-ups-start.webp"
+  },
+  "upright-row": {
+    "peak": "images/flat/upright-row-peak.webp",
+    "start": "images/flat/upright-row-start.webp"
+  },
+  "v-up": {
+    "peak": "images/flat/v-ups-peak.webp",
+    "start": "images/flat/v-ups-start.webp"
+  },
+  "walking": {
+    "main": "images/flat/walking-main.webp"
+  },
+  "walking-lunge": {
+    "peak": "images/flat/walking-lunge-peak.webp",
+    "start": "images/flat/walking-lunge-start.webp"
+  },
+  "wall-ball": {
+    "main": "images/flat/wall-ball-main.webp"
+  },
+  "wall-sit": {
+    "main": "images/flat/wall-sit-main.webp"
+  },
+  "weighted-pull-up": {
+    "peak": "images/flat/weighted-pull-up-peak.webp",
+    "start": "images/flat/weighted-pull-up-start.webp"
+  },
+  "wrist-curl": {
+    "peak": "images/flat/wrist-curl-peak.webp",
+    "start": "images/flat/wrist-curl-start.webp"
+  }
+}

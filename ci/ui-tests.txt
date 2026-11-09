@@ -1,1 +1,3 @@
-TabBarUITests
+ExerciseArtUITests
+ExerciseMediaUITests
+ExerciseLibraryUITests

@@ -64,8 +64,8 @@ struct ExerciseCard: View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-        } else if let url = ExerciseAnimation.url(for: exercise.id), let frame = ExerciseAnimation.firstFrame(url) {
-            // Bundled animations have a white background; show it whole.
+        } else if let frame = ExerciseArt.of(exercise.id)?.still {
+            // Bundled pictures are square with a plain background; show them whole.
             Color.white.overlay {
                 Image(uiImage: frame)
                     .resizable()

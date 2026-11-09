@@ -1,22 +1,22 @@
 import SwiftUI
 
 /// An exercise's own photos and videos, one page each, then its bundled
-/// animation (if it has one) on the last page.
+/// picture (if it has one) on the last page.
 struct MediaGallery: View {
     let media: [ExerciseMedia]
-    /// The bundled animation, if any.
-    var animation: URL?
+    /// The bundled picture, if any.
+    var art: ExerciseArt?
     var store: MediaStore = .standard
 
     var body: some View {
         let pages = Self.pages(for: media)
-        let count = pages.count + (animation == nil ? 0 : 1)
+        let count = pages.count + (art == nil ? 0 : 1)
         TabView {
             ForEach(pages, id: \.first!.mediaID) { page in
                 pageView(page)
             }
-            if let animation {
-                AnimatedExerciseView(url: animation)
+            if let art {
+                ExerciseArtView(art: art)
                     .background(Color.white)
             }
         }

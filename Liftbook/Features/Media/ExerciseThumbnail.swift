@@ -3,7 +3,7 @@ import SwiftData
 import SwiftUI
 
 /// A small square picture for an exercise: its machine's photo, else its
-/// first photo or video frame, else a symbol for its equipment.
+/// first photo or video frame, else its bundled picture, else a symbol for its equipment.
 struct ExerciseThumbnail: View {
     let exerciseID: String
     let equipment: Equipment
@@ -42,7 +42,7 @@ struct ExerciseThumbnail: View {
     private var image: UIImage? {
         if let machinePhoto, let photo = PhotoStore.machines.load(machinePhoto) { return photo }
         guard let first = media.display(for: exerciseID).first else {
-            return ExerciseAnimation.url(for: exerciseID).flatMap(ExerciseAnimation.firstFrame)
+            return ExerciseArt.of(exerciseID)?.still
         }
         switch first.kind {
         case .photo: return MediaStore.standard.loadImage(first.fileName)
