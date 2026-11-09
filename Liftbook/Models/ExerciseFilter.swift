@@ -30,8 +30,27 @@ struct ExerciseFilter: Equatable, Sendable {
         return words.allSatisfy { haystack.contains($0) }
     }
 
+    /// The matching exercises. With search text, the best matches come first:
+    /// the exact name, then names starting with the text, then names holding
+    /// every word, then matches through muscle or equipment; shorter (more
+    /// basic) names first within each. Without text, the order is kept.
     func apply(to exercises: [LibraryExercise]) -> [LibraryExercise] {
-        exercises.filter(matches)
+        let matching = exercises.filter(matches)
+        let words = Self.tokens(in: query)
+        guard !words.isEmpty else { return matching }
+        let joined = words.joined()
+        let ranked = matching.map { exercise -> (exercise: LibraryExercise, rank: Int, length: Int) in
+            let nameWords = Self.tokens(in: exercise.name)
+            let name = nameWords.joined()
+            let rank = name == joined ? 0
+                : name.hasPrefix(joined) ? 1
+                : words.allSatisfy { word in nameWords.contains { $0.hasPrefix(word) } } ? 2
+                : words.allSatisfy { name.contains($0) } ? 3
+                : 4
+            return (exercise, rank, exercise.name.count)
+        }
+        // Sorting is stable, so equal matches keep the library's A–Z order.
+        return ranked.sorted { ($0.rank, $0.length) < ($1.rank, $1.length) }.map(\.exercise)
     }
 
     /// Lowercases, strips accents, and drops hyphens and apostrophes so that

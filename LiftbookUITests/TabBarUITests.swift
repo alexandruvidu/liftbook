@@ -4,7 +4,7 @@ import XCTest
 final class TabBarUITests: XCTestCase {
     private static let tabs: [(title: String, contentID: String)] = [
         ("Home", "workout.emptyNewRoutine"),
-        ("Exercises", "exercise.row.ab-wheel-rollout"),
+        ("Exercises", "exercises.resultCount"),
         ("Activity", "activity.week"),
         ("Profile", "profile.body"),
     ]

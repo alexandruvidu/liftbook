@@ -3,9 +3,9 @@ import XCTest
 @MainActor
 final class ExerciseTypeUITests: XCTestCase {
     private static let cases: [(id: String, query: String, example: String, shot: String)] = [
-        ("barbell-bench-press", "bench", "60 kg × 8", "weight-reps"),
+        ("barbell-bench-press", "barbell bench press", "60 kg × 8", "weight-reps"),
         ("pull-up", "pull-up", "12 reps", "bodyweight"),
-        ("assisted-pull-up", "assisted", "8 reps · 20 kg assist", "assisted"),
+        ("assisted-pull-up", "assisted pull-up", "8 reps · 20 kg assist", "assisted"),
         ("plank", "plank", "1:00", "duration"),
         ("running", "running", "5 km in 25:00", "distance"),
     ]

@@ -18,7 +18,7 @@ final class CustomExerciseUITests: XCTestCase {
         app.buttons["exercises.add"].tap()
         let name = app.textFields["editor.name"]
         XCTAssertTrue(name.waitForExistence(timeout: 5))
-        name.enter("Sandbag Carry")
+        name.enter("Sandbag Shoulder Walk")
         let save = app.buttons["editor.save"]
         XCTAssertFalse(save.isEnabled, "Save should need a primary muscle")
 
@@ -42,12 +42,12 @@ final class CustomExerciseUITests: XCTestCase {
 
         // Edit
         row.tap()
-        XCTAssertTrue(app.navigationBars["Sandbag Carry"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Sandbag Shoulder Walk"].waitForExistence(timeout: 5))
         app.buttons["exercise.edit"].tap()
         XCTAssertTrue(name.waitForExistence(timeout: 5))
-        name.enter(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20) + "Heavy Sandbag Carry")
+        name.enter(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 30) + "Heavy Sandbag Shoulder Walk")
         save.tap()
-        XCTAssertTrue(app.navigationBars["Heavy Sandbag Carry"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Heavy Sandbag Shoulder Walk"].waitForExistence(timeout: 5))
         snap("custom-exercise-detail-\(appearance)")
 
         // Delete

@@ -16,15 +16,16 @@ final class ExerciseLibraryUITests: XCTestCase {
 
         app.openTab("Exercises")
         XCTAssertTrue(app.navigationBars["Exercises"].waitForExistence(timeout: 10))
-        XCTAssertTrue(app.buttons["exercise.row.ab-wheel-rollout"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.firstExerciseRow.waitForExistence(timeout: 5))
         snap("exercise-list-\(appearance)")
 
+        // Thousands of exercises: search rather than scroll.
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.enter("barbell bench press")
         let row = app.buttons["exercise.row.barbell-bench-press"]
-        var swipes = 0
-        while !row.isHittable && swipes < 10 {
-            app.swipeUp()
-            swipes += 1
-        }
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        app.dismissKeyboard()
         row.tap()
 
         XCTAssertTrue(app.navigationBars["Barbell Bench Press"].waitForExistence(timeout: 5))

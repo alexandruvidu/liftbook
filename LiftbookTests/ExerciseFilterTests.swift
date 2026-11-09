@@ -87,4 +87,25 @@ struct ExerciseFilterTests {
         #expect(sections.map(\.letter) == sections.map(\.letter).sorted())
         #expect(sections.reduce(0) { $0 + $1.exercises.count } == results.count)
     }
+
+    @Test func bestMatchesComeFirst() {
+        let names = ["Plank Jack", "Side Plank", "Plank", "Weighted Plank Row"]
+        let exercises = names.map { name in
+            LibraryExercise(id: name, name: name, primaryMuscles: [.abs], secondaryMuscles: [],
+                            equipment: .none, type: .duration, details: "")
+        }
+        let ranked = ExerciseFilter(query: "plank").apply(to: ExerciseLibrary(exercises: exercises).exercises)
+        #expect(ranked.map(\.name) == ["Plank", "Plank Jack", "Side Plank", "Weighted Plank Row"])
+    }
+
+    @Test func hyphenatedNamesMatchExactly() {
+        let first = ExerciseFilter(query: "pull up").apply(to: ExerciseLibrary.bundled.exercises).first
+        #expect(first?.id == "pull-up")
+    }
+
+    @Test func emptyQueryKeepsLibraryOrder() {
+        #expect(ExerciseFilter(equipment: .machine).apply(to: all).map(\.id)
+            == all.filter { $0.equipment == .machine }.map(\.id))
+    }
 }
+

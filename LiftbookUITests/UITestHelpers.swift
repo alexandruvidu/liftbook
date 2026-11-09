@@ -111,3 +111,10 @@ extension XCUIApplication {
         if search.exists { search.tap() } else { swipeDown() }
     }
 }
+
+extension XCUIApplication {
+    /// The first exercise in the library grid, whatever it is.
+    var firstExerciseRow: XCUIElement {
+        buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'exercise.row.'")).firstMatch
+    }
+}

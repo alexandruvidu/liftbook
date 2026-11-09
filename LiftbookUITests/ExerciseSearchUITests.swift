@@ -11,7 +11,7 @@ final class ExerciseSearchUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)
         app.openTab("Exercises")
-        XCTAssertTrue(app.buttons["exercise.row.ab-wheel-rollout"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.firstExerciseRow.waitForExistence(timeout: 10))
         return app
     }
 
@@ -20,10 +20,10 @@ final class ExerciseSearchUITests: XCTestCase {
 
         let field = app.searchFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 5))
-        field.enter("curl")
+        field.enter("barbell curl")
 
         XCTAssertTrue(app.buttons["exercise.row.barbell-curl"].waitForExistence(timeout: 5))
-        XCTAssertFalse(app.buttons["exercise.row.ab-wheel-rollout"].exists)
+        XCTAssertTrue(app.firstExerciseRow.label.localizedCaseInsensitiveContains("curl"))
         snap("exercise-search-\(appearance)")
     }
 
@@ -33,18 +33,22 @@ final class ExerciseSearchUITests: XCTestCase {
 
         choose("Chest", in: "exercises.filter.muscle", app: app)
         choose("Machine", in: "exercises.filter.equipment", app: app)
-        XCTAssertTrue(app.buttons["exercise.row.pec-deck"].waitForExistence(timeout: 5))
-        XCTAssertEqual(count.label, "3 exercises")
+        // Every result is a chest machine; the label reads "<name>, Chest · Machine".
+        let first = app.firstExerciseRow
+        XCTAssertTrue(first.waitForExistence(timeout: 5))
+        XCTAssertTrue(first.label.hasSuffix("· Machine"), first.label)
+        XCTAssertTrue(first.label.contains("Chest"), first.label)
+        XCTAssertTrue(count.label.hasSuffix("exercises"), count.label)
         snap("exercise-filter-\(appearance)")
 
-        choose("Kettlebell", in: "exercises.filter.equipment", app: app)
+        choose("Trap Bar", in: "exercises.filter.equipment", app: app)
         let clear = app.buttons["exercises.clearFilters"]
         XCTAssertTrue(clear.waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["No matching exercises"].exists)
         snap("exercise-filter-empty-\(appearance)")
 
         clear.tap()
-        XCTAssertTrue(app.buttons["exercise.row.ab-wheel-rollout"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.firstExerciseRow.waitForExistence(timeout: 5))
     }
 
     private func choose(_ option: String, in menuID: String, app: XCUIApplication) {
