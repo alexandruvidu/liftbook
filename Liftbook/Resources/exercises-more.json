@@ -265,7 +265,7 @@
    "adductors"
   ],
   "secondaryMuscles": [],
-  "equipment": "other",
+  "equipment": "machine",
   "type": "duration",
   "description": "Lie face down with one leg on a foam roll. Rotate the leg so that the foam roll contacts against your inner thigh. Shift as much weight onto the foam roll as can be tolerated. While trying to relax the muscles if the inner thigh, roll over the foam between your hip and knee, holding points of tension for 10-30 seconds. Repeat with the other leg."
  },
@@ -279,8 +279,8 @@
    "hamstrings",
    "glutes"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Start on all fours with your hands under your shoulders and your knees under your hips. Extend one leg straight out to the side with the foot flat on the floor and the toes pointing forward. Keep your back flat and slowly push your hips back towards the heel of the kneeling leg until you feel a stretch along the inside of the extended leg. Pause briefly, then return to the starting position. Complete all repetitions on one side before switching legs. Mobility exercise for the adductors and the hips."
  },
  {
@@ -290,7 +290,7 @@
    "adductors"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "duration",
   "description": "Lie on your back with your feet raised towards the ceiling. Have your partner hold your feet or ankles. Abduct your legs as far as you can. This will be your starting position. Attempt to squeeze your legs together for 10 or more seconds, while your partner prevents you from doing so. Now, relax the muscles in your legs as your partner pushes your feet apart, stretching as far as is comfortable for you. Be sure to let your partner know when the stretch is adequate to prevent overstretching or injury."
  },
@@ -939,7 +939,7 @@
    "hamstrings",
    "glutes"
   ],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "duration",
   "description": "Settle onto your side with your legs straight and stacked on top of each other. Before moving, bend your bottom leg slightly for stability. Settle into the starting position and take an easy breath before moving deeper. Ease toward the stretch until you feel mild tension; keep breathing and avoid bouncing. Stay in a mild stretch rather than pulling farther with momentum. Hold the position with steady breathing, then release gently; repeat on the other side if needed."
  },
@@ -1471,7 +1471,7 @@
    "calves",
    "glutes"
   ],
-  "equipment": "other",
+  "equipment": "machine",
   "type": "weightAndReps",
   "description": "Begin on the floor laying on your back with your feet on top of the ball. Position the ball so that when your legs are extended your ankles are on top of the ball. This will be your starting position. Raise your hips off of the ground, keeping your weight on the shoulder blades and your feet. Flex the knees, pulling the ball as close to you as you can, contracting the hamstrings. After a brief pause, return to the starting position."
  },
@@ -4764,7 +4764,7 @@
   "secondaryMuscles": [
    "hamstrings"
   ],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "duration",
   "description": "",
   "repdbID": "bench-adductor-stretch"
@@ -8940,17 +8940,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Take hold of the parallel bars with your palms facing down and your arms straight. Before moving, bend your knees and cross your ankles. Set the shoulders down and keep the elbows pointed mostly behind you. Bend the elbows to lower between the supports; stop at a comfortable shoulder depth. Choose a depth that lets the shoulders stay comfortable. Press through the hands to rise, then reset the shoulders before another rep."
- },
- {
-  "id": "chest-press",
-  "name": "Chest Press",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Adjust the seat height so that the grips are parallel to your chest. Use your legs to push the foot forward pedal. Bring the handles to the start position. Keep your back in contact with the back pad, press outwards. Press the handles away from your chest and exhale. Allow the handles to come in gently until they reach your chest. Allow the handles to return to your chest as you inhale."
  },
  {
   "id": "chest-push-multiple-response",
@@ -16424,8 +16413,8 @@
    "quads"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Lie face down with one leg bent out to the side and the foam roller under the inner thigh. Slowly roll back and forth over your adductors with moderate pressure."
  },
  {
@@ -17288,21 +17277,6 @@
   "equipment": "machine",
   "type": "weightAndReps",
   "description": "Ideally using a trapeze addon, Lift the weight up using your calves by getting on your toes."
- },
- {
-  "id": "hack-squats",
-  "name": "Hack Squats",
-  "primaryMuscles": [
-   "quads"
-  ],
-  "secondaryMuscles": [
-   "hamstrings",
-   "calves",
-   "glutes"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Hack squats target the lower body and are performed on a hack squat machine or with a barbell. For the machine variation, position yourself on the platform with your shoulders under the pads and feet slightly forward. Push through your heels to lift the weight, then bend your knees to lower the platform in a controlled motion until your thighs are parallel to the ground. Push back up to the starting position. For the barbell variation, hold the bar behind your legs with your arms extended and perform a squat-like motion."
  },
  {
   "id": "half-knee-bends",
@@ -18982,8 +18956,8 @@
    "glutes",
    "calves"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Position yourself face down on a bench with your hips at the edge and your legs extended straight behind you. Use the bench for support. Line the knees up with the machine or bench edge before starting the curl. Bend your knees to draw the pad toward you without lifting your hips from the support. Keep the hips still while the knees bend. Bring the weight or body back to its starting position without rushing."
  },
  {
@@ -18996,8 +18970,8 @@
    "glutes",
    "calves"
   ],
-  "equipment": "machine",
-  "type": "weightAndReps",
+  "equipment": "none",
+  "type": "bodyweight",
   "description": "Set the cable machine so that the ankle straps are at the lowest setting. Position yourself face down on the bench with your legs extended and the ankle straps attached to your feet. Line the knees up with the machine or bench edge before starting the curl. Bend your knees to draw the pad toward you without lifting your hips from the support. Keep the hips still while the knees bend. Ease back to the start before repeating."
  },
  {
@@ -21439,18 +21413,6 @@
   "description": "Gentle movements to improve the flexibility of the lower body and release tension in the hips."
  },
  {
-  "id": "leg-curl",
-  "name": "Leg Curl",
-  "primaryMuscles": [
-   "hamstrings",
-   "glutes"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "The leg curl, also known as the hamstring curl, is an isolation exercise that targets the hamstring muscles. The exercise involves flexing the lower leg against resistance towards the buttocks. Other exercises that can be used to strengthen the hamstrings are the glute-ham raise and the deadlift."
- },
- {
   "id": "leg-curl-with-elastic",
   "name": "Leg Curl with Elastic",
   "primaryMuscles": [
@@ -21470,8 +21432,8 @@
    "hamstrings"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Lay on a bench and put your calves behind the leg holder (better if they are hold on around the lower calves). Hold a grip on the bars to make sure the body is firmly in place. Bend your legs bringing the weight up, go slowly back. During the exercise the body should not move, all work is done by the legs."
  },
  {
@@ -21481,8 +21443,8 @@
    "hamstrings"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": ""
  },
  {
@@ -21492,7 +21454,7 @@
    "quads"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "duration",
   "description": "An isometric leg extension is a strengthening exercise where you contract your quadriceps muscles against an immovable resistance without changing the length of the muscle or moving your knee joint."
  },
@@ -21527,8 +21489,8 @@
    "calves"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Move the leg press using your calves by placing your feet at the bottom of the platform."
  },
  {
@@ -21540,8 +21502,8 @@
   "secondaryMuscles": [
    "glutes"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "The exercise is very similar to the wide leg press: Sit on the machine and put your feet on the platform so far apart that you could just put another foot in between them. The feet are parallel and point up. Lower the weight so much, that the knees form a right angle. Push immediately the platform up again, without any pause. When in the lower position, the knees point a bit outwards and the movement should be always fluid."
  },
  {
@@ -21553,8 +21515,8 @@
   "secondaryMuscles": [
    "glutes"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Sit on the machine and put your feet on the platform, a bit more than shoulder wide. The feet are turned outwards by a few degrees. Lower the weight so much, that the knees form a right angle. Push immediately the platform up again, without any pause. When in the lower position, the knees point a bit outwards and the movement should be always fluid."
  },
  {
@@ -21656,8 +21618,8 @@
    "shoulders",
    "triceps"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Plate-loaded chest press machine from Legend Fitness LeverEdge line."
  },
  {
@@ -24900,8 +24862,8 @@
    "calves",
    "glutes"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Hack Squats but with a 1-2s pause at the bottom of the movement. This makes sure that there is no more elastic energy stored in the muscles."
  },
  {
@@ -25003,8 +24965,8 @@
    "shoulders"
   ],
   "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Seated rear delt fly on pec deck machine (facing the machine and extending arms backwards, the hands should be at the height of the shoulders)"
  },
  {
@@ -29044,7 +29006,7 @@
    "glutes",
    "calves"
   ],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "assisted",
   "description": "Position yourself face down on a leg curl machine with your legs extended and your ankles hooked under the padded lever. Set your hands on the side handles of the machine for support. Line the knees up with the machine or bench edge before starting the curl. Bend your knees to draw the pad toward you without lifting your hips from the support. Keep the hips still while the knees bend. Ease back to the start before repeating."
  },
@@ -29058,7 +29020,7 @@
    "glutes",
    "calves"
   ],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "assisted",
   "description": "Settle onto your back with your legs extended and your arms by your sides. Bend your knees and place your feet planted, about hip width. Line the knees up with the machine or bench edge before starting the curl. Bend your knees to draw the pad toward you without lifting your hips from the support. Keep the hips still while the knees bend. Ease back to the start before repeating."
  },
@@ -30093,8 +30055,7 @@
   ],
   "equipment": "machine",
   "type": "weightAndReps",
-  "description": "",
-  "repdbID": "single-leg-press"
+  "description": "Strength training exercise where you push a weight away from your body using one leg at a time on a leg press machine. It helps to improve leg strength, balance, and muscular symmetry by isolating each leg individually. This exercise is particularly useful for identifying and correcting muscle imbalances between your legs."
  },
  {
   "id": "single-leg-push-off",
@@ -32685,7 +32646,7 @@
    "calves",
    "glutes"
   ],
-  "equipment": "other",
+  "equipment": "machine",
   "type": "weightAndReps",
   "description": "",
   "repdbID": "ball-leg-curl"
@@ -32769,7 +32730,7 @@
   "secondaryMuscles": [
    "hamstrings"
   ],
-  "equipment": "none",
+  "equipment": "machine",
   "type": "duration",
   "description": "",
   "repdbID": "standing-adductor-stretch"
@@ -33313,8 +33274,8 @@
   "secondaryMuscles": [
    "glutes"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Stand and set your feet about hip width and your hands on your hips. Transfer your weight onto your left leg and lift your right foot off the ground, bending your knee. Line the knees up with the machine or bench edge before starting the curl. Bend your knees to draw the pad toward you without lifting your hips from the support. Keep the hips still while the knees bend. Ease back to the start before repeating."
  },
  {
@@ -33717,8 +33678,8 @@
    "glutes",
    "hamstrings"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
+  "equipment": "machine",
+  "type": "weightAndReps",
   "description": "Settle onto your side with your legs straight and stacked on top of each other. Set your bottom arm under your head for support. Square the pelvis before moving the working leg. Move the working leg sideways from the hip without swinging your torso. Move only as far as the pelvis can remain steady. Return along the same path at a controlled pace."
  },
  {
@@ -34854,7 +34815,7 @@
    "abs",
    "triceps"
   ],
-  "equipment": "other",
+  "equipment": "machine",
   "type": "weightAndReps",
   "description": "",
   "repdbID": "trx-chest-press"

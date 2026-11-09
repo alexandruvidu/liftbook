@@ -240,7 +240,10 @@ def equipment_from_name(name: str, fallback: str) -> str:
     n = name.lower()
     if "smith" in n:
         return "smithMachine"
-    if re.search(r"\b(lever|leverage|machine|sled)\b", n) and fallback in ("none", "other", "cable"):
+    if re.search(r"\b(lever|leverage|machine|sled|pec deck|butterfly machine|leg press|leg curl|leg extension|"
+                 r"hack squat|calf press|seated row machine|chest press|shoulder press machine|hip thrust machine|"
+                 r"abductor|adductor|hammer ?strength)(?:e?s)?\b", n) \
+            and fallback in ("none", "other", "cable") and not re.search(r"\b(band|banded|cable)\b", n):
         return "machine"
     return fallback
 
