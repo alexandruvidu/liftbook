@@ -94,8 +94,16 @@ struct ExerciseFilterTests {
             LibraryExercise(id: name, name: name, primaryMuscles: [.abs], secondaryMuscles: [],
                             equipment: .none, type: .duration, details: "")
         }
-        let ranked = ExerciseFilter(query: "plank").apply(to: ExerciseLibrary(exercises: exercises).exercises)
+        let ranked = ExerciseFilter(query: "plank").apply(to: ExerciseLibrary(exercises: exercises).exercises, featured: [])
         #expect(ranked.map(\.name) == ["Plank", "Plank Jack", "Side Plank", "Weighted Plank Row"])
+        let featured = ExerciseFilter(query: "plank").apply(to: ExerciseLibrary(exercises: exercises).exercises,
+                                                            featured: ["Weighted Plank Row"])
+        #expect(featured.map(\.name) == ["Plank", "Plank Jack", "Weighted Plank Row", "Side Plank"])
+    }
+
+    @Test func everydayExercisesLeadSearch() {
+        let first = ExerciseFilter(query: "bench press").apply(to: ExerciseLibrary.bundled.exercises).first
+        #expect(first?.id == "barbell-bench-press")
     }
 
     @Test func hyphenatedNamesMatchExactly() {

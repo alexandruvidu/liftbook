@@ -12,10 +12,14 @@ struct ExerciseLibrary: Sendable {
 
     let exercises: [LibraryExercise]
     let byID: [String: LibraryExercise]
+    /// The hand-written, everyday exercises: search lists them first among
+    /// equally good matches, so "bench press" finds Barbell Bench Press.
+    let featuredIDs: Set<String>
 
-    init(exercises: [LibraryExercise]) {
+    init(exercises: [LibraryExercise], featuredIDs: Set<String> = []) {
         self.exercises = exercises.sorted(by: Self.inOrder)
         byID = Dictionary(self.exercises.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        self.featuredIDs = featuredIDs
     }
 
     init(data: Data) throws {
@@ -32,13 +36,14 @@ struct ExerciseLibrary: Sendable {
     static func load(core: Data, more: Data?, descriptions: [String: String] = [:]) throws -> ExerciseLibrary {
         let decoder = JSONDecoder()
         var exercises = try decoder.decode([LibraryExercise].self, from: core)
+        let featured = Set(exercises.map(\.id))
         if let more {
             exercises += try decoder.decode([LibraryExercise].self, from: more).map { exercise in
                 guard exercise.details.isEmpty, let text = descriptions[exercise.id] else { return exercise }
                 return exercise.withDetails(text)
             }
         }
-        return ExerciseLibrary(exercises: exercises)
+        return ExerciseLibrary(exercises: exercises, featuredIDs: featured)
     }
 
     /// The library shipped in the app bundle.

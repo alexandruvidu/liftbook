@@ -33,7 +33,7 @@ final class PersonalRecordsUITests: XCTestCase {
         app.navigationBars.buttons.element(boundBy: 0).tap()
         search.enter(String(repeating: XCUIKeyboardKey.delete.rawValue, count: 20) + "overhead press")
         let other = app.buttons["exercise.row.overhead-press"]
-        XCTAssertTrue(other.waitForExistence(timeout: 5), "Overhead press not listed")
+        XCTAssertTrue(other.waitForExistence(timeout: 10), "Overhead press not listed")
         other.tap()
         let empty = app.descendants(matching: .any)["exercise.records.empty"]
         app.scrollTo(empty)

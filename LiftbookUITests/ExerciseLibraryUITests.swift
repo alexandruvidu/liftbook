@@ -25,7 +25,6 @@ final class ExerciseLibraryUITests: XCTestCase {
         search.enter("barbell bench press")
         let row = app.buttons["exercise.row.barbell-bench-press"]
         XCTAssertTrue(row.waitForExistence(timeout: 5))
-        app.dismissKeyboard()
         row.tap()
 
         XCTAssertTrue(app.navigationBars["Barbell Bench Press"].waitForExistence(timeout: 5))

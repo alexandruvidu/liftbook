@@ -57,7 +57,8 @@ final class CustomExerciseUITests: XCTestCase {
         delete.tap()
         confirmDelete(in: app)
 
-        XCTAssertTrue(app.buttons["exercises.clearFilters"].waitForExistence(timeout: 10))
+        // Back on the search results, which still hold the catalog's sandbag exercises
+        XCTAssertTrue(app.buttons["exercise.row.sandbag-carry"].waitForExistence(timeout: 10))
         XCTAssertEqual(customRows(in: app).count, 0)
     }
 

@@ -32,14 +32,16 @@ struct ExerciseFilter: Equatable, Sendable {
 
     /// The matching exercises. With search text, the best matches come first:
     /// the exact name, then names starting with the text, then names holding
-    /// every word, then matches through muscle or equipment; shorter (more
-    /// basic) names first within each. Without text, the order is kept.
-    func apply(to exercises: [LibraryExercise]) -> [LibraryExercise] {
+    /// every word, then matches through muscle or equipment. Within each,
+    /// featured (everyday) exercises first, then shorter, more basic names.
+    /// Without text, the order is kept.
+    func apply(to exercises: [LibraryExercise],
+               featured: Set<String> = ExerciseLibrary.bundled.featuredIDs) -> [LibraryExercise] {
         let matching = exercises.filter(matches)
         let words = Self.tokens(in: query)
         guard !words.isEmpty else { return matching }
         let joined = words.joined()
-        let ranked = matching.map { exercise -> (exercise: LibraryExercise, rank: Int, length: Int) in
+        let ranked = matching.map { exercise -> (exercise: LibraryExercise, rank: Int, featured: Int, length: Int) in
             let nameWords = Self.tokens(in: exercise.name)
             let name = nameWords.joined()
             let rank = name == joined ? 0
@@ -47,10 +49,10 @@ struct ExerciseFilter: Equatable, Sendable {
                 : words.allSatisfy { word in nameWords.contains { $0.hasPrefix(word) } } ? 2
                 : words.allSatisfy { name.contains($0) } ? 3
                 : 4
-            return (exercise, rank, exercise.name.count)
+            return (exercise, rank, featured.contains(exercise.id) ? 0 : 1, exercise.name.count)
         }
         // Sorting is stable, so equal matches keep the library's A–Z order.
-        return ranked.sorted { ($0.rank, $0.length) < ($1.rank, $1.length) }.map(\.exercise)
+        return ranked.sorted { ($0.rank, $0.featured, $0.length) < ($1.rank, $1.featured, $1.length) }.map(\.exercise)
     }
 
     /// Lowercases, strips accents, and drops hyphens and apostrophes so that
