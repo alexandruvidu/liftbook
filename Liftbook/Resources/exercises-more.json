@@ -589,23 +589,6 @@
   "description": "https://www.youtube.com/watch?v=C995b3KLXS4&t=7s Elbows should stay straight Hold it for time/reps Start at an active hang: https://www.youtube.com/watch?v=HoE-C85ZlCE Progress towards a 90 degree in your shoulder"
  },
  {
-  "id": "archer-pull-ups",
-  "name": "Archer Pull Ups",
-  "primaryMuscles": [
-   "lats"
-  ],
-  "secondaryMuscles": [
-   "biceps",
-   "forearms",
-   "shoulders",
-   "upperBack"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "archer-pull-ups"
- },
- {
   "id": "archer-pull-up",
   "name": "Archer Pull-Up",
   "primaryMuscles": [
@@ -633,22 +616,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Begin in a push-up position with your hands just beyond shoulder width. Reach one arm straight out to the side, parallel to the ground. Brace the abdomen and glutes so the shoulders, hips and ankles move together. Shift toward one hand and bend that elbow while the other arm straightens to the side. Keep the head in line with the spine as the elbows bend. Press back to straight arms, keeping the body line intact."
- },
- {
-  "id": "archer-push-ups",
-  "name": "Archer Push Ups",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "shoulders",
-   "abs",
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "archer-push-ups"
  },
  {
   "id": "arm-and-neck-stretch",
@@ -1520,23 +1487,6 @@
   "equipment": "band",
   "type": "weightAndReps",
   "description": "Settle onto your back with your legs straight and your arms extended overhead, holding the band. Tighten your midsection and lift your legs and upper body off the ground simultaneously, reaching your hands toward your toes. Set the pelvis and keep the neck relaxed before curling upward. Raise your straight legs and torso together, reaching toward the feet before lowering under control. Finish one side's motion before the other side takes over. Lower the shoulders or torso with control before the next curl; switch sides when the set calls for it."
- },
- {
-  "id": "band-assisted-pull-ups",
-  "name": "Band Assisted Pull Ups",
-  "primaryMuscles": [
-   "lats"
-  ],
-  "secondaryMuscles": [
-   "biceps",
-   "forearms",
-   "shoulders",
-   "upperBack"
-  ],
-  "equipment": "band",
-  "type": "assisted",
-  "description": "",
-  "repdbID": "band-assisted-pull-ups"
  },
  {
   "id": "band-assisted-pull-up",
@@ -4359,21 +4309,6 @@
   "description": "Stand with your feet hip-width apart, holding a barbell on your upper back. Keep your back straight, chest up, and core engaged. Take a step back with one leg and lower your body by bending both knees. Ensure that your back knee nearly touches the ground. Push off your back foot to return to the starting position. Repeat the movement with the other leg. Continue alternating between legs for the desired repetitions."
  },
  {
-  "id": "barbell-step-ups",
-  "name": "Barbell Step Ups",
-  "primaryMuscles": [
-   "quads"
-  ],
-  "secondaryMuscles": [
-   "calves",
-   "glutes",
-   "hamstrings"
-  ],
-  "equipment": "barbell",
-  "type": "weightAndReps",
-  "description": "Stand up straight while holding a barbell placed on the back of your shoulders (slightly below the neck) and stand upright behind an elevated platform (such as the one used for spotting behind a flat bench). This is your starting position. Place the right foot on the elevated platform. Step on the platform by extending the hip and the knee of your right leg. Use the heel mainly to lift the rest of your body up and place the foot of the left leg on the platform as well. Breathe out as you execute the force required to come up. Step down with the left leg by flexing the hip and knee of the right leg as you inhale. Return to the original standing position by placing the right foot of to next to the left foot on the initial position. Repeat with the right leg for the recommended amount of repetitions and then perform with the left leg."
- },
- {
   "id": "barbell-step-up",
   "name": "Barbell Step-Up",
   "primaryMuscles": [
@@ -4386,7 +4321,7 @@
   ],
   "equipment": "barbell",
   "type": "weightAndReps",
-  "description": "Take your place in front of a bench or step with a barbell resting on your upper back. Set one foot on the bench or step, ensuring your entire foot is in contact with the surface. Put the lead foot fully on the platform before shifting your weight onto it. Step onto the platform and drive through the lead foot to stand tall on it. Keep the front foot planted and avoid collapsing inward at the knee. Push through the lead foot to return to the start, then change legs as planned."
+  "description": "Stand up straight while holding a barbell placed on the back of your shoulders (slightly below the neck) and stand upright behind an elevated platform (such as the one used for spotting behind a flat bench). This is your starting position. Place the right foot on the elevated platform. Step on the platform by extending the hip and the knee of your right leg. Use the heel mainly to lift the rest of your body up and place the foot of the left leg on the platform as well. Breathe out as you execute the force required to come up. Step down with the left leg by flexing the hip and knee of the right leg as you inhale. Return to the original standing position by placing the right foot of to next to the left foot on the initial position. Repeat with the right leg for the recommended amount of repetitions and then perform with the left leg."
  },
  {
   "id": "barbell-stiff-leg-good-morning",
@@ -5616,20 +5551,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Assume a plank position on the ground. You should be supporting your bodyweight on your toes and forearms, keeping your torso straight. Your forearms should be shoulder-width apart. This will be your starting position. Pressing your palms firmly into the ground, extend through the elbows to raise your body from the ground. Keep your torso rigid as you perform the movement. Slowly lower your forearms back to the ground by allowing the elbows to flex. Repeat."
- },
- {
-  "id": "body-ups",
-  "name": "Body-Ups",
-  "primaryMuscles": [
-   "triceps"
-  ],
-  "secondaryMuscles": [
-   "shoulders",
-   "abs"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Assume a plank position on the ground. You should be supporting your bodyweight on your toes and forearms, keeping your torso straight. Your forearms should be shoulder-width apart. This will be your starting position. Pressing your palms firmly into the ground, extend through the elbows to raise your body from the ground. Keep your torso rigid as you perform the movement. Slowly lower your forearms back to the ground by allowing the elbows to flex. Repeat as needed."
  },
  {
   "id": "bodyweight-biceps-curl",
@@ -9239,20 +9160,6 @@
   "description": "Begin in a high plank position with your hands just beyond shoulder width. Lower your body toward the ground by bending your elbows, keeping your core engaged. Brace the abdomen and glutes so the shoulders, hips and ankles move together. Bend your elbows to lower your chest while keeping your body in one line. Keep the head in line with the spine as the elbows bend. Press back to straight arms, keeping the body line intact."
  },
  {
-  "id": "clap-push-ups",
-  "name": "Clap Push-Ups",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "clap-push-ups"
- },
- {
   "id": "claps-over-the-head",
   "name": "Claps Over the Head",
   "primaryMuscles": [
@@ -9404,21 +9311,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Starting position: Start sitting or standing. Drop your head down, bringing your chin toward your chest, but not pushing. Steps: In a slower fluid motion and with your head relaxed and not pushing in any direction: lean toward your right shoulder. then bring your head back, facing up. then lean toward your left shoulder.4.and back toward the starting position. Keep repeating this as part of one slower fluid motion."
- },
- {
-  "id": "close-grip-push-ups",
-  "name": "Close Grip Push Ups",
-  "primaryMuscles": [
-   "chest",
-   "triceps"
-  ],
-  "secondaryMuscles": [
-   "shoulders"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "close-grip-push-ups"
  },
  {
   "id": "close-grip-chin-up",
@@ -9599,21 +9491,6 @@
    "upperBack",
    "traps"
   ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "commando-pull-up"
- },
- {
-  "id": "commando-pull-ups",
-  "name": "Commando Pull-Ups",
-  "primaryMuscles": [
-   "shoulders",
-   "biceps",
-   "lats",
-   "traps"
-  ],
-  "secondaryMuscles": [],
   "equipment": "none",
   "type": "bodyweight",
   "description": "variation of the pull-up exercise, it is performed with a grip of one hand supine and one hand prone, do not twist the torso to get back to the front, the head passes once to one side, once to the other."
@@ -10499,19 +10376,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "You sit at the bench press device, back slightly tilted to the back. The bar should be about 20 cm in front of you. Then you push the bar and take it back again, as you would with a bench press. In this position you strain your chest muscles a lot less, which is nice if you want to train, but your chest hasn't recovered yet."
- },
- {
-  "id": "diamond-push-ups",
-  "name": "Diamond Push Ups",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Start: Get into a plank. Place hands close together under your chest so thumbs and index fingers form a diamond shape. Lower: Bend your elbows to lower your chest toward your hands. Keep your body straight. Push: Push back up until arms are fully extended. New note Keep elbows close to your body and core tight."
  },
  {
   "id": "diaphragmatic-breathing",
@@ -23534,23 +23398,6 @@
   "description": "Grip the rings using a false grip, with the base of your palms on top of the rings. Initiate a pull up by pulling the elbows down to your side, flexing the elbows. As you reach the top position of the pull-up, pull the rings to your armpits as you roll your shoulders forward, allowing your elbows to move straight back behind you. This puts you into the proper position to continue into the dip portion of the movement. Maintaining control and stability, extend through the elbow to complete the motion. Use care when lowering yourself to the ground."
  },
  {
-  "id": "muscle-ups",
-  "name": "Muscle Ups",
-  "primaryMuscles": [
-   "lats",
-   "triceps"
-  ],
-  "secondaryMuscles": [
-   "shoulders",
-   "biceps",
-   "chest"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "muscle-ups"
- },
- {
   "id": "muscle-up-on-vertical-bar",
   "name": "Muscle-Up (on Vertical Bar)",
   "primaryMuscles": [
@@ -25099,19 +24946,6 @@
   "description": "A static bodyweight support with both hands and feet on the floor and hips raised in a pike position. Place your hands and feet securely on the floor, then raise your hips. Keep your elbows straight and actively push the floor away through your shoulders. Maintain a controlled, stationary position without bending your elbows, lowering your head for push-up repetitions, or raising your feet onto a surface. Hold for up to 30 seconds. Stop earlier for loss of alignment, loss of active shoulder support, or pain. Record actual seconds, hand and foot spacing, and alignment. This is the floor variation, not a pike push-up or an elevated-feet pike hold."
  },
  {
-  "id": "pike-push-ups",
-  "name": "Pike Push Ups",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Push Up performed from a pike position (optional to have feet elevated)."
- },
- {
   "id": "pike-to-cobra-push-up",
   "name": "Pike-to-Cobra Push-Up",
   "primaryMuscles": [
@@ -25956,20 +25790,6 @@
   ],
   "equipment": "none",
   "type": "bodyweight",
-  "description": "",
-  "repdbID": "pseudo-planche-push-ups"
- },
- {
-  "id": "pseudo-planche-push-up",
-  "name": "Pseudo Planche Push-up",
-  "primaryMuscles": [
-   "shoulders"
-  ],
-  "secondaryMuscles": [
-   "chest"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
   "description": "You should have the shoulder line in front of your wrists an perform a push-up, maintaining the shoulder in the same position"
  },
  {
@@ -26025,32 +25845,6 @@
   "equipment": "none",
   "type": "duration",
   "description": "Use a box or bench to get your chin above a pull-up bar with your elbows fully bent and shoulders pulled down. Take your feet off the box and hold that top position still for the set time. Keep your chest up and do not let your chin drop below the bar. This strengthens the hardest part of the pull-up."
- },
- {
-  "id": "pull-ups",
-  "name": "Pull-ups",
-  "primaryMuscles": [
-   "lats"
-  ],
-  "secondaryMuscles": [
-   "shoulders",
-   "biceps",
-   "traps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Grab the pull up bar with a wide grip, the body is hanging freely. Keep your chest out and pull yourself up till your chin reaches the bar or it touches your neck, if you want to pull behind you. Go with a slow and controlled movement down, always keeping the chest out."
- },
- {
-  "id": "pull-ups-neutral-grip",
-  "name": "Pull-Ups (Neutral Grip)",
-  "primaryMuscles": [
-   "lats"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Execution Pulling phase (concentric): Drive your elbows down and back, pulling your chest toward your hands. Keep your shoulders depressed and retracted (avoid shrugging). Focus on squeezing your lats and upper back at the top. Top position: Chin should clear or reach the level of your hands. Pause briefly and contract your lats hard."
  },
  {
   "id": "pullback",
@@ -26371,33 +26165,6 @@
   "equipment": "other",
   "type": "weightAndReps",
   "description": "Lie on the floor face down and place your hands about 36 inches apart from each other holding your torso up at arms length. Place your toes on top of an exercise ball. This will allow your body to be elevated. Lower yourself until your chest almost touches the floor as you inhale. Using your pectoral muscles, press your upper body back up to the starting position and squeeze your chest. Breathe out as you perform this step. After a second pause at the contracted position, repeat the movement for the prescribed amount of repetitions."
- },
- {
-  "id": "push-ups-decline",
-  "name": "Push-Ups | Decline",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "shoulders",
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Decline push-ups are another modified version of the traditional push-up that target the upper body muscles in a different way. To perform a decline push-up, elevate your feet on an elevated surface, such as a bench, chair, or step, while placing your hands on the ground in a push-up position. Lower your body towards the ground while maintaining a straight line from your shoulders to your ankles, and then push back up to the starting position. Unlike the inclined push-up, the decline push-up places more emphasis on the shoulders and triceps, while still engaging the chest muscles to a lesser extent. By elevating your feet, you increase the difficulty of the exercise by placing more weight on your upper body, forcing your shoulders and triceps to work harder to push your body back up. The decline push-up can be a great way to challenge your upper body strength and improve your ability to perform other push-up variations. As with any exercise, be sure to use proper form and start with a height that is appropriate for your strength and fitness level."
- },
- {
-  "id": "push-ups-incline",
-  "name": "Push-Ups | Incline",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Inclined push-ups primarily target the chest muscles (pectoralis major and minor), but also work the triceps, shoulders, and core to a lesser extent. Because the upper body is elevated, the incline push-up places less emphasis on the triceps compared to regular push-ups, which may be beneficial for individuals looking to specifically target their chest muscles."
  },
  {
   "id": "push-ups-parallettes",
@@ -27400,20 +27167,6 @@
   "description": "Take hold of the pull-up bar with palms facing up, hands about shoulder width. Suspend yourself from the bar with your arms straight and your body straight. Begin from a controlled hang with the shoulders active rather than slack. Pull your elbows down and bring your upper chest toward the bar without kicking your legs. Keep the palms in the chosen grip without bending the wrists back. Lower to long arms without dropping suddenly from the top."
  },
  {
-  "id": "reverse-grip-pull-ups",
-  "name": "Reverse-grip Pull-Ups",
-  "primaryMuscles": [
-   "biceps",
-   "lats"
-  ],
-  "secondaryMuscles": [
-   "abs"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Pull-ups on the bar with your thumbs pointing outward."
- },
- {
   "id": "revolved-chair-pose",
   "name": "Revolved Chair Pose",
   "primaryMuscles": [
@@ -27750,21 +27503,6 @@
   ],
   "equipment": "none",
   "type": "bodyweight",
-  "description": "Take your place in front of a pull-up bar with your feet about shoulder width. Reach up to hold the bar with palms facing down, just beyond shoulder width. Begin from a controlled hang with the shoulders active rather than slack. Pull your elbows down and bring your upper chest toward the bar without kicking your legs. Avoid swinging the legs to clear the bar. Lower to long arms without dropping suddenly from the top."
- },
- {
-  "id": "rocky-pull-ups-pulldowns",
-  "name": "Rocky Pull-Ups/Pulldowns",
-  "primaryMuscles": [
-   "lats"
-  ],
-  "secondaryMuscles": [
-   "biceps",
-   "upperBack",
-   "shoulders"
-  ],
-  "equipment": "other",
-  "type": "weightAndReps",
   "description": "Grab the pull-up bar with the palms facing forward using a wide grip. As you have both arms extended in front of you holding the bar at the chosen grip width, bring your torso back around 30 degrees or so while creating a curvature on your lower back and sticking your chest out. This is your starting position. Pull your torso up until the bar touches your upper chest by drawing the shoulders and the upper arms down and back. Exhale as you perform this portion of the movement. Tip: Concentrate on squeezing the back muscles once you reach the full contracted position. The upper torso should remain stationary as it moves through space and only the arms should move. The forearms should do no other work other than hold the bar. After a second on the contracted position, start to inhale and slowly lower your torso back to the starting position when your arms are fully extended and the lats are fully stretched. Now repeat the same movements as described above except this time your torso will remain straight as you go up and the bar will touch the back of the neck instead of the upper chest. Tip: Use the head to lean forward slightly as it will help you properly execute this portion of the exercise. Once you have lowered yourself back down to the starting position, repeat the exercise for the prescribed amount of repetitions in your program."
  },
  {
@@ -28222,22 +27960,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Begin in a high plank position with your hands directly under your shoulders and your body in a straight line. Lower your chest toward the ground, keeping your elbows close to your body. Brace the abdomen and glutes so the shoulders, hips and ankles move together. Bend your elbows to lower your chest while keeping your body in one line. Keep the head in line with the spine as the elbows bend. Press back to straight arms, keeping the body line intact."
- },
- {
-  "id": "scapular-pull-ups",
-  "name": "Scapular Pull Ups",
-  "primaryMuscles": [
-   "lats",
-   "traps"
-  ],
-  "secondaryMuscles": [
-   "forearms",
-   "upperBack"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "scapular-pull-ups"
  },
  {
   "id": "scapular-pull-up",
@@ -29714,20 +29436,6 @@
   "description": "Stand to one side of the box with your left foot resting on the middle of it. To begin, jump up and over to the other side of the box, landing with your right foot on top of the box and your left foot on the floor. Swing your arms to aid your movement. Continue shuffling back and forth across the box."
  },
  {
-  "id": "side-to-side-push-ups",
-  "name": "Side to Side Push Ups",
-  "primaryMuscles": [
-   "shoulders",
-   "obliques",
-   "chest",
-   "triceps"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "-start in push up position -lean the body weight to the right side, and complete a push up with the chest over the right hand -come back to the centered position -on rep 2, lean to the left side"
- },
- {
   "id": "side-wrist-pull",
   "name": "Side Wrist Pull",
   "primaryMuscles": [
@@ -30654,17 +30362,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Settle onto your back with your knees bent and feet planted. Fold your arms over your chest. Set the pelvis and keep the neck relaxed before curling upward. Curl your rib cage toward your pelvis, letting the abdominals move the torso. Leave a little space between the chin and chest; keep the movement in the torso. Lower the shoulders or torso with control before the next curl."
- },
- {
-  "id": "sit-ups",
-  "name": "Sit-ups",
-  "primaryMuscles": [
-   "abs"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Sit on a mat, your calves are resting on a bench, the knees make a right angle. Hold your hands behind your neck. Go now up with a rolling movement of your back, you should feel how the individual vertebrae lose contact with the mat. At the highest point, contract your abs as much as you can and hold there for 2 sec. Go now down, unrolling your back."
  },
  {
   "id": "sitting-calf-raises",
@@ -35619,21 +35316,6 @@
   "description": "Handstand against a wall for support (chest facing wall)."
  },
  {
-  "id": "wall-push-ups",
-  "name": "Wall Push Ups",
-  "primaryMuscles": [
-   "chest"
-  ],
-  "secondaryMuscles": [
-   "shoulders",
-   "triceps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "",
-  "repdbID": "wall-push-ups"
- },
- {
   "id": "wall-slides",
   "name": "Wall Slides",
   "primaryMuscles": [
@@ -36276,22 +35958,6 @@
   "equipment": "none",
   "type": "duration",
   "description": "Begin in a plank position with your hands on the wheel and your body straight. Brace your trunk and start rolling the wheel forward by extending your arms. Start at a pace that lets the feet and arms move in sync. Move at a repeatable pace, keeping the motion smooth and your breathing steady. Keep the pattern repeatable as speed increases. Keep the rhythm for the planned interval, slowing if your form starts to slip."
- },
- {
-  "id": "wide-grip-pull-ups",
-  "name": "Wide Grip Pull Ups",
-  "primaryMuscles": [
-   "lats"
-  ],
-  "secondaryMuscles": [
-   "biceps",
-   "shoulders",
-   "upperBack",
-   "traps"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Execution Pulling phase (concentric): Drive your elbows down and slightly back, pulling your chest toward the bar. Focus on leading with your chest, not your chin. Keep your shoulders depressed (avoid shrugging). Top position: Chin should clear the bar (or at least reach bar level). Pause for a brief squeeze in your lats."
  },
  {
   "id": "wide-grip-push-ups",

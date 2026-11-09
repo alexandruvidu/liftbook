@@ -32,8 +32,9 @@ struct ExerciseFilter: Equatable, Sendable {
 
     /// The matching exercises. With search text, the best matches come first:
     /// the exact name, then names starting with the text, then names holding
-    /// every word, then matches through muscle or equipment. Within each,
-    /// featured (everyday) exercises first, then shorter, more basic names.
+    /// every word, then matches through muscle or equipment. Among name
+    /// matches, featured (everyday) exercises come first; shorter, more basic
+    /// names first within each.
     /// Without text, the order is kept.
     func apply(to exercises: [LibraryExercise],
                featured: Set<String> = ExerciseLibrary.bundled.featuredIDs) -> [LibraryExercise] {
@@ -52,7 +53,11 @@ struct ExerciseFilter: Equatable, Sendable {
             return (exercise, rank, featured.contains(exercise.id) ? 0 : 1, exercise.name.count)
         }
         // Sorting is stable, so equal matches keep the library's A–Z order.
-        return ranked.sorted { ($0.rank, $0.featured, $0.length) < ($1.rank, $1.featured, $1.length) }.map(\.exercise)
+        // The exact name, then name matches (everyday exercises first), then the rest.
+        func key(_ r: (exercise: LibraryExercise, rank: Int, featured: Int, length: Int)) -> (Int, Int, Int, Int, Int) {
+            (r.rank == 0 ? 0 : 1, r.rank >= 3 ? 1 : 0, r.featured, r.rank, r.length)
+        }
+        return ranked.sorted { key($0) < key($1) }.map(\.exercise)
     }
 
     /// Lowercases, strips accents, and drops hyphens and apostrophes so that

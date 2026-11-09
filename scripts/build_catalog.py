@@ -87,7 +87,7 @@ SYNONYMS = {
     "db": "dumbbell", "kb": "kettlebell", "bb": "barbell", "lever": "machine", "leverage": "machine",
     "flye": "fly", "flie": "fly", "pushup": "push up", "pullup": "pull up", "chinup": "chin up",
     "situp": "sit up", "tricep": "triceps", "bicep": "biceps", "ohp": "overhead press",
-    "military": "overhead", "standing": "", "hammerstrength": "machine", "flat": "",
+    "military": "overhead", "standing": "", "hammerstrength": "machine", "flat": "", "ups": "up",
     "ezbar": "ezbar", "lying": "lying",
 }
 # The equipment word added to a name's key when the name doesn't say it, so

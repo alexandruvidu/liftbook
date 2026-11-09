@@ -98,7 +98,7 @@ struct ExerciseFilterTests {
         #expect(ranked.map(\.name) == ["Plank", "Plank Jack", "Side Plank", "Weighted Plank Row"])
         let featured = ExerciseFilter(query: "plank").apply(to: ExerciseLibrary(exercises: exercises).exercises,
                                                             featured: ["Weighted Plank Row"])
-        #expect(featured.map(\.name) == ["Plank", "Plank Jack", "Weighted Plank Row", "Side Plank"])
+        #expect(featured.map(\.name) == ["Plank", "Weighted Plank Row", "Plank Jack", "Side Plank"])
     }
 
     @Test func everydayExercisesLeadSearch() {
