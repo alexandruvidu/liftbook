@@ -1,7 +1,7 @@
 # Liftbook plan
 
-Work top to bottom. An item is done only when CI builds, all tests pass, and its
-screenshot looks correct.
+Work top to bottom. An item is done only when all tests pass locally, its screens
+look right in the simulator, and CI builds the IPA.
 
 ## Phase 0 — Scaffold
 - [x] Empty app builds and tests pass on CI

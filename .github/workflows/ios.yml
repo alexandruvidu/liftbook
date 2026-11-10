@@ -3,11 +3,6 @@ name: iOS CI
 on:
   push:
   workflow_dispatch:
-    inputs:
-      full:
-        description: Run every UI test, ignoring ci/ui-tests.txt
-        type: boolean
-        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -17,16 +12,13 @@ permissions:
   contents: read
 
 jobs:
-  build-test-package:
+  # Tests run locally before every push (scripts/test.sh); CI only packages the IPA.
+  build-package:
     # Xcode 27 image (macOS 27). See actions/runner-images README.
     runs-on: xcode-27
-    # The full UI suite at a phase end takes about an hour.
-    timeout-minutes: 120
+    timeout-minutes: 30
     permissions:
       contents: write  # publish the rolling "latest-build" release (built-in token only)
-    env:
-      SCREENSHOT_DIR: ${{ github.workspace }}/screenshots
-      RESULT_BUNDLE: ${{ github.workspace }}/build/TestResults.xcresult
 
     steps:
       - name: Checkout
@@ -61,79 +53,6 @@ jobs:
         run: |
           brew install xcodegen
           xcodegen generate
-
-      - name: Pick iPhone simulator
-        run: |
-          UDID=$(xcrun simctl list devices available -j | python3 -c '
-          import json, re, sys
-          devices = json.load(sys.stdin)["devices"]
-          runtimes = sorted((r for r in devices if ".iOS-" in r), reverse=True)
-          phones = [(r, d) for r in runtimes for d in devices[r] if d["name"].startswith("iPhone")]
-          # Prefer a standard "iPhone NN" model so screenshots match a typical phone.
-          standard = [(r, d) for r, d in phones if re.fullmatch(r"iPhone \d+", d["name"])]
-          for r, d in standard + phones:
-              print(d["udid"]); sys.stderr.write(d["name"] + " / " + r + "\n"); sys.exit(0)
-          sys.exit("No available iPhone simulator")
-          ')
-          echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
-
-      - name: Boot simulator
-        run: |
-          # Booting up front avoids instruments/lockdown timeouts on a cold simulator.
-          xcrun simctl boot "$SIM_UDID" || true
-          xcrun simctl bootstatus "$SIM_UDID" -b
-
-      - name: Test
-        run: |
-          set -o pipefail
-          mkdir -p "$SCREENSHOT_DIR"
-          # Unit tests always run. UI tests are limited to the classes listed in
-          # ci/ui-tests.txt, unless it says ALL or a full run was requested.
-          SELECT=()
-          if [ "${{ inputs.full }}" != "true" ] && [ -f ci/ui-tests.txt ] && ! grep -qx 'ALL' ci/ui-tests.txt; then
-            SELECT+=("-only-testing:LiftbookTests")
-            while read -r name; do
-              SELECT+=("-only-testing:LiftbookUITests/$name")
-            done < <(grep -vE '^[[:space:]]*(#|$)' ci/ui-tests.txt)
-          fi
-          echo "Test selection: ${SELECT[*]:-everything}"
-          TEST_RUNNER_SCREENSHOT_DIR="$SCREENSHOT_DIR" xcodebuild test "${SELECT[@]}" \
-            -project Liftbook.xcodeproj \
-            -scheme Liftbook \
-            -destination "id=$SIM_UDID" \
-            -resultBundlePath "$RESULT_BUNDLE" \
-            -parallel-testing-enabled NO \
-            CODE_SIGNING_ALLOWED=NO
-
-      - name: Summarize test failures
-        if: failure()
-        run: |
-          # Print each failing test with its message from the result bundle.
-          xcrun xcresulttool get test-results summary --path "$RESULT_BUNDLE" --compact \
-            | jq -r '.testFailures[]? | "\(.testIdentifierString): \(.failureText)"' \
-            || true
-
-      - name: Check screenshots were written
-        run: |
-          COUNT=$(find "$SCREENSHOT_DIR" -name '*.png' | wc -l | tr -d ' ')
-          echo "Found $COUNT screenshot(s):"; ls "$SCREENSHOT_DIR"
-          [ "$COUNT" -gt 0 ] || { echo "::error::UI tests produced no screenshots"; exit 1; }
-
-      - name: Upload screenshots
-        if: always()
-        uses: actions/upload-artifact@v6
-        with:
-          name: screenshots
-          path: screenshots/
-          if-no-files-found: warn
-
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v6
-        with:
-          name: xcresult
-          path: build/TestResults.xcresult
-          if-no-files-found: ignore
 
       - name: Archive unsigned Release build
         run: |
