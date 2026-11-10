@@ -20,7 +20,7 @@ struct FinishSummaryView: View {
                         .accessibilityHidden(true)
                     Text("Workout Complete")
                         .font(.title.bold())
-                    Text("\(session.name) · \(session.startedAt.formatted(date: .abbreviated, time: .shortened))")
+                    Text("\(session.displayName) · \(session.startedAt.formatted(date: .abbreviated, time: .shortened))")
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)

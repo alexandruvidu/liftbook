@@ -57,6 +57,18 @@ struct PreviousPerformanceTests {
         #expect(PreviousPerformance.find(exerciseID: "barbell-bench-press", in: [rows]) == nil)
     }
 
+    @Test func warmUpsAndWorkingSetsMatchTheirOwnKind() {
+        let warm = SetMeasurement(weight: 20, reps: 10)
+        let performance = PreviousPerformance(sets: [heavy, heavy], date: .now,
+                                              workingSets: [heavy, heavy], warmUpSets: [warm])
+        let kinds: [SetKind] = [.warmUp, .warmUp, .normal, .normal, .normal]
+        #expect(performance.set(at: 0, kinds: kinds) == warm)
+        #expect(performance.set(at: 1, kinds: kinds) == nil)
+        #expect(performance.set(at: 2, kinds: kinds) == heavy)
+        #expect(performance.set(at: 3, kinds: kinds) == heavy)
+        #expect(performance.set(at: 4, kinds: kinds) == nil)
+    }
+
     @Test func setAtIndexIsNilPastTheEnd() {
         let performance = PreviousPerformance(sets: [light], date: .now)
         #expect(performance.set(at: 0) == light)

@@ -50,6 +50,8 @@ struct HistoryCalendarView: View {
         HStack {
             Button("Previous Month", systemImage: "chevron.left") { month = history.month(month, offsetBy: -1) }
                 .labelStyle(.iconOnly)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
                 .accessibilityIdentifier("calendar.previous")
             Spacer()
             Text(month.formatted(.dateTime.month(.wide).year()))
@@ -58,6 +60,8 @@ struct HistoryCalendarView: View {
             Spacer()
             Button("Next Month", systemImage: "chevron.right") { month = history.month(month, offsetBy: 1) }
                 .labelStyle(.iconOnly)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
                 .accessibilityIdentifier("calendar.next")
         }
         .buttonStyle(.borderless)
@@ -115,7 +119,7 @@ private struct CalendarDayRow: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(session.name)
+            Text(session.displayName)
                 .font(.headline)
             Text(session.orderedExercises.map { catalog.name(for: $0.exerciseID) }.joined(separator: ", "))
                 .font(.subheadline)

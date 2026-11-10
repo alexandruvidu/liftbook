@@ -177,9 +177,10 @@ struct ExerciseBlock: View {
         VStack(spacing: 6) {
             SetHeaderRow(type: type)
             let labels = exercise.setLabels
+            let kinds = exercise.orderedSets.map(\.kind)
             ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.stableID) { index, set in
                 SetRow(set: set, number: index + 1, label: labels[index], type: type,
-                       identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index),
+                       identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index, kinds: kinds),
                        onRemove: exercise.sets.count > 1 ? { exercise.removeSet(set) } : nil) {
                     // Checking off a set confirms a guessed machine.
                     exercise.machineConfirmed = true

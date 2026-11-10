@@ -34,7 +34,9 @@ struct WeeklyMuscleChart: View {
         } header: {
             Text("Weekly Muscle Groups")
         } footer: {
-            Text("Each completed working set counts for every primary muscle of its exercise.")
+            Text(measure == .sets
+                 ? "Each completed working set counts for every primary muscle of its exercise."
+                 : "Weight × reps of each completed working set, counted for every primary muscle of its exercise.")
         }
     }
 
@@ -42,6 +44,8 @@ struct WeeklyMuscleChart: View {
         HStack {
             Button("Previous Week", systemImage: "chevron.left") { week = model.week(week, offsetBy: -1) }
                 .labelStyle(.iconOnly)
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
                 .accessibilityIdentifier("weekly.previous")
             Spacer()
             Text(weekTitle)
@@ -51,9 +55,13 @@ struct WeeklyMuscleChart: View {
             Button("Next Week", systemImage: "chevron.right") { week = model.week(week, offsetBy: 1) }
                 .labelStyle(.iconOnly)
                 .disabled(week.contains(.now))
+                .frame(minWidth: 44, minHeight: 44)
+                .contentShape(Rectangle())
                 .accessibilityIdentifier("weekly.next")
         }
         .buttonStyle(.borderless)
+        // Full-width separator below, not one starting at the title.
+        .alignmentGuide(.listRowSeparatorLeading) { _ in 0 }
     }
 
     private var weekTitle: String {

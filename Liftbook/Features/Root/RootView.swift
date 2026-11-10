@@ -5,6 +5,9 @@ struct RootView: View {
     @State private var selection: AppTab = .home
     @State private var starter = WorkoutStartController()
     @State private var isQuickStarting = false
+    /// The start button hides while typing: the overlay would otherwise ride
+    /// up with the keyboard and cover the field's results.
+    @State private var isKeyboardShown = false
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)
     private var active: [WorkoutSession]
 
@@ -36,7 +39,7 @@ struct RootView: View {
         // Floats just above the tab bar; while a workout runs, the bar above
         // the tabs takes its place.
         .overlay(alignment: .bottomTrailing) {
-            if active.isEmpty {
+            if active.isEmpty && !isKeyboardShown {
                 StartButton(action: start)
                     .padding(.trailing, 20)
                     .padding(.bottom, 66)
@@ -57,6 +60,16 @@ struct RootView: View {
             }
         }
         .workoutStarting(starter, offersLeftover: true)
+        .task {
+            for await _ in NotificationCenter.default.notifications(named: UIResponder.keyboardWillShowNotification) {
+                isKeyboardShown = true
+            }
+        }
+        .task {
+            for await _ in NotificationCenter.default.notifications(named: UIResponder.keyboardWillHideNotification) {
+                isKeyboardShown = false
+            }
+        }
     }
 }
 

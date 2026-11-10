@@ -26,7 +26,9 @@ struct SettingsBlock: View {
             }
             Divider()
             row("Default rest", systemImage: "timer",
-                note: "Starts when you check off a set; each exercise can set its own.") {
+                note: defaultRest == 0
+                    ? "Off: no timer after a set, unless an exercise sets its own."
+                    : "Starts when you check off a set; each exercise can set its own.") {
                 Picker("Default Rest", selection: $defaultRest) {
                     ForEach(RestTimer.options, id: \.self) { seconds in
                         Text(RestTimer.label(seconds: seconds)).tag(seconds)
@@ -50,7 +52,9 @@ struct SettingsBlock: View {
                 HStack {
                     Label(title, systemImage: systemImage)
                     Spacer(minLength: 8)
-                    control()
+                    // Unwrapped, so ViewThatFits falls back to the stacked layout
+                    // instead of letting the picker wrap over the note below.
+                    control().fixedSize()
                 }
                 VStack(alignment: .leading, spacing: 6) {
                     Label(title, systemImage: systemImage)

@@ -42,6 +42,17 @@ enum BodyMetricKind: String, Codable, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// Whether a typed value is believable: above zero and below a limit no
+    /// body reaches (in stored units: kg, cm, %). Counts may be zero.
+    func accepts(stored value: Double) -> Bool {
+        switch self {
+        case .weight: value > 0 && value <= 500
+        case .length: value > 0 && value <= 300
+        case .percent: value > 0 && value <= 100
+        case .number: value >= 0 && value <= 100_000
+        }
+    }
+
     func stored(fromDisplay value: Double, unit: WeightUnit) -> Double {
         switch self {
         case .weight: unit.kilograms(fromDisplay: value)

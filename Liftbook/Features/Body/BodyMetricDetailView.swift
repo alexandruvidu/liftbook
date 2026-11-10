@@ -112,7 +112,8 @@ private struct AddBodyMeasurementView: View {
     @State private var date = Date.now
 
     var body: some View {
-        let value = SetInput.decimal(text)
+        let value = SetInput.decimal(text).map { metric.kind.stored(fromDisplay: $0, unit: unit) }
+            .flatMap { metric.kind.accepts(stored: $0) ? $0 : nil }
         NavigationStack {
             Form {
                 Section {
@@ -139,9 +140,7 @@ private struct AddBodyMeasurementView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         guard let value else { return }
-                        modelContext.insert(BodyMeasurement(metricID: metric.metricID,
-                                                            value: metric.kind.stored(fromDisplay: value, unit: unit),
-                                                            date: date))
+                        modelContext.insert(BodyMeasurement(metricID: metric.metricID, value: value, date: date))
                         try? modelContext.save()
                         dismiss()
                     }

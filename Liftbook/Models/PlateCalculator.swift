@@ -54,6 +54,15 @@ enum PlateCalculator {
                       belowBar: false)
     }
 
+    /// Runs of the same plate, heaviest first: [25, 25, 25, 5] → [(25, 3), (5, 1)].
+    static func grouped(_ plates: [Double]) -> [(plate: Double, count: Int)] {
+        var groups: [(plate: Double, count: Int)] = []
+        for plate in plates {
+            if groups.last?.plate == plate { groups[groups.count - 1].count += 1 } else { groups.append((plate, 1)) }
+        }
+        return groups
+    }
+
     /// "20,10,1.25" ⇄ [20, 10, 1.25], for storing the chosen plates.
     static func encode(_ plates: [Double]) -> String {
         plates.sorted(by: >).map { String(format: "%g", $0) }.joined(separator: ",")

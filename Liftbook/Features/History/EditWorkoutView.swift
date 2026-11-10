@@ -59,6 +59,12 @@ struct EditWorkoutView: View {
             .scrollDismissesKeyboard(.interactively)
             .keyboardDoneButton()
             .revealsFocusedFields()
+            // A workout always needs a name: cards and exports show it.
+            .onDisappear {
+                if session.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    session.name = WorkoutStarter.defaultName(at: session.startedAt)
+                }
+            }
             .navigationTitle("Edit Workout")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

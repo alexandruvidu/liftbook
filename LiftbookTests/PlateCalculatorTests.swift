@@ -46,6 +46,12 @@ struct PlateCalculatorTests {
         #expect(PlateCalculator.decode("25,10,2.5,1.25") == [25, 10, 2.5, 1.25])
     }
 
+    @Test func groupsRunsOfTheSamePlate() {
+        let groups = PlateCalculator.grouped([25, 25, 25, 5, 1.25])
+        #expect(groups.map(\.plate) == [25, 5, 1.25])
+        #expect(groups.map(\.count) == [3, 1, 1])
+    }
+
     @Test func absurdTargetsStopAtThePlateLimit() {
         let result = PlateCalculator.plates(for: 9_999_999_999, bar: 20, available: [25, 20, 1.25])
         #expect(result.perSide.count == PlateCalculator.maxPlatesPerSide)

@@ -16,8 +16,7 @@ enum RestTimer {
     static func label(seconds: Int) -> String {
         switch seconds {
         case 0: "Off"
-        case ..<60: "\(seconds)s"
-        case let s where s % 60 == 0: "\(s / 60) min"
+        // One format for every option ("0:45", "1:00", "1:30"), not a mix of "45s" and "1 min".
         default: SetMeasurement.clock(TimeInterval(seconds))
         }
     }

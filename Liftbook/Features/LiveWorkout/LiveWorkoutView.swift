@@ -98,12 +98,12 @@ struct LiveWorkoutView: View {
         }
         .animation(.snappy, value: session.restEndsAt == nil)
         .task(id: session.restEndsAt) { await runRestTimer(catalog: catalog) }
-        .navigationTitle(session.name)
+        .navigationTitle(session.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 VStack(spacing: 0) {
-                    Text(session.name)
+                    Text(session.displayName)
                         .font(.headline)
                         .lineLimit(1)
                     // A timer-style Text ticks on its own without re-rendering

@@ -39,8 +39,10 @@ struct WarmUpCalculatorView: View {
                         .accessibilityElement(children: .combine)
                         .accessibilityIdentifier("warmup.step.\(index)")
                     }
-                    LabeledContent("Then \(format(working)) \(unit.symbol)", value: "Working sets")
-                        .fontWeight(.semibold)
+                    if !steps.isEmpty {
+                        LabeledContent("Then \(format(working)) \(unit.symbol)", value: "Working sets")
+                            .fontWeight(.semibold)
+                    }
                 }
             }
         }

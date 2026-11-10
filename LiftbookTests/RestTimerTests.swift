@@ -5,7 +5,7 @@ import Testing
 struct RestTimerTests {
     private let now = Date(timeIntervalSince1970: 10_000)
 
-    @Test(arguments: [(0, "Off"), (45, "45s"), (60, "1 min"), (90, "1:30"), (120, "2 min"), (150, "2:30")])
+    @Test(arguments: [(0, "Off"), (45, "0:45"), (60, "1:00"), (90, "1:30"), (120, "2:00"), (150, "2:30")])
     func labels(seconds: Int, expected: String) {
         #expect(RestTimer.label(seconds: seconds) == expected)
     }

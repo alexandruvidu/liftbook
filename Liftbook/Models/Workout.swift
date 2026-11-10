@@ -132,3 +132,13 @@ extension WorkoutSet {
     /// See `WorkoutExercise.stableID`.
     var stableID: ObjectIdentifier { ObjectIdentifier(self) }
 }
+
+extension WorkoutSession {
+    /// The name to show; an emptied name falls back to the time-of-day name,
+    /// so cards, titles and exports never show a blank.
+    var displayName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            ? WorkoutStarter.defaultName(at: startedAt)
+            : name
+    }
+}

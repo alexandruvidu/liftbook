@@ -41,7 +41,8 @@ struct PlateCalculatorView: View {
                         set: { isOn in
                             available = isOn ? (available + [plate]).sorted(by: >) : available.filter { $0 != plate }
                         }))
-                    .accessibilityIdentifier("plates.toggle.\(format(plate))")
+                    // Locale-independent ("1.25", not "1,25") so UI tests can find it.
+                    .accessibilityIdentifier("plates.toggle.\(String(format: "%g", plate))")
                 }
             } header: {
                 Text("Your Plates")
@@ -76,7 +77,10 @@ struct PlateCalculatorView: View {
                                 format: format)
                     .frame(height: 120)
                     .accessibilityHidden(true)
-                Text(result.perSide.map(format).joined(separator: " + ") + " \(unit.symbol)")
+                // "2 × 20 + 1.25 kg" rather than listing every plate.
+                Text(PlateCalculator.grouped(result.perSide)
+                    .map { $0.count == 1 ? format($0.plate) : "\($0.count) × \(format($0.plate))" }
+                    .joined(separator: " + ") + " \(unit.symbol)")
                     .font(.headline)
                     .monospacedDigit()
                     .accessibilityLabel("Each side: " + result.perSide.map { "\(format($0)) \(unit.symbol)" }.joined(separator: ", "))

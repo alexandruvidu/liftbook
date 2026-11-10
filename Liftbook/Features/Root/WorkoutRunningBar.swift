@@ -12,7 +12,7 @@ struct WorkoutRunningBar: View {
                     .foregroundStyle(.tint)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 0) {
-                    Text(session.name)
+                    Text(session.displayName)
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(1)
                     // Ticks on its own without re-rendering the tab view.
@@ -32,7 +32,7 @@ struct WorkoutRunningBar: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Workout in progress: \(session.name). Open")
+        .accessibilityLabel("Workout in progress: \(session.displayName). Open")
         .accessibilityIdentifier("runningBar")
     }
 }

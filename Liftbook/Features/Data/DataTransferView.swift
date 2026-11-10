@@ -78,7 +78,8 @@ struct DataTransferView: View {
 
     private func prepareExports() {
         do {
-            let day = Date.now.formatted(.iso8601.year().month().day())
+            // Today in the user's time zone (plain .iso8601 is UTC: a day off after midnight).
+            let day = Date.now.formatted(Date.ISO8601FormatStyle(timeZone: .current).year().month().day())
             let machines = (try? modelContext.fetch(FetchDescriptor<Machine>())) ?? []
             let csv = DataExport.workoutsCSV(sessions, catalog: catalog, machines: machines)
             csvURL = try DataExport.temporaryFile(named: "liftbook-workouts-\(day).csv", data: Data(csv.utf8))

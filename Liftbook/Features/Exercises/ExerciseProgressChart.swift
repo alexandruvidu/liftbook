@@ -76,7 +76,9 @@ struct ExerciseProgressChart: View {
         .foregroundStyle(Color.accentColor)
         .chartYScale(domain: .automatic(includesZero: metric == .volume))
         .chartXAxis {
-            AxisMarks(values: .automatic(desiredCount: 4)) {
+            // Within a couple of weeks, one tick per day: automatic ticks fall
+            // between days and repeat the same date label.
+            AxisMarks(values: Self.spansFewDays(points) ? .stride(by: .day) : .automatic(desiredCount: 4)) {
                 AxisGridLine().foregroundStyle(Color.secondary.opacity(0.15))
                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
             }
@@ -89,6 +91,11 @@ struct ExerciseProgressChart: View {
         }
         .chartXSelection(value: $selectedDate)
         .accessibilityLabel(metric.description)
+    }
+
+    private static func spansFewDays(_ points: [ExerciseProgress.Point]) -> Bool {
+        guard let first = points.map(\.date).min(), let last = points.map(\.date).max() else { return true }
+        return last.timeIntervalSince(first) < 14 * 86_400
     }
 
     /// The point nearest the touched date.

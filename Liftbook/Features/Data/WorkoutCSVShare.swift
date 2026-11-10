@@ -36,6 +36,6 @@ struct ShareWorkoutButton: View {
                 Label("Export CSV", systemImage: "square.and.arrow.up")
             }
         }
-        .accessibilityLabel("Export \(session.name) as CSV")
+        .accessibilityLabel("Export \(session.displayName) as CSV")
     }
 }

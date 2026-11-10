@@ -13,7 +13,7 @@ struct WorkoutCard: View {
         Block {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(session.name)
+                    Text(session.displayName)
                         .font(.headline)
                     Text("\(session.startedAt.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))) · \(SetMeasurement.clock(summary.duration))")
                         .font(.subheadline)

@@ -53,7 +53,7 @@ struct WorkoutDetailView: View {
             .padding(16)
         }
         .blockScreenBackground()
-        .navigationTitle(session.name)
+        .navigationTitle(session.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
