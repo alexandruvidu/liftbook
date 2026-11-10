@@ -18,7 +18,7 @@ struct RoutineRow: View {
     }
 
     /// "Bench Press, Squat, Row" or "Bench Press, Squat +3 more".
-    static func summary(of names: [String], limit: Int = 3) -> String {
+    nonisolated static func summary(of names: [String], limit: Int = 3) -> String {
         guard names.count > limit else { return names.joined(separator: ", ") }
         return names.prefix(limit - 1).joined(separator: ", ") + " +\(names.count - limit + 1) more"
     }

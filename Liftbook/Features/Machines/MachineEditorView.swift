@@ -74,7 +74,9 @@ struct MachineEditorView: View {
     }
 
     private var photoArea: some View {
-        PhotosPicker(selection: $pickerItem, matching: .images) {
+        // The picker's label closure isn't main-actor isolated, so read the state first.
+        let photo = photo
+        return PhotosPicker(selection: $pickerItem, matching: .images) {
             ZStack {
                 Color(.tertiarySystemFill)
                 if let photo {
