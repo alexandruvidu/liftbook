@@ -49,7 +49,7 @@ enum Progression {
             if lowest >= range.upperBound {
                 let increment = increment(for: exercise, unit: unit)
                 return Suggestion(weight: weight + increment, reps: range.lowerBound, increasesWeight: true,
-                                  reason: "You hit \(range.upperBound) reps on every set last time.")
+                                  reason: "You did \(lowest)+ reps on every set last time.")
             }
             let target = min(max(lowest + 1, range.lowerBound), range.upperBound)
             return Suggestion(weight: weight, reps: target, increasesWeight: false,

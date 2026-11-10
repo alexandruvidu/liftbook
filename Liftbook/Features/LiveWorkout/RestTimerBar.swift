@@ -16,7 +16,7 @@ struct RestTimerBar: View {
                     Text(exerciseName.map { "Rest after \($0)" } ?? "Rest")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                        .lineLimit(2)
                     Text(timerInterval: Date.now...max(end, .now), countsDown: true)
                         .font(.title2.weight(.semibold))
                         .monospacedDigit()
@@ -37,7 +37,9 @@ struct RestTimerBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 20))
+        // Thick enough that the set rows scrolling underneath don't show through.
+        .background(.thickMaterial, in: RoundedRectangle(cornerRadius: 20))
+        .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
         .padding(.horizontal, 12)
         .padding(.bottom, 4)
         .accessibilityElement(children: .contain)

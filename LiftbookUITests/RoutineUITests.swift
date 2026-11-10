@@ -5,6 +5,25 @@ final class RoutineUITests: XCTestCase {
     func testRoutinesInFoldersLight() { buildRoutine(appearance: "light") }
     func testRoutinesInFoldersDark() { buildRoutine(appearance: "dark") }
 
+    func testDuplicateFolderNameIsRefused() {
+        continueAfterFailure = false
+        let app = XCUIApplication.launchLiftbook()
+        for name in ["Push", "push"] {
+            XCTAssertTrue(app.buttons["workout.add"].waitForExistence(timeout: 10))
+            app.buttons["workout.add"].tap()
+            app.buttons["workout.newFolder"].firstMatch.tap()
+            let field = app.alerts.textFields.firstMatch
+            XCTAssertTrue(field.waitForExistence(timeout: 5))
+            field.enter(name)
+            app.alerts.buttons["Create"].tap()
+        }
+        let duplicate = app.alerts["You already have a folder called push"]
+        XCTAssertTrue(duplicate.waitForExistence(timeout: 5))
+        duplicate.buttons["OK"].tap()
+        XCTAssertEqual(app.buttons.matching(identifier: "folder.menu.Push").count, 1)
+        XCTAssertFalse(app.buttons["folder.menu.push"].exists)
+    }
+
     private func buildRoutine(appearance: String) {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook(appearance: appearance)

@@ -28,6 +28,27 @@ enum SetInput {
         return total
     }
 
+    /// Largest value accepted while typing, in the display unit: anything
+    /// above is a typo and would break totals and the plate calculator.
+    static func maximum(for field: SetField) -> Double {
+        switch field {
+        case .weight: 2_000
+        case .reps: 1_000
+        case .duration: 24 * 3600
+        case .distance: 1_000
+        }
+    }
+
+    /// Whether typed text is a number above the field's maximum.
+    static func exceedsMaximum(_ text: String, for field: SetField) -> Bool {
+        let value: Double? = switch field {
+        case .weight, .distance: decimal(text)
+        case .reps: reps(text).map(Double.init)
+        case .duration: duration(text)
+        }
+        return (value ?? 0) > maximum(for: field)
+    }
+
     /// RPE choices offered when logging a set.
     static let rpeOptions: [Double] = Array(stride(from: 6.0, through: 10.0, by: 0.5))
 }
@@ -134,5 +155,13 @@ extension WorkoutSet {
             completedAt = date
         }
         return isCompleted
+    }
+
+    /// Un-checks a done set whose values no longer make a complete set,
+    /// e.g. after its weight was deleted, so it stops counting.
+    func uncheckIfIncomplete(for type: ExerciseType) {
+        guard isCompleted, !measurement.isComplete(for: type) else { return }
+        isCompleted = false
+        completedAt = nil
     }
 }

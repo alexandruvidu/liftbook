@@ -41,7 +41,8 @@ struct WorkoutHomeView: View {
                                 Image(systemName: "chevron.down")
                                     .font(.subheadline.weight(.bold))
                                     .rotationEffect(.degrees(isCollapsed ? -90 : 0))
-                                    .frame(width: 28, height: 44)
+                                    .frame(width: 44, height: 44)
+                                    .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
                             .accessibilityLabel(isCollapsed ? "Show \(folder.name)" : "Hide \(folder.name)")

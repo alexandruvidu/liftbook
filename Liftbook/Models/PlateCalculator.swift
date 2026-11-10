@@ -23,8 +23,10 @@ enum PlateCalculator {
         unit == .kilograms ? [25, 20, 15, 10, 5, 2.5, 1.25] : [45, 35, 25, 10, 5, 2.5]
     }
 
-    static let barOptionsKilograms: [Double] = [20, 15, 10, 7, 25]
-    static let barOptionsPounds: [Double] = [45, 35, 25, 15, 55]
+    static let barOptionsKilograms: [Double] = [25, 20, 15, 10, 7]
+    static let barOptionsPounds: [Double] = [55, 45, 35, 25, 15]
+    /// More plates than fit on any bar; stops absurd targets from looping for ages.
+    static let maxPlatesPerSide = 30
 
     /// Plates per side for `target`, greedily using the heaviest available
     /// plate first (exact for standard plate sets). Rounds down if the target
@@ -40,7 +42,7 @@ enum PlateCalculator {
         var perSide: [Double] = []
         for plate in Set(available).sorted(by: >) where plate > 0 {
             let plateUnits = Int((plate * 100).rounded())
-            while remainingPerSide >= plateUnits {
+            while remainingPerSide >= plateUnits && perSide.count < maxPlatesPerSide {
                 perSide.append(plate)
                 remainingPerSide -= plateUnits
             }

@@ -11,6 +11,8 @@ struct SetValueField: View {
     /// e.g. "Set 2 weight", so VoiceOver says which set a field belongs to.
     let accessibilityName: String
     @State private var text = ""
+    @FocusState private var isFocused: Bool
+    @Environment(\.revealField) private var revealField
 
     var body: some View {
         TextField(spec.placeholder, text: $text, prompt: placeholder.flatMap { $0.isEmpty ? nil : Text($0) })
@@ -20,8 +22,23 @@ struct SetValueField: View {
             .padding(.vertical, 7)
             .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))
             .accessibilityLabel(accessibilityName)
+            .focused($isFocused)
+            .id(revealID)
+            .onChange(of: isFocused) { _, focused in
+                guard focused, let revealField else { return }
+                Task {
+                    // Once the keyboard is up, so the visible area is known.
+                    try? await Task.sleep(for: .milliseconds(350))
+                    revealField(revealID)
+                }
+            }
             .onAppear { text = set.measurement.inputText(for: spec.field, unit: unit) }
-            .onChange(of: text) { _, newValue in
+            .onChange(of: text) { oldValue, newValue in
+                // Refuse typos like 999999999 kg rather than storing them.
+                if SetInput.exceedsMaximum(newValue, for: spec.field) {
+                    text = oldValue
+                    return
+                }
                 var measurement = set.measurement
                 measurement.setInput(newValue, for: spec.field, unit: unit)
                 if measurement != set.measurement { set.measurement = measurement }
@@ -33,6 +50,8 @@ struct SetValueField: View {
                 if typed != measurement { text = measurement.inputText(for: spec.field, unit: unit) }
             }
     }
+
+    private var revealID: String { "\(ObjectIdentifier(set).hashValue).\(spec.field.rawValue)" }
 }
 
 private extension SetField {

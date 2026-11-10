@@ -107,10 +107,10 @@ private struct NoMatchingExercisesView: View {
         ContentUnavailableView {
             Label("No matching exercises", systemImage: "magnifyingglass")
         } description: {
-            Text("Try a shorter search or loosen the muscle and equipment filters.")
+            Text("Try a shorter or different search, or fewer muscle and equipment filters.")
         } actions: {
             Button(action: clear) {
-                Text("Clear Filters").foregroundStyle(Color.accentForeground)
+                Text("Show All Exercises").foregroundStyle(Color.accentForeground)
             }
             .buttonStyle(.borderedProminent)
             .accessibilityIdentifier("exercises.clearFilters")

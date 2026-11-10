@@ -16,12 +16,13 @@ struct QuickStartSheet: View {
                     Button {
                         start(.empty)
                     } label: {
-                        Text("\(Image(systemName: "play.fill"))  Start Empty Workout")
+                        Text("\(Image(systemName: "play.fill")) Start Empty Workout")
                             .multilineTextAlignment(.center)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
                     }
                     .buttonStyle(.pillProminent)
+                    .accessibilityLabel("Start Empty Workout")
                     .accessibilityIdentifier("quickStart.empty")
 
                     if !routines.isEmpty {

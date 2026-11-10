@@ -193,6 +193,7 @@ struct ExerciseBlock: View {
 
     private var progressText: String {
         let done = exercise.sets.filter(\.isCompleted).count
-        return "\(done) / \(exercise.sets.count) sets"
+        let total = exercise.sets.count
+        return "\(done) / \(total) \(total == 1 ? "set" : "sets")"
     }
 }

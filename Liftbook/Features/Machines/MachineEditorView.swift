@@ -15,6 +15,17 @@ struct MachineEditorView: View {
     @State private var photo: UIImage?
     @State private var pickerItem: PhotosPickerItem?
     @State private var isConfirmingDelete = false
+    @Query private var allMachines: [Machine]
+
+    private var trimmedName: String { name.trimmingCharacters(in: .whitespaces) }
+
+    /// Another machine of this exercise already has the name (ignoring case).
+    private var isTaken: Bool {
+        allMachines.contains {
+            $0.exerciseID == exerciseID && $0 !== machine
+                && $0.name.trimmingCharacters(in: .whitespaces).caseInsensitiveCompare(trimmedName) == .orderedSame
+        }
+    }
 
     var body: some View {
         NavigationStack {
@@ -30,7 +41,12 @@ struct MachineEditorView: View {
                     TextField("Where it is (optional)", text: $location)
                         .accessibilityIdentifier("machine.location")
                 } footer: {
-                    Text("Each machine keeps its own history, so last time's weights match the one you're on.")
+                    if isTaken {
+                        Text("This exercise already has a machine with this name.")
+                            .foregroundStyle(.red)
+                    } else {
+                        Text("Each machine keeps its own history, so last time's weights match the one you're on.")
+                    }
                 }
                 if machine != nil {
                     Section {
@@ -49,7 +65,7 @@ struct MachineEditorView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") { save() }
-                        .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .disabled(trimmedName.isEmpty || isTaken)
                         .accessibilityIdentifier("machine.save")
                 }
             }

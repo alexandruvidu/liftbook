@@ -43,7 +43,9 @@ private struct FolderActionsModifier: ViewModifier {
     let folderCount: Int
 
     @Environment(\.modelContext) private var modelContext
+    @Query private var folders: [RoutineFolder]
     @State private var name = ""
+    @State private var duplicateName: String?
 
     private var isNaming: Binding<Bool> {
         Binding(
@@ -71,6 +73,14 @@ private struct FolderActionsModifier: ViewModifier {
                 Button(isRenaming ? "Save" : "Create", action: saveName)
                     .disabled(trimmedName.isEmpty)
             }
+            // Checked on save: an alert's buttons don't update while you type.
+            .alert("You already have a folder called \(duplicateName ?? "")", isPresented: Binding(
+                get: { duplicateName != nil }, set: { if !$0 { duplicateName = nil } }
+            )) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Pick another name so the folders can be told apart.")
+            }
             .confirmationDialog("Delete this folder?", isPresented: isDeleting, titleVisibility: .visible) {
                 Button("Delete Folder", role: .destructive, action: deleteFolder)
             } message: {
@@ -86,8 +96,21 @@ private struct FolderActionsModifier: ViewModifier {
         name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    /// Another folder already has this name (ignoring case), so the two
+    /// couldn't be told apart in pickers.
+    private var isTaken: Bool {
+        var renaming: RoutineFolder?
+        if case .rename(let folder) = action { renaming = folder }
+        return folders.contains { $0 !== renaming && $0.name.caseInsensitiveCompare(trimmedName) == .orderedSame }
+    }
+
     private func saveName() {
         guard !trimmedName.isEmpty else { return }
+        if isTaken {
+            duplicateName = trimmedName
+            action = nil
+            return
+        }
         switch action {
         case .create: modelContext.insert(RoutineFolder(name: trimmedName, sortIndex: folderCount))
         case .rename(let folder): folder.name = trimmedName

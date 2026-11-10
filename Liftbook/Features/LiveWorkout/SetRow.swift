@@ -83,6 +83,7 @@ struct SetRow: View {
                     in: RoundedRectangle(cornerRadius: 10))
         .padding(.horizontal, -6)
         .dynamicTypeSize(...Self.largestTextSize)
+        .onChange(of: set.measurement) { set.uncheckIfIncomplete(for: type) }
     }
 
     /// Last time's values for this set; tapping copies them in.
@@ -129,6 +130,7 @@ struct SetRow: View {
         .buttonStyle(.borderless)
         .disabled(!set.isCompleted && !ready)
         .accessibilityLabel(set.isCompleted ? "Set \(number) done" : "Mark set \(number) done")
+        .accessibilityRemoveTraits(set.isCompleted ? [] : .isSelected)
         .accessibilityIdentifier("\(identifier).check")
         .sensoryFeedback(.success, trigger: set.isCompleted) { _, done in done }
     }

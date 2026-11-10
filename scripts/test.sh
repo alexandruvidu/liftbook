@@ -40,7 +40,7 @@ xcodebuild test ${SELECT[@]+"${SELECT[@]}"} \
     -resultBundlePath "$RESULT" \
     -parallel-testing-enabled NO \
     CODE_SIGNING_ALLOWED=NO \
-    | grep -E "error:|✘|Test run with|Test Case.*(passed|failed)|Executed|\*\* TEST"
+    | grep --line-buffered -E "error:|✘|Test run with|Test Case.*(passed|failed)|Executed|\*\* TEST"
 STATUS=${PIPESTATUS[0]}
 set -e
 

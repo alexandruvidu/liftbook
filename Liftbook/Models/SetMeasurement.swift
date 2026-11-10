@@ -115,11 +115,10 @@ struct SetMeasurement: Equatable, Hashable, Codable, Sendable {
         decimal(unit.display(kilograms: kilograms))
     }
 
-    static func decimal(_ value: Double) -> String {
+    /// Rounded to 0.1, in the user's locale ("62.5" or "62,5"), no grouping.
+    static func decimal(_ value: Double, locale: Locale = .current) -> String {
         let rounded = (value * 10).rounded() / 10
-        return rounded == rounded.rounded()
-            ? String(Int(rounded))
-            : String(format: "%.1f", rounded)
+        return rounded.formatted(.number.precision(.fractionLength(0...1)).grouping(.never).locale(locale))
     }
 }
 

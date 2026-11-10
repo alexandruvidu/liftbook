@@ -43,7 +43,7 @@ struct ExerciseOptionsMenu: View {
     var body: some View {
         Menu {
             if session.isLinkedToNext(exercise) {
-                Button("Unlink from Next Exercise", systemImage: "link.badge.plus") {
+                Button("Unlink from Next Exercise", systemImage: "scissors") {
                     session.unlinkFromNext(exercise)
                 }
             } else if session.exercise(after: exercise) != nil {

@@ -13,6 +13,12 @@ struct ProgressionTests {
         reps.map { SetMeasurement(weight: weight, reps: $0) }
     }
 
+    @Test func reasonNamesTheRepsActuallyDone() throws {
+        let suggestion = try #require(Progression.suggestion(
+            lastSets: sets(62.5, [8, 8]), exercise: exercise("barbell-bench-press"), range: 3...5, unit: .kilograms))
+        #expect(suggestion.reason == "You did 8+ reps on every set last time.")
+    }
+
     @Test func topOfTheRangeOnEverySetAddsWeight() throws {
         let suggestion = try #require(Progression.suggestion(
             lastSets: sets(60, [12, 12, 12]), exercise: exercise("barbell-bench-press"), range: 8...12, unit: .kilograms))

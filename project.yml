@@ -83,6 +83,9 @@ schemes:
       config: Debug
     test:
       config: Debug
+      # Fixed so number and date formatting in tests doesn't follow the Mac's region.
+      language: en
+      region: US
       targets:
         - LiftbookTests
         - LiftbookUITests

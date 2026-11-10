@@ -51,6 +51,6 @@ struct WarmUpCalculatorView: View {
     }
 
     private func format(_ value: Double) -> String {
-        String(format: "%g", value)
+        value.formatted(.number.precision(.fractionLength(0...2)).grouping(.never))
     }
 }

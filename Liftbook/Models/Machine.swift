@@ -45,6 +45,15 @@ enum MachineFilter: Hashable, Sendable {
     /// Only sets logged on this machine.
     case machine(UUID)
 
+    /// "with this exercise", or "on this machine" when filtered, for empty states.
+    var emptyStateScope: String {
+        switch self {
+        case .all: "with this exercise"
+        case .none: "with this exercise and no machine"
+        case .machine: "on this machine"
+        }
+    }
+
     /// `.machine(id)`, or `.none` for nil.
     init(_ machineID: UUID?) {
         self = machineID.map(MachineFilter.machine) ?? .none

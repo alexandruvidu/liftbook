@@ -25,7 +25,7 @@ struct ExerciseProgressChart: View {
             .accessibilityIdentifier("progress.metric")
 
             if points.isEmpty {
-                Text("Finish a workout with this exercise to start the chart.")
+                Text("Finish a workout \(machine.emptyStateScope) to start the chart.")
                     .foregroundStyle(.secondary)
                     .accessibilityIdentifier("progress.chart.empty")
             } else {

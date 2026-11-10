@@ -42,6 +42,9 @@ struct RootView: View {
                     .padding(.bottom, 66)
             }
         }
+        // Room under every scrolling screen so the start button never
+        // covers the last row.
+        .contentMargins(.bottom, active.isEmpty ? 72 : 0, for: .scrollContent)
         .workoutRunningAccessory(session: active.last) { starter.resume($0) }
         // Set explicitly: some system views (e.g. the photo picker button)
         // otherwise drop the asset-catalog accent from the tab bar.

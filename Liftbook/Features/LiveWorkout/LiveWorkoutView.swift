@@ -88,6 +88,7 @@ struct LiveWorkoutView: View {
         .blockScreenBackground()
         .scrollDismissesKeyboard(.interactively)
         .keyboardDoneButton()
+        .revealsFocusedFields()
         .safeAreaInset(edge: .bottom) {
             if session.restEndsAt != nil {
                 RestTimerBar(session: session,

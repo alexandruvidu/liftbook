@@ -92,7 +92,7 @@ struct PlateCalculatorView: View {
     }
 
     private func format(_ value: Double) -> String {
-        String(format: "%g", value)
+        value.formatted(.number.precision(.fractionLength(0...2)).grouping(.never))
     }
 
     private func load() {
@@ -119,12 +119,16 @@ private struct BarbellSideView: View {
     let heaviest: Double
     let format: (Double) -> String
 
-    private let column: CGFloat = 34
     private let sleeve: CGFloat = 28
+    private let collar: CGFloat = 20
 
     var body: some View {
         GeometryReader { geometry in
             let plateArea = max(geometry.size.height - 26, 20)
+            // Narrower columns once there are too many plates to fit.
+            let fits = (geometry.size.width - sleeve - collar) / CGFloat(max(plates.count, 1))
+            let column = max(min(34, fits), 6)
+            let plateWidth = min(18, column - 2)
             VStack(alignment: .leading, spacing: 6) {
                 // Plates centred on the sleeve, taller for heavier plates
                 HStack(alignment: .center, spacing: 0) {
@@ -132,27 +136,29 @@ private struct BarbellSideView: View {
                         .fill(Color.secondary.opacity(0.5))
                         .frame(width: sleeve, height: 10)
                     ForEach(Array(plates.enumerated()), id: \.offset) { _, plate in
-                        RoundedRectangle(cornerRadius: 4)
+                        RoundedRectangle(cornerRadius: min(4, plateWidth / 3))
                             .fill(Color.accentColor)
-                            .frame(width: 18, height: plateArea * (0.35 + 0.65 * plate / heaviest))
+                            .frame(width: plateWidth, height: plateArea * (0.35 + 0.65 * plate / heaviest))
                             .frame(width: column)
                     }
                     Capsule()
                         .fill(Color.secondary.opacity(0.5))
-                        .frame(width: 20, height: 10)
+                        .frame(width: collar, height: 10)
                 }
                 .frame(height: plateArea)
-                // One row of labels, each under its plate
-                HStack(spacing: 0) {
-                    Color.clear.frame(width: sleeve, height: 1)
-                    ForEach(Array(plates.enumerated()), id: \.offset) { _, plate in
-                        Text(format(plate))
-                            .font(.caption2)
-                            .monospacedDigit()
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(0.7)
-                            .frame(width: column)
+                // One row of labels, each under its plate (too cramped past ~14 plates)
+                if column >= 22 {
+                    HStack(spacing: 0) {
+                        Color.clear.frame(width: sleeve, height: 1)
+                        ForEach(Array(plates.enumerated()), id: \.offset) { _, plate in
+                            Text(format(plate))
+                                .font(.caption2)
+                                .monospacedDigit()
+                                .foregroundStyle(.secondary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                                .frame(width: column)
+                        }
                     }
                 }
             }

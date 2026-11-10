@@ -14,6 +14,29 @@ struct SetInputTests {
         #expect(SetInput.decimal(text) == nil)
     }
 
+    @Test func decimalsFollowTheLocale() {
+        #expect(SetMeasurement.decimal(62.5, locale: Locale(identifier: "en_US")) == "62.5")
+        #expect(SetMeasurement.decimal(62.5, locale: Locale(identifier: "ro_RO")) == "62,5")
+        #expect(SetMeasurement.decimal(1500, locale: Locale(identifier: "ro_RO")) == "1500")
+    }
+
+    @Test func typosAboveTheMaximumAreRefused() {
+        #expect(SetInput.exceedsMaximum("999999999", for: .weight))
+        #expect(SetInput.exceedsMaximum("99999", for: .reps))
+        #expect(!SetInput.exceedsMaximum("250", for: .weight))
+        #expect(!SetInput.exceedsMaximum("", for: .reps))
+        #expect(!SetInput.exceedsMaximum("62,", for: .weight))
+    }
+
+    @Test func clearingADoneSetsWeightUnchecksIt() {
+        let set = WorkoutSet(position: 0, measurement: SetMeasurement(weight: 60, reps: 8))
+        set.toggleCompleted(for: .weightAndReps)
+        set.measurement.weight = nil
+        set.uncheckIfIncomplete(for: .weightAndReps)
+        #expect(!set.isCompleted)
+        #expect(set.completedAt == nil)
+    }
+
     @Test func repsParsesWholeNumbers() {
         #expect(SetInput.reps("8") == 8)
         #expect(SetInput.reps("8.5") == nil)

@@ -13,11 +13,17 @@ struct RoutineEditorView: View {
     @State private var draft: RoutineDraft
     @State private var isPicking = false
     @State private var isConfirmingDelete = false
+    @State private var isConfirmingDiscard = false
+    /// The routine as it was when the sheet opened, to spot unsaved changes.
+    private let original: RoutineDraft
 
     init(routine: Routine?) {
         self.routine = routine
-        _draft = State(initialValue: routine.map(RoutineDraft.init(routine:)) ?? RoutineDraft())
+        original = routine.map(RoutineDraft.init(routine:)) ?? RoutineDraft()
+        _draft = State(initialValue: original)
     }
+
+    private var hasChanges: Bool { draft != original }
 
     var body: some View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
@@ -63,6 +69,13 @@ struct RoutineEditorView: View {
                     Section {
                         Button("Delete Routine", role: .destructive) { isConfirmingDelete = true }
                             .accessibilityIdentifier("routine.delete")
+                            .confirmationDialog("Delete \(draft.trimmedName)?", isPresented: $isConfirmingDelete,
+                                                titleVisibility: .visible) {
+                                Button("Delete Routine", role: .destructive, action: delete)
+                                Button("Cancel", role: .cancel) {}
+                            } message: {
+                                Text("Past workouts started from it are not affected.")
+                            }
                     }
                 }
             }
@@ -71,7 +84,17 @@ struct RoutineEditorView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") {
+                        if hasChanges { isConfirmingDiscard = true } else { dismiss() }
+                    }
+                    .accessibilityIdentifier("routine.cancel")
+                    // An alert, not a dialog: anchored to a toolbar button, a dialog
+                    // shows as a bare popover without its title or cancel button.
+                    .alert("Discard your changes?", isPresented: $isConfirmingDiscard) {
+                        Button("Discard Changes", role: .destructive) { dismiss() }
+                            .accessibilityIdentifier("routine.discardChanges")
+                        Button("Keep Editing", role: .cancel) {}
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
@@ -82,12 +105,9 @@ struct RoutineEditorView: View {
             .sheet(isPresented: $isPicking) {
                 ExercisePickerView(catalog: catalog) { draft.add($0) }
             }
-            .confirmationDialog("Delete \(draft.trimmedName)?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
-                Button("Delete Routine", role: .destructive, action: delete)
-            } message: {
-                Text("Past workouts started from it are not affected.")
-            }
         }
+        // Swiping the sheet away would silently lose a half-made routine.
+        .interactiveDismissDisabled(hasChanges)
     }
 
     private func save() {

@@ -63,7 +63,7 @@ struct RPEMenu: View {
                 Button("RPE \(SetMeasurement.decimal(value))") { set.rpe = value }
             }
         } label: {
-            Text(set.rpe.map(SetMeasurement.decimal) ?? "–")
+            Text(set.rpe.map { SetMeasurement.decimal($0) } ?? "–")
                 .monospacedDigit()
                 .frame(maxWidth: .infinity, minHeight: 34)
                 .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))

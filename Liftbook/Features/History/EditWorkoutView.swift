@@ -58,6 +58,7 @@ struct EditWorkoutView: View {
             .blockScreenBackground()
             .scrollDismissesKeyboard(.interactively)
             .keyboardDoneButton()
+            .revealsFocusedFields()
             .navigationTitle("Edit Workout")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
