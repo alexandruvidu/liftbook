@@ -32,7 +32,8 @@ struct WeekStrip: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .frame(height: 72, alignment: .bottom)
+            // A minimum, so large day letters grow the row instead of pushing bars into the text above.
+            .frame(minHeight: 72, alignment: .bottom)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(daysDescription)
         }

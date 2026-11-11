@@ -4,6 +4,7 @@ import SwiftUI
 /// An exercise in the live workout (or in a past workout being edited): a
 /// header with the name and menu, then its sets. Collapses to the header.
 struct ExerciseBlock: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let exercise: WorkoutExercise
     let info: LibraryExercise?
     let fallbackName: String
@@ -137,7 +138,12 @@ struct ExerciseBlock: View {
     }
 
     private var pills: some View {
-        HStack(spacing: 8) {
+        // Stacked at accessibility sizes: side by side, the pills squeezed
+        // "Rest 1:30" to a letter per line and widened the whole workout.
+        let layout = typeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout(spacing: 8))
+        return layout {
             if !machines.isEmpty {
                 MachineChip(name: machines.name(for: exercise.machineID), isConfirmed: exercise.machineConfirmed) {
                     isPickingMachine = true

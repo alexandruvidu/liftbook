@@ -5,6 +5,7 @@ import SwiftUI
 /// Line chart of an exercise over time: estimated 1RM, max weight or volume.
 /// One series in the accent color, touch a point to read its exact value.
 struct ExerciseProgressChart: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let exerciseID: String
     var machine: MachineFilter = .all
 
@@ -78,7 +79,9 @@ struct ExerciseProgressChart: View {
         .chartXAxis {
             // Within a couple of weeks, one tick per day: automatic ticks fall
             // between days and repeat the same date label.
-            AxisMarks(values: Self.spansFewDays(points) ? .stride(by: .day) : .automatic(desiredCount: 4)) {
+            AxisMarks(values: Self.spansFewDays(points) && !typeSize.isAccessibilitySize
+                      ? .stride(by: .day)
+                      : .automatic(desiredCount: typeSize.isAccessibilitySize ? 2 : 4)) {
                 AxisGridLine().foregroundStyle(Color.secondary.opacity(0.15))
                 AxisValueLabel(format: .dateTime.day().month(.abbreviated))
             }

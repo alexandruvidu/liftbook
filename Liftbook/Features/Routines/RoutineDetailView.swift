@@ -3,6 +3,7 @@ import SwiftUI
 
 /// Read-only view of a routine with Start Workout and Edit.
 struct RoutineDetailView: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let routine: Routine
     let catalog: ExerciseCatalog
     let onStart: () -> Void
@@ -39,6 +40,10 @@ struct RoutineDetailView: View {
                                               size: 40)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(catalog.name(for: entry.exerciseID))
+                                if typeSize.isAccessibilitySize {
+                                    Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
+                                        .foregroundStyle(.secondary)
+                                }
                                 if let machine = machines.name(for: entry.machineID) {
                                     Text(machine)
                                         .font(.caption)
@@ -46,8 +51,12 @@ struct RoutineDetailView: View {
                                 }
                             }
                             Spacer()
-                            Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
-                                .foregroundStyle(.secondary)
+                            // Under the name at accessibility sizes, where beside it
+                            // the name broke a word per line.
+                            if !typeSize.isAccessibilitySize {
+                                Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }

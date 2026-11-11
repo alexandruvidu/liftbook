@@ -25,6 +25,7 @@ struct BlockHeader<Trailing: View>: View {
     var subtitle: String?
     var image: Image?
     @ViewBuilder var trailing: Trailing
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     init(_ title: String, subtitle: String? = nil, image: Image? = nil, @ViewBuilder trailing: () -> Trailing) {
         self.title = title
@@ -34,7 +35,13 @@ struct BlockHeader<Trailing: View>: View {
     }
 
     var body: some View {
-        HStack(spacing: 12) {
+        // At accessibility sizes the trailing control goes under the title,
+        // which otherwise gets squeezed to a word per line.
+        let stacked = typeSize.isAccessibilitySize
+        let layout = stacked
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
+            : AnyLayout(HStackLayout(spacing: 12))
+        return layout {
             if let image {
                 image
                     .font(.title3)
@@ -52,7 +59,7 @@ struct BlockHeader<Trailing: View>: View {
                         .foregroundStyle(.secondary)
                 }
             }
-            Spacer(minLength: 8)
+            if !stacked { Spacer(minLength: 8) }
             trailing
         }
     }
@@ -114,11 +121,14 @@ struct SectionTitle: View {
 struct PillButtonStyle: ButtonStyle {
     var prominent = false
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.subheadline.weight(.semibold))
-            .lineLimit(1)
+            // Wraps at accessibility sizes rather than "Start Worko…".
+            .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
+            .multilineTextAlignment(.center)
             .padding(.horizontal, 14)
             .frame(minHeight: 34)
             .foregroundStyle(prominent ? Color.accentForeground : Color.primary)

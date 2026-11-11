@@ -3,6 +3,7 @@ import SwiftUI
 
 /// An exercise's personal records across all finished workouts.
 struct RecordsSection: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let exercise: LibraryExercise
     var machine: MachineFilter = .all
 
@@ -21,9 +22,14 @@ struct RecordsSection: View {
                 }
                 ForEach(records, id: \.kind) { record in
                     VStack(alignment: .leading, spacing: 2) {
-                        HStack(alignment: .firstTextBaseline) {
+                        // Label above the value at accessibility sizes, where side
+                        // by side split "Heaviest weight" mid-word.
+                        let layout = typeSize.isAccessibilitySize
+                            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 2))
+                            : AnyLayout(HStackLayout(alignment: .firstTextBaseline))
+                        layout {
                             Label(record.kind.title, systemImage: "trophy")
-                            Spacer()
+                            if !typeSize.isAccessibilitySize { Spacer() }
                             Text(record.kind.formatted(record.value, unit: unit))
                                 .font(.body.weight(.semibold))
                                 .monospacedDigit()
@@ -31,7 +37,7 @@ struct RecordsSection: View {
                         Text("\(record.set.formatted(for: exercise.type, unit: unit)) · \(record.date.formatted(.dateTime.day().month(.abbreviated).year()))")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .frame(maxWidth: .infinity, alignment: typeSize.isAccessibilitySize ? .leading : .trailing)
                     }
                     .accessibilityElement(children: .combine)
                     .accessibilityIdentifier("exercise.record.\(record.kind.rawValue)")

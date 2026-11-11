@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 
 struct ExercisesHomeView: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     var library: ExerciseLibrary = .bundled
     @Query(sort: \CustomExercise.name) private var customExercises: [CustomExercise]
     @Query private var media: [ExerciseMedia]
@@ -22,7 +23,9 @@ struct ExercisesHomeView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     ExerciseFilterBar(filter: $filter, resultCount: results.count)
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
+                    // One column at accessibility sizes: two cut every name to "Barbell Bench…".
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12),
+                                             count: typeSize.isAccessibilitySize ? 1 : 2), spacing: 12) {
                         ForEach(results) { exercise in
                             NavigationLink(value: exercise) {
                                 ExerciseCard(exercise: exercise, cover: cover[exercise.id],

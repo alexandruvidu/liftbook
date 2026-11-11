@@ -157,12 +157,13 @@ struct LiveWorkoutView: View {
                 try? modelContext.save()
             }
         }
-        .confirmationDialog("Discard this workout?", isPresented: $isConfirmingDiscard, titleVisibility: .visible) {
+        .alert("Discard this workout?", isPresented: $isConfirmingDiscard) {
             Button("Discard Workout", role: .destructive) {
                 RestAlerts.cancel()
                 onDiscard()
             }
                 .accessibilityIdentifier("live.confirmDiscard")
+            Button("Cancel", role: .cancel) {}
         } message: {
             Text("Nothing from this session will be saved.")
         }

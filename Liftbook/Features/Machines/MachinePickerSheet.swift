@@ -85,7 +85,8 @@ struct MachinePickerSheet: View {
                 VStack(alignment: .leading, spacing: 3) {
                     Text(machine.name)
                         .font(.subheadline.weight(.bold))
-                        .lineLimit(2)
+                        // Room to wrap: two lines made "Flat bench A" and "B" identical at large sizes.
+                        .lineLimit(4)
                     if !machine.location.isEmpty {
                         Text(machine.location)
                             .font(.caption)
