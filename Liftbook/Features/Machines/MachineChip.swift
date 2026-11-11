@@ -15,7 +15,9 @@ struct MachineChip: View {
                     .accessibilityHidden(true)
                 Text(label)
                     .font(.footnote.weight(.semibold))
-                    .lineLimit(1)
+                    // Wraps rather than "Flat bench…", which hid which bench.
+                    .lineLimit(3)
+                    .multilineTextAlignment(.leading)
                 Image(systemName: "chevron.down")
                     .font(.caption2.weight(.bold))
                     .accessibilityHidden(true)

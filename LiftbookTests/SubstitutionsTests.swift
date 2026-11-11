@@ -15,6 +15,18 @@ struct SubstitutionsTests {
         #expect(suggestions.allSatisfy { !Set($0.primaryMuscles).isDisjoint(with: bench.primaryMuscles) })
     }
 
+    @Test func benchPressSuggestsOtherPresses() throws {
+        let bench = try #require(library.exercise(id: "barbell-bench-press"))
+        let suggestions = Substitutions.suggestions(for: bench, among: library.exercises)
+        #expect(suggestions.contains { $0.id == "dumbbell-bench-press" })
+        #expect(suggestions.allSatisfy { Substitutions.movementWords(in: $0.name).contains("press") })
+    }
+
+    @Test func movementWordsDropEquipmentAndPosition() {
+        #expect(Substitutions.movementWords(in: "Incline Dumbbell Bench Press") == ["bench", "press"])
+        #expect(Substitutions.movementWords(in: "Cable Curl") == ["curl"])
+    }
+
     @Test func sameTypeRanksAboveOtherTypes() {
         func make(_ id: String, _ type: ExerciseType, equipment: Equipment = .barbell) -> LibraryExercise {
             LibraryExercise(id: id, name: id, primaryMuscles: [.chest], secondaryMuscles: [],

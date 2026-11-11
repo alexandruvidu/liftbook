@@ -3,6 +3,7 @@ import SwiftUI
 /// An exercise in the library grid: its picture, name, muscle and equipment.
 struct ExerciseCard: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dynamicTypeSize) private var typeSize
     let exercise: LibraryExercise
     /// The first photo or video to show, if any.
     let cover: ExerciseMedia?
@@ -40,12 +41,12 @@ struct ExerciseCard: View {
                 Text(exercise.name)
                     .font(.subheadline.weight(.bold))
                     .foregroundStyle(Color.primary)
-                    .lineLimit(2, reservesSpace: true)
+                    .lineLimit(typeSize.isAccessibilitySize ? 5 : 2, reservesSpace: !typeSize.isAccessibilitySize)
                     .multilineTextAlignment(.leading)
                 Text("\(exercise.primaryMuscles.first?.displayName ?? "Full body") · \(exercise.equipment.displayName)")
                     .font(.caption)
                     .foregroundStyle(Color.secondary)
-                    .lineLimit(1)
+                    .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
             }
             .padding(10)
             .frame(maxWidth: .infinity, alignment: .leading)

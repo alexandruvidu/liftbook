@@ -24,8 +24,11 @@ struct ExercisePickerView: View {
                             Text("\(order + 1)")
                                 .font(.footnote.weight(.bold))
                                 .foregroundStyle(Color.accentForeground)
-                                .frame(width: 24, height: 24)
-                                .background(Circle().fill(Color.accentColor))
+                                // Grows with the text; a fixed 24 pt circle clipped at large sizes.
+                                .padding(.horizontal, 6)
+                                .frame(minWidth: 24, minHeight: 24)
+                                .background(Capsule().fill(Color.accentColor))
+                                .fixedSize()
                         }
                     }
                     .contentShape(Rectangle())

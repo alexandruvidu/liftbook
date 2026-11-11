@@ -115,5 +115,20 @@ struct ExerciseFilterTests {
         #expect(ExerciseFilter(equipment: .machine).apply(to: all).map(\.id)
             == all.filter { $0.equipment == .machine }.map(\.id))
     }
-}
 
+    @Test func typosStillFindTheExercise() {
+        let results = ExerciseFilter(query: "bnech pres").apply(to: all)
+        #expect(results.first?.id == "barbell-bench-press" || results.contains { $0.id == "barbell-bench-press" })
+    }
+
+    @Test func nonsenseStillFindsNothing() {
+        #expect(ExerciseFilter(query: "zzzz").apply(to: all).isEmpty)
+        #expect(ExerciseFilter(query: "xq").apply(to: all).isEmpty)
+    }
+
+    @Test func editDistance() {
+        #expect(ExerciseFilter.distance("bnech", "bench") == 1)
+        #expect(ExerciseFilter.distance("pres", "press") == 1)
+        #expect(ExerciseFilter.distance("curl", "curl") == 0)
+    }
+}
