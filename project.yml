@@ -9,6 +9,8 @@ options:
 settings:
   base:
     SWIFT_VERSION: "6.0"
+    # CI replaces the last number with the run number on each build (0.1.<run>);
+    # bump the first two here for bigger releases.
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     # Unsigned builds only: the IPA is sideloaded with SideStore/LiveContainer.

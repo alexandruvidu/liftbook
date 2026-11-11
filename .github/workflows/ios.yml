@@ -57,6 +57,11 @@ jobs:
       - name: Archive unsigned Release build
         run: |
           set -o pipefail
+          # x.y from project.yml, then the run number as the patch: every build
+          # gets a higher version, so LiveContainer / SideStore see an update.
+          BASE=$(sed -nE 's/^ *MARKETING_VERSION: *"?([0-9]+\.[0-9]+).*/\1/p' project.yml | head -n1)
+          VERSION="${BASE:?MARKETING_VERSION not found}.${GITHUB_RUN_NUMBER}"
+          echo "Version $VERSION ($GITHUB_RUN_NUMBER)"
           xcodebuild archive \
             -project Liftbook.xcodeproj \
             -scheme Liftbook \
@@ -64,7 +69,7 @@ jobs:
             -destination 'generic/platform=iOS' \
             -archivePath build/Liftbook.xcarchive \
             -quiet \
-            CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
+            MARKETING_VERSION="$VERSION" CURRENT_PROJECT_VERSION="$GITHUB_RUN_NUMBER" \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
       - name: Package IPA
