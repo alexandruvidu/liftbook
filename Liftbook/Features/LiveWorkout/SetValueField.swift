@@ -15,7 +15,7 @@ struct SetValueField: View {
     @Environment(\.revealField) private var revealField
 
     var body: some View {
-        TextField(spec.placeholder, text: $text, prompt: placeholder.flatMap { $0.isEmpty ? nil : Text($0) })
+        TextField(spec.placeholder, text: $text, prompt: placeholder.flatMap { $0.isEmpty ? nil : Text($0).foregroundStyle(.secondary) })
             .keyboardType(spec.field.keyboard)
             .multilineTextAlignment(.center)
             .monospacedDigit()

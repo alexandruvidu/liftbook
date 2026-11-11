@@ -44,6 +44,7 @@ struct PlateCalculatorView: View {
                     // Locale-independent ("1.25", not "1,25") so UI tests can find it.
                     .accessibilityIdentifier("plates.toggle.\(String(format: "%g", plate))")
                 }
+                .tint(Color.accentColor)
             } header: {
                 Text("Your Plates")
             } footer: {

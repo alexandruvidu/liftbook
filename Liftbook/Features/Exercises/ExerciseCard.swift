@@ -2,6 +2,7 @@ import SwiftUI
 
 /// An exercise in the library grid: its picture, name, muscle and equipment.
 struct ExerciseCard: View {
+    @Environment(\.colorScheme) private var colorScheme
     let exercise: LibraryExercise
     /// The first photo or video to show, if any.
     let cover: ExerciseMedia?
@@ -71,6 +72,8 @@ struct ExerciseCard: View {
                     .resizable()
                     .scaledToFit()
             }
+            // Dimmed in dark mode so the white tile doesn't glare.
+            .brightness(colorScheme == .dark ? -0.14 : 0)
         } else {
             Image(systemName: exercise.equipment.symbolName)
                 .font(.system(size: 40))

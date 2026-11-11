@@ -130,7 +130,8 @@ struct MachinePickerSheet: View {
                     .font(.subheadline.weight(.semibold))
                 Text("Name and photo")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    // Plain gray: `.secondary` inside a button is a dim shade of the tint.
+                    .foregroundStyle(Color.secondary)
             }
             .frame(maxWidth: .infinity, minHeight: 190)
             .foregroundStyle(.tint)

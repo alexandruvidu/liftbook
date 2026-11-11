@@ -3,6 +3,7 @@ import SwiftUI
 
 /// Sheet for creating a custom exercise (`editing == nil`) or editing/deleting one.
 struct ExerciseEditorView: View {
+    @Environment(\.dynamicTypeSize) private var typeSize
     let editing: CustomExercise?
     var onDelete: () -> Void = {}
     var library: ExerciseLibrary = .bundled
@@ -46,10 +47,12 @@ struct ExerciseEditorView: View {
                     Picker("Logged as", selection: $draft.type) {
                         ForEach(ExerciseType.allCases) { Text($0.displayName).tag($0) }
                     }
+                    .pickerStyleFitting(typeSize)
                     .accessibilityIdentifier("editor.type")
                     Picker("Equipment", selection: $draft.equipment) {
                         ForEach(Equipment.allCases) { Text($0.displayName).tag($0) }
                     }
+                    .pickerStyleFitting(typeSize)
                     .accessibilityIdentifier("editor.equipment")
                 } header: {
                     Text("Tracking")
@@ -143,4 +146,17 @@ struct ExerciseEditorView: View {
 #Preview {
     ExerciseEditorView(editing: nil)
         .modelContainer(Persistence.makeContainer(inMemory: true))
+}
+
+private extension View {
+    /// A menu normally; a list on its own screen at accessibility text sizes,
+    /// where a menu's value is cut off mid-word ("Weig…Reps").
+    @ViewBuilder
+    func pickerStyleFitting(_ size: DynamicTypeSize) -> some View {
+        if size.isAccessibilitySize {
+            pickerStyle(.navigationLink)
+        } else {
+            pickerStyle(.menu)
+        }
+    }
 }

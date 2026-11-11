@@ -39,6 +39,8 @@ struct RestTimerBar: View {
         .padding(.vertical, 12)
         // Thick enough that the set rows scrolling underneath don't show through.
         .background(.thickMaterial, in: RoundedRectangle(cornerRadius: 20))
+        // An edge, so it stands apart from same-gray cards in dark mode.
+        .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color(.separator)))
         .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
         .padding(.horizontal, 12)
         .padding(.bottom, 4)
