@@ -33,6 +33,9 @@ CORE = ROOT / "Liftbook/Resources/exercises.json"
 OUT = ROOT / "Liftbook/Resources/exercises-more.json"
 CORE_SOURCES = ROOT / "scripts/catalog/core-sources.json"
 ILLUSTRATIONS = ROOT / "Liftbook/Resources/exercise-illustrations.json"
+# Removed duplicates and the exercise each one was merged into; the app moves
+# logged data from the old ID to the new one, so they must stay out.
+ALIASES = ROOT / "Liftbook/Resources/exercise-aliases.json"
 
 REPDB_URL = "https://raw.githubusercontent.com/RepDB/exercise-dataset/66c4298af8d99b9dc397dad6699e508fb871d249/exercises.json"
 FEDB_URL = "https://raw.githubusercontent.com/yuhonas/free-exercise-db/f00c92c7dcf1216a928a52c3706c7ce8e2f71ed5/dist/exercises.json"
@@ -378,6 +381,7 @@ def main() -> int:
             taken_names.add(r["name"].lower())
             counts[r["source"]] = counts.get(r["source"], 0) + 1
 
+    aliases = json.loads(ALIASES.read_text())
     out = []
     for k, r in merged.items():
         texts = descriptions.get(k, {})
@@ -388,6 +392,8 @@ def main() -> int:
         while identifier in taken_ids:
             identifier, n = f"{base}-{n}", n + 1
         taken_ids.add(identifier)
+        if identifier in aliases:
+            continue  # a duplicate merged into another exercise
         source = next((s for s in DESCRIPTION_ORDER if s in texts), None)
         entry = {
             "id": identifier, "name": r["name"],

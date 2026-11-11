@@ -65,7 +65,7 @@ struct ExerciseLibrary: Sendable {
     }()
 
     func exercise(id: String) -> LibraryExercise? {
-        byID[id]
+        byID[id] ?? byID[ExerciseAliases.resolve(id)]
     }
 
     /// Exercises grouped by the first letter of their name, A–Z.

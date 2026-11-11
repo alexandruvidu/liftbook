@@ -74,7 +74,8 @@ enum DataImport {
             }
             guard let session = current?.session else { continue }
 
-            var exerciseID = value(row, "exercise_id")
+            // Exports from before a duplicate was removed use its old ID.
+            var exerciseID = ExerciseAliases.resolve(value(row, "exercise_id"))
             if catalog.exercise(id: exerciseID) == nil, let match = byName[value(row, "exercise").lowercased()] {
                 exerciseID = match
             }

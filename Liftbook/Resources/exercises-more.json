@@ -17000,20 +17000,6 @@
   "repdbID": "glute-kickback-hold"
  },
  {
-  "id": "glute-ham-raise",
-  "name": "Glute-Ham Raise",
-  "primaryMuscles": [
-   "hamstrings"
-  ],
-  "secondaryMuscles": [
-   "glutes",
-   "lowerBack"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Set the glute-ham raise machine to fit your body. Set yourself face down on the machine with your ankles secured. Line the knees up with the machine or bench edge before starting the curl. Bend your knees to draw the pad toward you without lifting your hips from the support. Keep the hips still while the knees bend. Return along the same path at a controlled pace."
- },
- {
   "id": "good-morning-off-pins",
   "name": "Good Morning Off Pins",
   "primaryMuscles": [
@@ -26946,20 +26932,6 @@
   "description": "Position yourself face down on a flat bench with your hips at the edge and your legs hanging off the bench. Use the bench for stability. Secure the hips and feet on the support before lifting. Raise your torso or legs until they line up with your body, without arching sharply at the lower back. Finish in a straight body line, before the lower back overarches. Bring the weight or body back to its starting position without rushing."
  },
  {
-  "id": "reverse-lunges",
-  "name": "Reverse Lunges",
-  "primaryMuscles": [
-   "glutes",
-   "quads"
-  ],
-  "secondaryMuscles": [
-   "hamstrings"
-  ],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Starting position: Stand straight, feet hip-width apart. Steps: Step backward with one leg so it can bend comfortably to a 90 degree angle. Slowly bend both knees to form 90 degree angles. Return to the starting position. Repeat, alternating legs."
- },
- {
   "id": "reverse-nordic-curl",
   "name": "Reverse Nordic Curl",
   "primaryMuscles": [
@@ -27793,32 +27765,6 @@
   "description": "A rubber band glute kickback is an exercise performed on hands and knees, where you anchor a resistance band to your foot and kick your heel back and up, squeezing your glute at the top of the movement, while maintaining a stable core and flat back to target and strengthen the gluteal muscles."
  },
  {
-  "id": "run",
-  "name": "Run",
-  "primaryMuscles": [
-   "fullBody"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "duration",
-  "description": "Running or jogging outside in a park, on the tracks,..."
- },
- {
-  "id": "run-equipment",
-  "name": "Run (equipment)",
-  "primaryMuscles": [
-   "fullBody"
-  ],
-  "secondaryMuscles": [
-   "quads",
-   "hamstrings",
-   "calves"
-  ],
-  "equipment": "none",
-  "type": "duration",
-  "description": "Begin by standing upright with your feet about hip width. Brace your trunk and keep your upper body relaxed. Start at a pace that lets the feet and arms move in sync. Move at a repeatable pace, keeping the motion smooth and your breathing steady. Keep the pattern repeatable as speed increases. Keep the rhythm for the planned interval, slowing if your form starts to slip."
- },
- {
   "id": "run-interval-training",
   "name": "Run - Interval Training",
   "primaryMuscles": [
@@ -27852,20 +27798,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "View the video to undestand the exercise"
- },
- {
-  "id": "runners-stretch",
-  "name": "Runners Stretch",
-  "primaryMuscles": [
-   "hamstrings"
-  ],
-  "secondaryMuscles": [
-   "calves",
-   "quads"
-  ],
-  "equipment": "none",
-  "type": "duration",
-  "description": "Stand and set your feet about hip width. Step forward with your right foot, keeping your left foot planted. Settle into the starting position and take an easy breath before moving deeper. Ease toward the stretch until you feel mild tension; keep breathing and avoid bouncing. Stay in a mild stretch rather than pulling farther with momentum. Hold the position with steady breathing, then release gently; repeat on the other side if needed."
  },
  {
   "id": "russian-push-ups",
@@ -32049,21 +31981,6 @@
   "description": "Begin with a loaded barbell on the floor. The bar should be close to or touching the shins, and a wide grip should be taken on the bar. The feet should be directly below the hips, with the feet turned out as needed. Lower the hips, with the chest up and the head looking forward. The shoulders should be just in front of the bar. This will be the starting position. Begin the first pull by driving through the front of the heels, raising the bar from the ground. The back angle should stay the same until the bar passes the knees. Transition into the second pull by extending through the hips knees and ankles, driving the bar up as quickly as possible. The bar should be close to the body. At peak extension, shrug the shoulders and allow the elbows to flex to the side. As you move your feet into the receiving position, forcefully pull yourself below the bar as you elevate the bar overhead. The feet should move forcefully to a split position, one foot forward one foot back. Receive the bar with your body as low as possible and the arms fully extended overhead. Keeping the bar aligned over the front of the heels, your head and chest up, drive through heels of the feet to move to a standing position, bringing your feet together. Carefully return the weight to floor."
  },
  {
-  "id": "split-squats",
-  "name": "Split Squats",
-  "primaryMuscles": [
-   "hamstrings"
-  ],
-  "secondaryMuscles": [
-   "calves",
-   "glutes",
-   "quads"
-  ],
-  "equipment": "none",
-  "type": "duration",
-  "description": "Being in a standing position. Jump into a split leg position, with one leg forward and one leg back, flexing the knees and lowering your hips slightly as you do so. As you descend, immediately reverse direction, standing back up and jumping, reversing the position of your legs. Repeat 5-10 times on each leg."
- },
- {
   "id": "split-squats-left",
   "name": "Split Squats Left",
   "primaryMuscles": [
@@ -32537,17 +32454,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Step onto the edge of a step or a sturdy platform with your heels hanging off and your toes on the step. Use a railing or wall for balance if needed. Let the ankles move freely while the rest of the body stays quiet. Rise through the balls of your feet, lifting the heels as high as you can without rocking. Pause at the top without rolling the ankles outward. Lower the heels at a measured pace before rising again."
- },
- {
-  "id": "standing-calf-raises",
-  "name": "Standing Calf Raises",
-  "primaryMuscles": [
-   "calves"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Get onto the calf raises machine, you should able to completely push your calves down. Stand straight, don't make a hollow back and don't bend your legs. Pull yourself up as high as you can. Make a small pause of 1 - 2 seconds and go slowly down."
  },
  {
   "id": "standing-calf-stretch",
@@ -33478,18 +33384,6 @@
   "type": "weightAndReps",
   "description": "",
   "repdbID": "sumo-squat"
- },
- {
-  "id": "sumo-squats",
-  "name": "Sumo Squats",
-  "primaryMuscles": [
-   "glutes",
-   "quads"
-  ],
-  "secondaryMuscles": [],
-  "equipment": "none",
-  "type": "bodyweight",
-  "description": "Stand with your feet wider than your shoulders, with your toes pointed out at a 45 degree angle and barbell on your shoulder. While keeping your back straight, descend slowly by bending at the knees and hips as if you are sitting down (squatting). Lower yourself until your quadriceps and hamstrings are parallel to the floor. Return to the starting position by pressing upwards and extending your legs while maintaining an equal distribution of weight on your forefoot and heel."
  },
  {
   "id": "superman",
@@ -36190,21 +36084,6 @@
   "equipment": "none",
   "type": "bodyweight",
   "description": "Hang from a pull-up bar, raise your legs to the ceiling. Move lower body from left to right with straight legs like a windshield wiper"
- },
- {
-  "id": "world-greatest-stretch",
-  "name": "World Greatest Stretch",
-  "primaryMuscles": [
-   "hamstrings"
-  ],
-  "secondaryMuscles": [
-   "glutes",
-   "quads",
-   "calves"
-  ],
-  "equipment": "none",
-  "type": "duration",
-  "description": "Begin in a lunge position with your right foot forward and your left foot back. Set your hands on the ground on either side of your right foot. Settle into the starting position and take an easy breath before moving deeper. Ease toward the stretch until you feel mild tension; keep breathing and avoid bouncing. Stay in a mild stretch rather than pulling farther with momentum. Hold the position with steady breathing, then release gently; repeat on the other side if needed."
  },
  {
   "id": "world-s-greatest-stretch",

@@ -31,11 +31,11 @@ struct ExerciseCatalog {
     }
 
     func exercise(id: String) -> LibraryExercise? {
-        byID[id]
+        byID[id] ?? byID[ExerciseAliases.resolve(id)]
     }
 
     /// The exercise name, or a placeholder if it was deleted.
     func name(for id: String) -> String {
-        byID[id]?.name ?? "Deleted exercise"
+        exercise(id: id)?.name ?? "Deleted exercise"
     }
 }

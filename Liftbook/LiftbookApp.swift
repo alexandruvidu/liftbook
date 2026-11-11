@@ -13,6 +13,8 @@ struct LiftbookApp: App {
         } else {
             container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
         }
+        // Logged data may point at duplicates removed from the catalog.
+        ExerciseAliases.migrate(in: container.mainContext)
         if UITestOverrides.seedSampleData {
             Persistence.seedSampleData(in: container.mainContext)
         }
