@@ -1,17 +1,19 @@
 import SwiftUI
 
-/// The round + button floating beside the tab bar that starts a workout.
-/// Liquid Glass on iOS 26, a material circle before that.
+/// The "Start" button floating beside the tab bar that starts a workout.
+/// Labelled, not a bare "+", so it isn't confused with the create buttons.
+/// Liquid Glass on iOS 26, a material capsule before that.
 struct StartButton: View {
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: "plus")
-                .font(.title2.weight(.bold))
+            Label("Start", systemImage: "play.fill")
+                .font(.headline)
                 .foregroundStyle(.tint)
-                .frame(width: 60, height: 60)
-                .contentShape(Circle())
+                .padding(.horizontal, 20)
+                .frame(height: 56)
+                .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .modifier(GlassCircle())
@@ -23,10 +25,10 @@ struct StartButton: View {
 private struct GlassCircle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 26, *) {
-            content.glassEffect(.regular.interactive(), in: Circle())
+            content.glassEffect(.regular.interactive(), in: Capsule())
         } else {
             content
-                .background(.regularMaterial, in: Circle())
+                .background(.regularMaterial, in: Capsule())
                 .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
         }
     }

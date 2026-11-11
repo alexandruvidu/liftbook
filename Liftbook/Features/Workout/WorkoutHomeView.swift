@@ -5,8 +5,6 @@ struct WorkoutHomeView: View {
     @Query(sort: \RoutineFolder.sortIndex) private var folders: [RoutineFolder]
     @Query(sort: \Routine.name) private var routines: [Routine]
     @Query private var customExercises: [CustomExercise]
-    @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }) private var finished: [WorkoutSession]
-    @AppStorage(WeeklyGoal.storageKey) private var goal = WeeklyGoal.defaultGoal
     @State private var collapsedFolders: Set<UUID> = []
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -20,10 +18,6 @@ struct WorkoutHomeView: View {
             let unfiled = routines.filter { $0.folder == nil }
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    WeekStrip(week: WeekActivity.week(containing: .now, sessions: finished, goal: goal) {
-                        catalog.exercise(id: $0)?.type ?? .weightAndReps
-                    })
-
                     if routines.isEmpty && folders.isEmpty {
                         Block {
                             NoRoutinesSection { editorTarget = .new }

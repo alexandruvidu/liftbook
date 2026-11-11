@@ -27,7 +27,9 @@ struct AddMediaButton: View {
                 Button("Take Photo or Video", systemImage: "camera") { isUsingCamera = true }
             }
         } label: {
-            Label("Add Photo or Video", systemImage: "plus")
+            // Icon only: adding your own media is occasional, not a main action.
+            Label("Add Photo or Video", systemImage: "camera")
+                .labelStyle(.iconOnly)
         }
         .accessibilityIdentifier("media.add")
         .photosPicker(isPresented: $isPickingLibrary, selection: $items, maxSelectionCount: 5,

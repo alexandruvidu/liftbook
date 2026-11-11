@@ -34,15 +34,11 @@ struct ProgressionRow: View {
                     .font(.title3)
                     .foregroundStyle(Color.accentColor)
                     .accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Next: \(target(suggestion))")
-                        .font(.subheadline.weight(.semibold))
-                        .monospacedDigit()
-                    Text(suggestion.reason)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                .accessibilityElement(children: .combine)
+                // One line: the same explanation on every exercise was noise.
+                Text("Next: \(target(suggestion))")
+                    .font(.subheadline.weight(.semibold))
+                    .monospacedDigit()
+                    .accessibilityHint(suggestion.reason)
                 .accessibilityIdentifier("\(identifier).suggestion")
                 if !dynamicTypeSize.isAccessibilitySize { Spacer(minLength: 4) }
                 Menu {

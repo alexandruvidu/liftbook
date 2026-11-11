@@ -8,9 +8,7 @@ struct WorkoutStatStrip: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // A timer-style Text ticks on its own without re-rendering the
-            // screen, so open menus and focused fields aren't disturbed.
-            tile("Time", value: Text(session.startedAt, style: .timer), id: "live.stat.time", accent: true)
+            // No time tile: the navigation title already shows the elapsed time.
             tile("Volume", value: Text(unit.volumeText(kilograms: stats.volume)), id: "live.stat.volume")
             tile("Sets", value: Text("\(stats.completedSets) / \(stats.totalSets)"), id: "live.stat.sets")
         }
