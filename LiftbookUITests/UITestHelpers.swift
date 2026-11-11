@@ -73,12 +73,20 @@ extension XCUIApplication {
     @MainActor
     func openTab(_ title: String) {
         if title == "Start" {
+            // The start button floats on the Home tab only.
+            if !buttons["startButton"].exists { openTab("Home") }
             let start = buttons["startButton"]
             XCTAssertTrue(start.waitForExistence(timeout: 10), "No start button")
             start.tap()
             return
         }
         let inBar = tabBars.buttons[title]
+        // The tab bar shrinks to the current tab after scrolling down;
+        // scrolling back up brings the other tabs back.
+        if !inBar.waitForExistence(timeout: 3) {
+            swipeDown()
+            swipeDown()
+        }
         if inBar.waitForExistence(timeout: 10) {
             inBar.tap()
         } else {

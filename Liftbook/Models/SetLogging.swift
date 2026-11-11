@@ -51,6 +51,21 @@ enum SetInput {
 
     /// RPE choices offered when logging a set.
     static let rpeOptions: [Double] = Array(stride(from: 6.0, through: 10.0, by: 0.5))
+
+    /// Plain-language meaning of an RPE value, phrased as reps left in the tank.
+    static func rpeDescription(_ rpe: Double) -> String {
+        switch rpe {
+        case 10...: "Max effort, no more reps possible"
+        case 9.5..<10: "No more reps, maybe a bit more weight"
+        case 9..<9.5: "Could do 1 more rep"
+        case 8.5..<9: "Could do 1–2 more reps"
+        case 8..<8.5: "Could do 2 more reps"
+        case 7.5..<8: "Could do 2–3 more reps"
+        case 7..<7.5: "Could do 3 more reps"
+        case 6.5..<7: "Could do 3–4 more reps"
+        default: "Could do 4+ more reps, felt easy"
+        }
+    }
 }
 
 extension SetMeasurement {

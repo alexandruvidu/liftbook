@@ -91,3 +91,40 @@ extension WorkoutSession {
         if restExerciseID == exercise.exerciseID { stopRest() }
     }
 }
+
+extension WorkoutSession {
+    /// Moves `moving` (in their current order) to just before `target`, or to
+    /// the end when `target` is nil, renumbering every exercise. A superset
+    /// split apart by the move becomes separate supersets (or none).
+    func moveExercises(_ moving: [WorkoutExercise], before target: WorkoutExercise?) {
+        let movingIDs = Set(moving.map(ObjectIdentifier.init))
+        guard !movingIDs.isEmpty else { return }
+        var ordered = orderedExercises
+        let moved = ordered.filter { movingIDs.contains(ObjectIdentifier($0)) }
+        ordered.removeAll { movingIDs.contains(ObjectIdentifier($0)) }
+        let index = target.flatMap { target in ordered.firstIndex { $0 === target } } ?? ordered.endIndex
+        ordered.insert(contentsOf: moved, at: index)
+        for (position, exercise) in ordered.enumerated() { exercise.position = position }
+
+        // A group now in more than one run: each later run gets a group of its own.
+        var seen: Set<UUID> = []
+        var previous: UUID?
+        for exercise in ordered {
+            guard let group = exercise.supersetGroup else { previous = nil; continue }
+            if group != previous {
+                if seen.contains(group) {
+                    let fresh = UUID()
+                    for other in ordered.drop(while: { $0 !== exercise }).prefix(while: { $0.supersetGroup == group }) {
+                        other.supersetGroup = fresh
+                    }
+                    previous = fresh
+                    seen.insert(fresh)
+                    continue
+                }
+                seen.insert(group)
+            }
+            previous = group
+        }
+        cleanUpSupersets()
+    }
+}

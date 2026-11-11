@@ -59,6 +59,14 @@ struct SetInputTests {
         #expect(SetInput.rpeOptions.last == 10)
         #expect(SetInput.rpeOptions.count == 9)
     }
+
+    @Test func rpeDescriptionsExplainRepsLeft() {
+        #expect(SetInput.rpeDescription(10) == "Max effort, no more reps possible")
+        #expect(SetInput.rpeDescription(8) == "Could do 2 more reps")
+        #expect(SetInput.rpeDescription(6) == "Could do 4+ more reps, felt easy")
+        // Every offered value gets its own explanation.
+        #expect(Set(SetInput.rpeOptions.map(SetInput.rpeDescription)).count == SetInput.rpeOptions.count)
+    }
 }
 
 struct SetMeasurementInputTests {

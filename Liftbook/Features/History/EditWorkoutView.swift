@@ -34,14 +34,19 @@ struct EditWorkoutView: View {
                             .accessibilityIdentifier("edit.notes")
                     }
 
-                    ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
-                        ExerciseBlock(exercise: exercise,
-                                      info: catalog.exercise(id: exercise.exerciseID),
-                                      fallbackName: catalog.name(for: exercise.exerciseID),
-                                      identifier: "edit.exercise.\(index)",
-                                      startsRest: false,
-                                      isCollapsed: $collapsed.member(exercise.stableID))
+                    let ordered = session.orderedExercises
+                    VStack(spacing: 12) {
+                        ForEach(ordered, id: \.stableID) { exercise in
+                            ExerciseBlock(exercise: exercise,
+                                          info: catalog.exercise(id: exercise.exerciseID),
+                                          fallbackName: catalog.name(for: exercise.exerciseID),
+                                          identifier: "edit.exercise.\(ordered.firstIndex { $0 === exercise } ?? 0)",
+                                          startsRest: false,
+                                          isCollapsed: $collapsed.member(exercise.stableID))
+                        }
+                        .reorderableIfAvailable()
                     }
+                    .reordersExercises(of: session)
 
                     Button {
                         isPicking = true
@@ -55,6 +60,7 @@ struct EditWorkoutView: View {
                 }
                 .padding(16)
             }
+            .swipeActionsContainerIfAvailable()
             .blockScreenBackground()
             .scrollDismissesKeyboard(.interactively)
             .keyboardDoneButton()

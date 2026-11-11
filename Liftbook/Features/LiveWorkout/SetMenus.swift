@@ -59,8 +59,14 @@ struct RPEMenu: View {
     var body: some View {
         Menu {
             Button("No RPE") { set.rpe = nil }
-            ForEach(SetInput.rpeOptions.reversed(), id: \.self) { value in
-                Button("RPE \(SetMeasurement.decimal(value))") { set.rpe = value }
+            Section("How hard was the set?") {
+                ForEach(SetInput.rpeOptions.reversed(), id: \.self) { value in
+                    Button { set.rpe = value } label: {
+                        // The second text shows as the menu item's subtitle.
+                        Text("RPE \(SetMeasurement.decimal(value))")
+                        Text(SetInput.rpeDescription(value))
+                    }
+                }
             }
         } label: {
             Text(set.rpe.map { SetMeasurement.decimal($0) } ?? "–")

@@ -32,7 +32,8 @@ final class LogSetsUITests: XCTestCase {
         type("8", into: app.textFields["live.exercise.0.set.0.reps"])
         app.dismissKeyboard()
 
-        let rpe = app.buttons["RPE 8"]
+        // Menu items carry a subtitle explaining the value, which may join the label
+        let rpe = app.buttons.matching(NSPredicate(format: "label == 'RPE 8' OR label BEGINSWITH 'RPE 8,'")).firstMatch
         XCTAssertTrue(app.buttons["live.exercise.0.set.0.rpe"].openMenu(showing: rpe), "RPE menu did not open")
         rpe.tap()
         XCTAssertEqual(app.buttons["live.exercise.0.set.0.rpe"].label, "RPE 8")

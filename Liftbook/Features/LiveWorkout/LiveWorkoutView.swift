@@ -52,22 +52,28 @@ struct LiveWorkoutView: View {
                         .padding(.vertical, 24)
                 }
 
-                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
-                    let machines = allMachines.of(exercise.exerciseID)
-                    ExerciseBlock(exercise: exercise,
-                                  info: catalog.exercise(id: exercise.exerciseID),
-                                  fallbackName: catalog.name(for: exercise.exerciseID),
-                                  identifier: "live.exercise.\(index)",
-                                  // With machines, last time is that machine's (or no machine's).
-                                  previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
-                                                                     machine: machines.isEmpty ? .all : MachineFilter(exercise.machineID),
-                                                                     in: finishedSessions, excluding: session),
-                                  previousNote: PreviousPerformance.note(exerciseID: exercise.exerciseID,
+                let ordered = session.orderedExercises
+                VStack(spacing: 12) {
+                    ForEach(ordered, id: \.stableID) { exercise in
+                        let index = ordered.firstIndex { $0 === exercise } ?? 0
+                        let machines = allMachines.of(exercise.exerciseID)
+                        ExerciseBlock(exercise: exercise,
+                                      info: catalog.exercise(id: exercise.exerciseID),
+                                      fallbackName: catalog.name(for: exercise.exerciseID),
+                                      identifier: "live.exercise.\(index)",
+                                      // With machines, last time is that machine's (or no machine's).
+                                      previous: PreviousPerformance.find(exerciseID: exercise.exerciseID,
+                                                                         machine: machines.isEmpty ? .all : MachineFilter(exercise.machineID),
                                                                          in: finishedSessions, excluding: session),
-                                  isCollapsed: $collapsed.member(exercise.stableID),
-                                  machines: machines,
-                                  history: finishedSessions)
+                                      previousNote: PreviousPerformance.note(exerciseID: exercise.exerciseID,
+                                                                             in: finishedSessions, excluding: session),
+                                      isCollapsed: $collapsed.member(exercise.stableID),
+                                      machines: machines,
+                                      history: finishedSessions)
+                    }
+                    .reorderableIfAvailable()
                 }
+                .reordersExercises(of: session) { try? modelContext.save() }
 
                 Button {
                     isPicking = true
@@ -85,6 +91,7 @@ struct LiveWorkoutView: View {
             }
             .padding(16)
         }
+        .swipeActionsContainerIfAvailable()
         .blockScreenBackground()
         .scrollDismissesKeyboard(.interactively)
         .keyboardDoneButton()
@@ -131,6 +138,8 @@ struct LiveWorkoutView: View {
                     .foregroundStyle(Color.accentForeground)
                     .accessibilityIdentifier("live.finish")
             }
+            // Finish never moves into the overflow menu when space is tight.
+            .keepsVisibleIfAvailable()
         }
         .sheet(isPresented: $isEditingNote) {
             WorkoutNoteSheet(session: session)

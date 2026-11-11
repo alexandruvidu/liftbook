@@ -93,6 +93,9 @@ struct RestSecondsMenu: View {
         } label: {
             Label("Rest \(RestTimer.label(seconds: current))", systemImage: "timer")
                 .font(.subheadline.weight(.semibold))
+                // Kept on one line beside a long machine name, which wraps instead.
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
                 .foregroundStyle(Color.primary)
                 .padding(.horizontal, 14)
                 .frame(minHeight: 34)

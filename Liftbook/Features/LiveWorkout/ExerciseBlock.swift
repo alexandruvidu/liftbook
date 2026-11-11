@@ -137,31 +137,55 @@ struct ExerciseBlock: View {
         }
     }
 
+    /// The machine, rest and note pills: on one row when they fit, else the
+    /// machine (whose name may be long) on its own row above the other two.
+    @ViewBuilder
     private var pills: some View {
         // Stacked at accessibility sizes: side by side, the pills squeezed
         // "Rest 1:30" to a letter per line and widened the whole workout.
-        let layout = typeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
-            : AnyLayout(HStackLayout(spacing: 8))
-        return layout {
-            if !machines.isEmpty {
-                MachineChip(name: machines.name(for: exercise.machineID), isConfirmed: exercise.machineConfirmed) {
-                    isPickingMachine = true
+        if typeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 8) {
+                machinePill
+                restAndNotePills
+            }
+        } else {
+            ViewThatFits(in: .horizontal) {
+                HStack(spacing: 8) {
+                    machinePill.fixedSize(horizontal: true, vertical: false)
+                    restAndNotePills
                 }
-                .accessibilityIdentifier("\(identifier).machine")
+                VStack(alignment: .leading, spacing: 8) {
+                    machinePill
+                    HStack(spacing: 8) { restAndNotePills }
+                }
             }
-            if startsRest {
-                RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
-                    .accessibilityIdentifier("\(identifier).rest")
-            }
-            Button {
-                isNoteOpen.toggle()
-            } label: {
-                Label("Note", systemImage: "square.and.pencil")
-            }
-            .buttonStyle(.pill)
-            .accessibilityIdentifier("\(identifier).note")
         }
+    }
+
+    @ViewBuilder
+    private var machinePill: some View {
+        if !machines.isEmpty {
+            MachineChip(name: machines.name(for: exercise.machineID), isConfirmed: exercise.machineConfirmed) {
+                isPickingMachine = true
+            }
+            .accessibilityIdentifier("\(identifier).machine")
+        }
+    }
+
+    @ViewBuilder
+    private var restAndNotePills: some View {
+        if startsRest {
+            RestSecondsMenu(exercise: exercise, defaultSeconds: defaultRest)
+                .accessibilityIdentifier("\(identifier).rest")
+        }
+        Button {
+            isNoteOpen.toggle()
+        } label: {
+            Label("Note", systemImage: "square.and.pencil")
+                .fixedSize(horizontal: true, vertical: false)
+        }
+        .buttonStyle(.pill)
+        .accessibilityIdentifier("\(identifier).note")
     }
 
     /// Shown when the note pill is on, or there's a note (now or last time).
@@ -193,6 +217,18 @@ struct ExerciseBlock: View {
                     guard startsRest, let session = exercise.session else { return }
                     session.startRest(seconds: session.restSeconds(after: exercise, default: defaultRest),
                                       for: exercise.exerciseID)
+                }
+                // Swipe left to delete (iOS 27, in the screen's swipe container);
+                // the set number's menu offers the same everywhere.
+                .swipeActions(edge: .trailing) {
+                    if exercise.sets.count > 1 {
+                        Button(role: .destructive) {
+                            withAnimation(.snappy) { exercise.removeSet(set) }
+                        } label: {
+                            Label("Delete Set", systemImage: "trash")
+                        }
+                        .accessibilityIdentifier("\(identifier).set.\(index).delete")
+                    }
                 }
             }
         }

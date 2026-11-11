@@ -36,10 +36,11 @@ struct RootView: View {
                 ProfileHomeView()
             }
         }
-        // Floats just above the tab bar; while a workout runs, the bar above
+        // Floats just above the tab bar on Home only: on the other tabs it
+        // covered cards and settings. While a workout runs, the bar above
         // the tabs takes its place.
         .overlay(alignment: .bottomTrailing) {
-            if active.isEmpty && !isKeyboardShown {
+            if selection == .home && active.isEmpty && !isKeyboardShown {
                 StartButton(action: start)
                     .padding(.trailing, 20)
                     .padding(.bottom, 66)
@@ -47,8 +48,9 @@ struct RootView: View {
         }
         // Room under every scrolling screen so the start button never
         // covers the last row.
-        .contentMargins(.bottom, active.isEmpty ? 72 : 0, for: .scrollContent)
+        .contentMargins(.bottom, selection == .home && active.isEmpty ? 72 : 0, for: .scrollContent)
         .workoutRunningAccessory(session: active.last) { starter.resume($0) }
+        .minimizesTabBarOnScroll()
         // Set explicitly: some system views (e.g. the photo picker button)
         // otherwise drop the asset-catalog accent from the tab bar.
         .tint(Color.accentColor)

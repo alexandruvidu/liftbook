@@ -28,6 +28,7 @@ struct ExerciseOptionsMenu: View {
     let onShowPlates: () -> Void
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
     @Environment(\.modelContext) private var modelContext
+    @State private var isConfirmingRemove = false
 
     /// Ramps up to the first working set's weight, using the plate settings.
     private func addWarmUps() {
@@ -63,7 +64,12 @@ struct ExerciseOptionsMenu: View {
                 Button("Plate Calculator", systemImage: "scalemass", action: onShowPlates)
             }
             Button("Remove Exercise", systemImage: "trash", role: .destructive) {
-                session.removeExercise(exercise)
+                // Sets already done are lost with it: ask first.
+                if exercise.sets.contains(where: \.isCompleted) {
+                    isConfirmingRemove = true
+                } else {
+                    session.removeExercise(exercise)
+                }
             }
         } label: {
             Image(systemName: "ellipsis")
@@ -72,5 +78,11 @@ struct ExerciseOptionsMenu: View {
                 .contentShape(Rectangle())
         }
         .accessibilityLabel("Exercise options")
+        .confirmationDialog("Remove this exercise?", isPresented: $isConfirmingRemove, titleVisibility: .visible) {
+            Button("Remove Exercise", role: .destructive) { session.removeExercise(exercise) }
+                .accessibilityIdentifier("options.confirmRemove")
+        } message: {
+            Text("The sets you've checked off for it will be deleted.")
+        }
     }
 }

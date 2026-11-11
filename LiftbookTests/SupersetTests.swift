@@ -87,4 +87,43 @@ struct SupersetTests {
         #expect(session.supersets.isEmpty)
         #expect(e[0].supersetGroup == nil)
     }
+
+    @Test func movingReordersAndRenumbers() {
+        let (session, e) = session()
+        session.moveExercises([e[3]], before: e[0])
+        #expect(session.orderedExercises.map(\.exerciseID) == ["d", "a", "b", "c"])
+        #expect(session.orderedExercises.map(\.position) == [0, 1, 2, 3])
+        session.moveExercises([e[3]], before: nil)
+        #expect(session.orderedExercises.map(\.exerciseID) == ["a", "b", "c", "d"])
+    }
+
+    @Test func movingASupersetTogetherKeepsIt() {
+        let (session, e) = session()
+        session.linkWithNext(e[1])
+        session.moveExercises([e[1], e[2]], before: e[0])
+        #expect(session.supersets.map { $0.map(\.exerciseID) } == [["b", "c"]])
+    }
+
+    @Test func movingOutOfASupersetUnlinksIt() {
+        let (session, e) = session()
+        session.linkWithNext(e[0])
+        session.linkWithNext(e[1])
+        // a+b+c, then b moves to the end: a+c stay linked, b is on its own.
+        session.moveExercises([e[1]], before: nil)
+        #expect(session.supersets.map { $0.map(\.exerciseID) } == [["a", "c"]])
+        #expect(e[1].supersetGroup == nil)
+    }
+
+    @Test func splittingASupersetMakesSeparateGroups() {
+        let (session, e) = session()
+        session.linkWithNext(e[0])
+        session.linkWithNext(e[1])
+        session.linkWithNext(e[2])
+        // a+b and c+d; moving c before b leaves every run a single exercise.
+        session.unlinkFromNext(e[1])
+        session.moveExercises([e[2]], before: e[1])
+        #expect(session.orderedExercises.map(\.exerciseID) == ["a", "c", "b", "d"])
+        #expect(session.supersets.isEmpty)
+        #expect(session.exercises.allSatisfy { $0.supersetGroup == nil })
+    }
 }
