@@ -74,6 +74,7 @@ jobs:
           cp -R build/Liftbook.xcarchive/Products/Applications/Liftbook.app build/Payload/
           (cd build && zip -qry ../Liftbook.ipa Payload)
           ls -lh Liftbook.ipa
+          python3 scripts/make_source.py build/Payload/Liftbook.app/Info.plist Liftbook.ipa source.json
 
       - name: Upload IPA
         # The rolling release below is the main download; don't let an
@@ -82,7 +83,9 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           name: ipa
-          path: Liftbook.ipa
+          path: |
+            Liftbook.ipa
+            source.json
           if-no-files-found: error
 
       - name: Publish IPA to rolling release
@@ -90,20 +93,19 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          # The release holds only the IPA, at a stable public URL that
-          # LiveContainer (or any sideloader) can install from directly:
-          #   https://github.com/${{ github.repository }}/releases/download/latest-build/Liftbook.ipa
-          # Replace it in place so the link never disappears, and retry
-          # because the releases API sometimes returns HTTP 500.
-          NOTES="Unsigned build of ${GITHUB_SHA::7} from main. Install in LiveContainer from https://github.com/${GITHUB_REPOSITORY}/releases/download/latest-build/Liftbook.ipa"
+          # Stable public URLs for sideloading:
+          #   IPA:    https://github.com/${{ github.repository }}/releases/download/latest-build/Liftbook.ipa
+          #   Source: https://github.com/${{ github.repository }}/releases/download/latest-build/source.json
+          # Replace the files in place so the download links never disappear,
+          # and retry because the releases API sometimes returns HTTP 500.
+          BASE="https://github.com/${GITHUB_REPOSITORY}/releases/download/latest-build"
+          NOTES="Unsigned build of ${GITHUB_SHA::7} from main. Add the source to LiveContainer or SideStore for updates: ${BASE}/source.json — or install the IPA directly: ${BASE}/Liftbook.ipa"
           publish() {
             if gh release view latest-build -R "$GITHUB_REPOSITORY" > /dev/null 2>&1; then
-              gh release upload latest-build Liftbook.ipa -R "$GITHUB_REPOSITORY" --clobber &&
-                gh release edit latest-build -R "$GITHUB_REPOSITORY" --notes "$NOTES" &&
-                # Older builds also published a SideStore source; IPA only now.
-                { gh release delete-asset latest-build source.json -R "$GITHUB_REPOSITORY" -y 2>/dev/null || true; }
+              gh release upload latest-build Liftbook.ipa source.json -R "$GITHUB_REPOSITORY" --clobber &&
+                gh release edit latest-build -R "$GITHUB_REPOSITORY" --notes "$NOTES"
             else
-              gh release create latest-build Liftbook.ipa -R "$GITHUB_REPOSITORY" \
+              gh release create latest-build Liftbook.ipa source.json -R "$GITHUB_REPOSITORY" \
                 --target "$GITHUB_SHA" --prerelease --title "Latest build" --notes "$NOTES"
             fi
           }
