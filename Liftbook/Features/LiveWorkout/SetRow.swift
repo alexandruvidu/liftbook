@@ -71,7 +71,7 @@ struct SetRow: View {
                     .accessibilityIdentifier("\(identifier).\(spec.field.rawValue)")
             }
 
-            RPEMenu(set: set)
+            RPEPicker(set: set, number: number)
                 .frame(width: SetColumns.rpe)
                 .accessibilityIdentifier("\(identifier).rpe")
 

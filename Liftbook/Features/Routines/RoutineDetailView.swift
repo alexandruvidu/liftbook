@@ -3,7 +3,6 @@ import SwiftUI
 
 /// Read-only view of a routine with Start Workout and Edit.
 struct RoutineDetailView: View {
-    @Environment(\.dynamicTypeSize) private var typeSize
     let routine: Routine
     let catalog: ExerciseCatalog
     let onStart: () -> Void
@@ -33,31 +32,15 @@ struct RoutineDetailView: View {
                 .accessibilityIdentifier("routine.start")
 
                 BlockSection("Exercises") {
-                    ForEach(routine.orderedEntries) { entry in
-                        HStack(spacing: 12) {
-                            ExerciseThumbnail(exerciseID: entry.exerciseID,
-                                              equipment: catalog.exercise(id: entry.exerciseID)?.equipment ?? .other,
-                                              size: 40)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(catalog.name(for: entry.exerciseID))
-                                if typeSize.isAccessibilitySize {
-                                    Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
-                                        .foregroundStyle(.secondary)
-                                }
-                                if let machine = machines.name(for: entry.machineID) {
-                                    Text(machine)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                            Spacer()
-                            // Under the name at accessibility sizes, where beside it
-                            // the name broke a word per line.
-                            if !typeSize.isAccessibilitySize {
-                                Text(entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets")
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
+                    ForEach(Array(routine.orderedEntries.enumerated()), id: \.element.persistentModelID) { index, entry in
+                        let sets = entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets"
+                        ExerciseHeaderLink(exerciseID: entry.exerciseID,
+                                           name: catalog.name(for: entry.exerciseID),
+                                           subtitle: [sets, machines.name(for: entry.machineID)]
+                                               .compactMap { $0 }.joined(separator: " · "),
+                                           equipment: catalog.exercise(id: entry.exerciseID)?.equipment ?? .other,
+                                           thumbnailSize: 40,
+                                           identifier: "routine.detail.exercise.\(index)")
                     }
                 }
 

@@ -29,6 +29,7 @@ struct ExerciseBlock: View {
     @State private var isNoteOpen = false
     @State private var isPickingMachine = false
     @State private var isAddingMachine = false
+    @State private var isShowingExercise = false
     @Query private var customExercises: [CustomExercise]
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
@@ -53,6 +54,9 @@ struct ExerciseBlock: View {
                 .buttonStyle(.pill)
                 .accessibilityIdentifier("\(identifier).addSet")
             }
+        }
+        .navigationDestination(isPresented: $isShowingExercise) {
+            ExerciseDetailView(exerciseID: exercise.exerciseID)
         }
         .sheet(isPresented: $isPickingMachine) {
             MachinePickerSheet(exerciseID: exercise.exerciseID, exerciseName: info?.name ?? fallbackName, type: type,
@@ -129,6 +133,7 @@ struct ExerciseBlock: View {
                 ExerciseOptionsMenu(exercise: exercise, session: session,
                                     showsPlates: type == .weightAndReps,
                                     onSwap: info == nil ? nil : { isSwapping = true },
+                                    onViewExercise: info == nil ? nil : { isShowingExercise = true },
                                     onAddMachine: machines.isEmpty && startsRest ? { isAddingMachine = true } : nil) {
                     isShowingPlates = true
                 }
@@ -219,16 +224,10 @@ struct ExerciseBlock: View {
                                       for: exercise.exerciseID)
                 }
                 // Swipe left to delete (iOS 27, in the screen's swipe container);
-                // the set number's menu offers the same everywhere.
-                .swipeActions(edge: .trailing) {
-                    if exercise.sets.count > 1 {
-                        Button(role: .destructive) {
-                            withAnimation(.snappy) { exercise.removeSet(set) }
-                        } label: {
-                            Label("Delete Set", systemImage: "trash")
-                        }
-                        .accessibilityIdentifier("\(identifier).set.\(index).delete")
-                    }
+                // the set number's menu offers the same everywhere. A lone set stays.
+                .swipeToDelete("Delete Set", isEnabled: exercise.sets.count > 1,
+                               identifier: "\(identifier).set.\(index).delete") {
+                    exercise.removeSet(set)
                 }
             }
         }

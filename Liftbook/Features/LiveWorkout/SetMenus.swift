@@ -52,28 +52,96 @@ extension SetKind {
     }
 }
 
-/// Picks the set's rate of perceived exertion.
-struct RPEMenu: View {
+/// The set's rate of perceived exertion; tapping it opens a slider.
+struct RPEPicker: View {
     let set: WorkoutSet
+    let number: Int
+    @State private var isPicking = false
 
     var body: some View {
-        Menu {
-            Button("No RPE") { set.rpe = nil }
-            Section("How hard was the set?") {
-                ForEach(SetInput.rpeOptions.reversed(), id: \.self) { value in
-                    Button { set.rpe = value } label: {
-                        // The second text shows as the menu item's subtitle.
-                        Text("RPE \(SetMeasurement.decimal(value))")
-                        Text(SetInput.rpeDescription(value))
-                    }
-                }
-            }
+        Button {
+            isPicking = true
         } label: {
             Text(set.rpe.map { SetMeasurement.decimal($0) } ?? "–")
                 .monospacedDigit()
                 .frame(maxWidth: .infinity, minHeight: 34)
                 .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))
         }
+        .buttonStyle(.borderless)
         .accessibilityLabel(set.rpe.map { "RPE \(SetMeasurement.decimal($0))" } ?? "RPE not set")
+        .sheet(isPresented: $isPicking) {
+            RPESheet(number: number, initial: set.rpe) { set.rpe = $0 }
+        }
+    }
+}
+
+/// A slider from 6 to 10 in half steps, each value explained as reps left.
+private struct RPESheet: View {
+    let number: Int
+    let save: (Double?) -> Void
+    @State private var value: Double
+    @Environment(\.dismiss) private var dismiss
+
+    init(number: Int, initial: Double?, save: @escaping (Double?) -> Void) {
+        self.number = number
+        self.save = save
+        // Unset sets start in the middle, at a typical working effort.
+        _value = State(initialValue: initial ?? 8)
+    }
+
+    private var range: ClosedRange<Double> {
+        (SetInput.rpeOptions.first ?? 6)...(SetInput.rpeOptions.last ?? 10)
+    }
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Text("How hard was set \(number)?")
+                .font(.headline)
+            VStack(spacing: 4) {
+                Text("RPE \(SetMeasurement.decimal(value))")
+                    .font(.system(.largeTitle, design: .rounded).weight(.bold))
+                    .monospacedDigit()
+                    .contentTransition(.numericText(value: value))
+                Text(SetInput.rpeDescription(value))
+                    .font(.body)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            .animation(.snappy, value: value)
+            .accessibilityElement(children: .combine)
+
+            Slider(value: $value, in: range, step: 0.5) {
+                Text("RPE")
+            } minimumValueLabel: {
+                Text("Easy").font(.caption).foregroundStyle(.secondary)
+            } maximumValueLabel: {
+                Text("Max").font(.caption).foregroundStyle(.secondary)
+            }
+            .accessibilityValue("RPE \(SetMeasurement.decimal(value)). \(SetInput.rpeDescription(value))")
+            .accessibilityIdentifier("rpe.slider")
+            .sensoryFeedback(.selection, trigger: value)
+
+            HStack(spacing: 12) {
+                Button {
+                    save(nil)
+                    dismiss()
+                } label: {
+                    Text("No RPE").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.pill)
+                .accessibilityIdentifier("rpe.clear")
+                Button {
+                    save(value)
+                    dismiss()
+                } label: {
+                    Text("Save").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.pillProminent)
+                .accessibilityIdentifier("rpe.save")
+            }
+        }
+        .padding(20)
+        .presentationDetents([.medium])
+        .presentationDragIndicator(.visible)
     }
 }

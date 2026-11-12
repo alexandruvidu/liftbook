@@ -46,6 +46,17 @@ struct RoutineDraft: Equatable, Sendable {
         entries = routine.orderedEntries.map { Entry(exerciseID: $0.exerciseID, setCount: $0.setCount, machineID: $0.machineID) }
     }
 
+    /// A new routine copying a past workout: its name, exercises in order,
+    /// machines, and how many sets of each, not counting warm-ups.
+    init(session: WorkoutSession) {
+        name = session.displayName
+        entries = session.orderedExercises.map { exercise in
+            let working = exercise.sets.filter { $0.kind != .warmUp }.count
+            let count = min(max(working, RoutineDraft.setCountRange.lowerBound), RoutineDraft.setCountRange.upperBound)
+            return Entry(exerciseID: exercise.exerciseID, setCount: count, machineID: exercise.machineID)
+        }
+    }
+
     var trimmedName: String {
         name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -75,5 +86,15 @@ struct RoutineDraft: Equatable, Sendable {
         remove(at: source)
         let insertAt = min(max(destination - shift, 0), entries.count)
         entries.insert(contentsOf: moving, at: insertAt)
+    }
+
+    /// Moves the entries with `ids` (keeping their order) to just before the
+    /// entry `target`, or to the end when `target` is nil.
+    mutating func move(_ ids: [UUID], before target: UUID?) {
+        let moving = entries.filter { ids.contains($0.id) }
+        guard !moving.isEmpty else { return }
+        entries.removeAll { ids.contains($0.id) }
+        let index = target.flatMap { target in entries.firstIndex { $0.id == target } } ?? entries.endIndex
+        entries.insert(contentsOf: moving, at: index)
     }
 }

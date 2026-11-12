@@ -13,6 +13,26 @@ extension View {
         }
     }
 
+    /// Swipe left to delete, only while `isEnabled`: otherwise no swipe at
+    /// all, so a row that can't be deleted doesn't slide. Rows outside a
+    /// `List` need a `swipeActionsContainerIfAvailable()` around them.
+    @ViewBuilder
+    func swipeToDelete(_ title: String, isEnabled: Bool, identifier: String,
+                       action: @escaping () -> Void) -> some View {
+        if isEnabled {
+            swipeActions(edge: .trailing) {
+                Button(role: .destructive) {
+                    withAnimation(.snappy) { action() }
+                } label: {
+                    Label(title, systemImage: "trash")
+                }
+                .accessibilityIdentifier(identifier)
+            }
+        } else {
+            self
+        }
+    }
+
     /// Shrinks the tab bar while scrolling down, so it covers less (iOS 26).
     @ViewBuilder
     func minimizesTabBarOnScroll() -> some View {

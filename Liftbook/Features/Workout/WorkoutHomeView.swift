@@ -68,6 +68,7 @@ struct WorkoutHomeView: View {
             .navigationDestination(for: Routine.self) { routine in
                 RoutineDetailView(routine: routine, catalog: catalog) { starter.start(.routine(routine)) }
             }
+            .exercisePageDestination()
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Menu("Add", systemImage: "plus") {

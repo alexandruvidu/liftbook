@@ -98,6 +98,7 @@ struct ActivityHomeView: View {
                 WorkoutDetailView(session: session, catalog: catalog) { starter.start(.repeating(session)) }
             }
             .navigationDestination(for: String.self) { ExerciseDetailView(exerciseID: $0) }
+            .exercisePageDestination()
         }
     }
 

@@ -72,8 +72,12 @@ final class RoutineUITests: XCTestCase {
         snap("exercise-picker-\(appearance)")
         add.tap()
 
-        XCTAssertTrue(app.staticTexts["Barbell Bench Press"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["Incline Dumbbell Press"].exists)
+        // Each exercise is a block whose header opens the exercise page
+        let first = app.buttons["routine.entry.0.page"]
+        XCTAssertTrue(first.waitForExistence(timeout: 5))
+        XCTAssertTrue(first.label.contains("Barbell Bench Press"), first.label)
+        XCTAssertTrue(app.buttons["routine.entry.2.page"].label.contains("Incline Dumbbell Press"))
+        XCTAssertTrue(app.descendants(matching: .any)["routine.entry.0.set.2"].exists, "No set rows")
         snap("routine-editor-\(appearance)")
         app.buttons["routine.save"].tap()
 
@@ -85,11 +89,16 @@ final class RoutineUITests: XCTestCase {
 
         // Re-open and check order survived the save
         row.tap()
-        XCTAssertTrue(app.staticTexts["Overhead Press"].waitForExistence(timeout: 5))
-        let bench = app.staticTexts["Barbell Bench Press"].frame.minY
-        let overhead = app.staticTexts["Overhead Press"].frame.minY
-        let incline = app.staticTexts["Incline Dumbbell Press"].frame.minY
-        XCTAssertLessThan(bench, overhead)
-        XCTAssertLessThan(overhead, incline)
+        let names = ["Barbell Bench Press", "Overhead Press", "Incline Dumbbell Press"]
+        XCTAssertTrue(app.buttons["routine.detail.exercise.2"].waitForExistence(timeout: 5))
+        for (index, name) in names.enumerated() {
+            let label = app.buttons["routine.detail.exercise.\(index)"].label
+            XCTAssertTrue(label.contains(name), "Exercise \(index) is \(label), not \(name)")
+        }
+
+        // An exercise opens its page
+        app.buttons["routine.detail.exercise.1"].tap()
+        XCTAssertTrue(app.navigationBars["Overhead Press"].waitForExistence(timeout: 5)
+                      || app.staticTexts["Overhead Press"].waitForExistence(timeout: 2), "Exercise page did not open")
     }
 }

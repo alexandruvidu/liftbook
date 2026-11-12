@@ -23,6 +23,8 @@ struct ExerciseOptionsMenu: View {
     let session: WorkoutSession
     let showsPlates: Bool
     let onSwap: (() -> Void)?
+    /// Opens the exercise's page; nil for exercises no longer in the library.
+    var onViewExercise: (() -> Void)?
     /// Offered for exercises that have no machines yet.
     var onAddMachine: (() -> Void)?
     let onShowPlates: () -> Void
@@ -43,6 +45,9 @@ struct ExerciseOptionsMenu: View {
 
     var body: some View {
         Menu {
+            if let onViewExercise {
+                Button("View Exercise", systemImage: "info.circle", action: onViewExercise)
+            }
             if session.isLinkedToNext(exercise) {
                 Button("Unlink from Next Exercise", systemImage: "scissors") {
                     session.unlinkFromNext(exercise)

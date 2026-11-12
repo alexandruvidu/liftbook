@@ -13,6 +13,7 @@ struct WorkoutDetailView: View {
     @Query private var machines: [Machine]
     @State private var isEditing = false
     @State private var isConfirmingDelete = false
+    @State private var isSavingRoutine = false
 
     var body: some View {
         let summary = WorkoutSummary(session: session, history: []) { type(of: $0) }
@@ -46,6 +47,15 @@ struct WorkoutDetailView: View {
                 }
                 .buttonStyle(.pillProminent)
                 .accessibilityIdentifier("detail.repeat")
+                Button {
+                    isSavingRoutine = true
+                } label: {
+                    Label("Save as Routine", systemImage: "list.bullet.rectangle")
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 6)
+                }
+                .buttonStyle(.pill)
+                .accessibilityIdentifier("detail.saveRoutine")
                 Button("Delete Workout", role: .destructive) { isConfirmingDelete = true }
                     .frame(maxWidth: .infinity, minHeight: 44)
                     .accessibilityIdentifier("detail.delete")
@@ -67,6 +77,9 @@ struct WorkoutDetailView: View {
         }
         .sheet(isPresented: $isEditing) {
             EditWorkoutView(session: session, catalog: catalog)
+        }
+        .sheet(isPresented: $isSavingRoutine) {
+            RoutineEditorView(newFrom: RoutineDraft(session: session))
         }
         .confirmationDialog("Delete this workout?", isPresented: $isConfirmingDelete, titleVisibility: .visible) {
             Button("Delete Workout", role: .destructive) {
@@ -95,21 +108,12 @@ struct WorkoutDetailView: View {
         let labels = exercise.setLabels
         let machinePhoto = machines.first { $0.machineID == exercise.machineID }?.photoFileName
         return Block {
-            HStack(spacing: 12) {
-                ExerciseThumbnail(exerciseID: exercise.exerciseID,
-                                  equipment: catalog.exercise(id: exercise.exerciseID)?.equipment ?? .other,
-                                  machinePhoto: machinePhoto, size: 44)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(exercise.displayName(catalog: catalog, machines: machines))
-                        .font(.headline)
-                        .foregroundStyle(.tint)
-                    if let letter = session.supersetLetter(for: exercise) {
-                        Text("Superset \(letter)")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
+            ExerciseHeaderLink(exerciseID: exercise.exerciseID,
+                               name: exercise.displayName(catalog: catalog, machines: machines),
+                               subtitle: session.supersetLetter(for: exercise).map { "Superset \($0)" },
+                               equipment: catalog.exercise(id: exercise.exerciseID)?.equipment ?? .other,
+                               machinePhoto: machinePhoto,
+                               identifier: "detail.exercise.\(index).page")
             if !exercise.notes.isEmpty {
                 Text(exercise.notes)
                     .font(.subheadline)
