@@ -35,3 +35,24 @@ enum RestAlerts {
         UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [notificationID])
     }
 }
+
+extension RestAlerts {
+    /// Schedules the end-of-rest notification, then waits for the rest to end
+    /// to play the sound and hide the timer. Restart it whenever the end changes.
+    @MainActor
+    static func run(for session: WorkoutSession, exerciseName: String?, sound: Bool) async {
+        guard let end = session.restEndsAt else {
+            cancel()
+            return
+        }
+        schedule(at: end, exerciseName: exerciseName ?? "your workout", sound: sound)
+        let delay = end.timeIntervalSinceNow
+        if delay > 0 {
+            try? await Task.sleep(for: .seconds(delay))
+        }
+        guard !Task.isCancelled, session.restEndsAt == end else { return }
+        // Don't beep for a rest that ended while the app was closed.
+        if sound && delay > -2 { playSound() }
+        session.stopRest()
+    }
+}

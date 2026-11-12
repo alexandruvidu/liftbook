@@ -46,3 +46,31 @@ struct WorkoutNotesTests {
         #expect(PreviousPerformance.note(exerciseID: "b", in: [old, blank]) == nil)
     }
 }
+
+@MainActor
+struct EditedWorkoutNameTests {
+    private let calendar: Calendar = {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        return calendar
+    }()
+
+    private func session(named name: String, hour: Int) -> WorkoutSession {
+        let start = calendar.date(from: DateComponents(year: 2026, month: 11, day: 5, hour: hour))!
+        return WorkoutSession(name: name, startedAt: start)
+    }
+
+    @Test func blankNameFallsBackToTheTimeOfDayName() {
+        let workout = session(named: "  \n", hour: 18)
+        workout.tidyAfterEditing(calendar: calendar)
+        #expect(workout.name == "Evening Workout")
+    }
+
+    @Test func nameAndNotesAreTrimmed() {
+        let workout = session(named: "  Push Day ", hour: 9)
+        workout.notes = "\n Felt strong  "
+        workout.tidyAfterEditing(calendar: calendar)
+        #expect(workout.name == "Push Day")
+        #expect(workout.notes == "Felt strong")
+    }
+}

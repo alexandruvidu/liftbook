@@ -171,3 +171,19 @@ private struct BarbellSideView: View {
         }
     }
 }
+
+/// The plate calculator as a sheet from a workout, starting at its weight.
+struct PlatesSheet: View {
+    let initialKilograms: Double?
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            PlateCalculatorView(initialKilograms: initialKilograms)
+                .toolbar {
+                    Button("Done") { dismiss() }
+                        .accessibilityIdentifier("plates.done")
+                }
+        }
+    }
+}

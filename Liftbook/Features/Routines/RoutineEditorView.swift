@@ -41,7 +41,7 @@ struct RoutineEditorView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 12) {
-                    detailsBlock
+                    RoutineDetailsBlock(draft: $draft, folders: folders)
 
                     if draft.entries.isEmpty {
                         Text("Add the exercises you want to do, then set how many sets of each.")
@@ -132,39 +132,6 @@ struct RoutineEditorView: View {
         .interactiveDismissDisabled(hasChanges)
     }
 
-    /// Name, folder and notes, like a workout's title area.
-    private var detailsBlock: some View {
-        Block {
-            TextField("Routine name", text: $draft.name)
-                .font(.title3.weight(.bold))
-                .textInputAutocapitalization(.words)
-                .accessibilityIdentifier("routine.name")
-            Divider()
-            HStack {
-                Label("Folder", systemImage: "folder")
-                    .foregroundStyle(.secondary)
-                Spacer()
-                Menu {
-                    Picker("Folder", selection: $draft.folderID) {
-                        Text("None").tag(UUID?.none)
-                        ForEach(folders) { Text($0.name).tag(Optional($0.folderID)) }
-                    }
-                } label: {
-                    HStack(spacing: 4) {
-                        Text(folders.first { $0.folderID == draft.folderID }?.name ?? "None")
-                        Image(systemName: "chevron.up.chevron.down")
-                            .font(.caption.weight(.semibold))
-                    }
-                }
-                .accessibilityIdentifier("routine.folder")
-            }
-            Divider()
-            TextField("Notes (optional)", text: $draft.notes, axis: .vertical)
-                .lineLimit(1...6)
-                .accessibilityIdentifier("routine.notes")
-        }
-    }
-
     private func binding(for id: UUID) -> Binding<RoutineDraft.Entry> {
         Binding {
             draft.entries.first { $0.id == id } ?? RoutineDraft.Entry(exerciseID: "")
@@ -199,23 +166,5 @@ struct RoutineEditorView: View {
             modelContext.delete(routine)
         }
         dismiss()
-    }
-}
-
-private extension View {
-    /// Drag-to-reorder for the editor's exercise blocks (iOS 27).
-    @ViewBuilder
-    func reordersEntries(of draft: Binding<RoutineDraft>) -> some View {
-        if #available(iOS 27, *) {
-            reorderContainer(for: RoutineDraft.Entry.self) { difference in
-                let target: UUID? = switch difference.destination.position {
-                case .before(let id): id
-                case .end: nil
-                }
-                withAnimation(.snappy) { draft.wrappedValue.move(difference.sources, before: target) }
-            }
-        } else {
-            self
-        }
     }
 }

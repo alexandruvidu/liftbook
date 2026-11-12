@@ -178,3 +178,25 @@ struct WorkoutStarterTests {
         #expect(set.kind == .normal)
     }
 }
+
+@MainActor
+struct WorkoutDiscardTests {
+    private let container = Persistence.makeContainer(inMemory: true)
+
+    @Test func discardDeletesTheWorkoutsAndCancelsTheRestAlert() throws {
+        let context = container.mainContext
+        let running = WorkoutSession(name: "Running")
+        let other = WorkoutSession(name: "Other")
+        context.insert(running)
+        context.insert(other)
+        running.startRest(seconds: 90, for: "a")
+        try context.save()
+
+        var cancelled = 0
+        WorkoutStarter.discard([running], in: context) { cancelled += 1 }
+
+        #expect(cancelled == 1)
+        let left = try context.fetch(FetchDescriptor<WorkoutSession>())
+        #expect(left.map(\.name) == ["Other"])
+    }
+}

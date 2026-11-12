@@ -4,6 +4,8 @@ import SwiftUI
 struct WorkoutRunningBar: View {
     let session: WorkoutSession
     let open: () -> Void
+    /// Inline beside a minimized tab bar there's only room for the essentials.
+    @Environment(\.tabViewBottomAccessoryPlacement) private var placement
 
     var body: some View {
         Button(action: open) {
@@ -22,12 +24,14 @@ struct WorkoutRunningBar: View {
                         .foregroundStyle(.secondary)
                 }
                 Spacer(minLength: 8)
-                Image(systemName: "chevron.up")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
+                if placement != .inline {
+                    Image(systemName: "chevron.up")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
+                }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, placement == .inline ? 12 : 16)
             .frame(maxWidth: .infinity, minHeight: 44)
             .contentShape(Rectangle())
         }
@@ -41,10 +45,12 @@ struct WorkoutRunningBar: View {
 /// Labelled, not a bare "+", so it isn't confused with the create buttons.
 struct StartWorkoutBar: View {
     let action: () -> Void
+    @Environment(\.tabViewBottomAccessoryPlacement) private var placement
 
     var body: some View {
         Button(action: action) {
-            Label("Start Workout", systemImage: "play.fill")
+            // Shorter inline, beside a minimized tab bar.
+            Label(placement == .inline ? "Start" : "Start Workout", systemImage: "play.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.tint)
                 .frame(maxWidth: .infinity, minHeight: 44)

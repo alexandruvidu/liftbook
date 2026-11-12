@@ -39,11 +39,12 @@ struct ExerciseBlock: View {
             header
             if !isCollapsed {
                 pills
-                if showsNote { noteField }
+                if showsNote { ExerciseNoteField(exercise: exercise, previousNote: previousNote, identifier: identifier) }
                 if startsRest, let info, let last = previous?.workingSets, !last.isEmpty {
                     ProgressionRow(exercise: exercise, info: info, lastWorkingSets: last, identifier: identifier)
                 }
-                sets
+                ExerciseSetList(exercise: exercise, type: type, identifier: identifier, previous: previous,
+                                startsRest: startsRest, defaultRest: defaultRest)
                 Button {
                     exercise.addSet()
                     try? modelContext.save()
@@ -78,13 +79,7 @@ struct ExerciseBlock: View {
             }
         }
         .sheet(isPresented: $isShowingPlates) {
-            NavigationStack {
-                PlateCalculatorView(initialKilograms: exercise.orderedSets.last(where: { ($0.weight ?? 0) > 0 })?.weight)
-                    .toolbar {
-                        Button("Done") { isShowingPlates = false }
-                            .accessibilityIdentifier("plates.done")
-                    }
-            }
+            PlatesSheet(initialKilograms: exercise.orderedSets.last(where: { ($0.weight ?? 0) > 0 })?.weight)
         }
     }
 
@@ -107,7 +102,7 @@ struct ExerciseBlock: View {
                             .font(.headline)
                             .foregroundStyle(.tint)
                             .multilineTextAlignment(.leading)
-                        Text(progressText)
+                        Text(exercise.setProgress)
                             .font(.subheadline)
                             .monospacedDigit()
                             .foregroundStyle(.secondary)
@@ -193,46 +188,5 @@ struct ExerciseBlock: View {
     /// Shown when the note pill is on, or there's a note (now or last time).
     private var showsNote: Bool {
         isNoteOpen || !exercise.notes.isEmpty || previousNote != nil
-    }
-
-    private var noteField: some View {
-        TextField(previousNote.map { "Last note: \($0)" } ?? "Exercise note",
-                  text: Bindable(exercise).notes, axis: .vertical)
-            .font(.subheadline)
-            .lineLimit(1...4)
-            .padding(10)
-            .background(.fill.tertiary, in: .card(minimum: 10))
-            .accessibilityIdentifier("\(identifier).notes")
-    }
-
-    private var sets: some View {
-        VStack(spacing: 6) {
-            SetHeaderRow(type: type)
-            let labels = exercise.setLabels
-            let kinds = exercise.orderedSets.map(\.kind)
-            ForEach(Array(exercise.orderedSets.enumerated()), id: \.element.stableID) { index, set in
-                SetRow(set: set, number: index + 1, label: labels[index], type: type,
-                       identifier: "\(identifier).set.\(index)", previous: previous?.set(at: index, kinds: kinds),
-                       onRemove: exercise.sets.count > 1 ? { exercise.removeSet(set) } : nil) {
-                    // Checking off a set confirms a guessed machine.
-                    exercise.machineConfirmed = true
-                    guard startsRest, let session = exercise.session else { return }
-                    session.startRest(seconds: session.restSeconds(after: exercise, default: defaultRest),
-                                      for: exercise.exerciseID)
-                }
-                // Swipe left to delete (iOS 27, in the screen's swipe container);
-                // the set number's menu offers the same everywhere. A lone set stays.
-                .swipeToDelete("Delete Set", isEnabled: exercise.sets.count > 1,
-                               identifier: "\(identifier).set.\(index).delete") {
-                    exercise.removeSet(set)
-                }
-            }
-        }
-    }
-
-    private var progressText: String {
-        let done = exercise.sets.filter(\.isCompleted).count
-        let total = exercise.sets.count
-        return "\(done) / \(total) \(total == 1 ? "set" : "sets")"
     }
 }

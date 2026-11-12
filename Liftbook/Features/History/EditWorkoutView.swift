@@ -17,24 +17,7 @@ struct EditWorkoutView: View {
         NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 12) {
-                    Block {
-                        TextField("Name", text: $session.name)
-                            .font(.headline)
-                            .accessibilityIdentifier("edit.name")
-                        Divider()
-                        DatePicker("Started", selection: Binding(get: { session.startedAt }, set: { session.moveStart(to: $0) }))
-                            .accessibilityIdentifier("edit.start")
-                        Divider()
-                        Stepper(value: Binding(get: { session.durationMinutes }, set: { session.setDuration(minutes: $0) }),
-                                in: 1...(24 * 60), step: 5) {
-                            LabeledContent("Duration", value: "\(session.durationMinutes) min")
-                        }
-                        .accessibilityIdentifier("edit.duration")
-                        Divider()
-                        TextField("Workout notes", text: $session.notes, axis: .vertical)
-                            .lineLimit(1...6)
-                            .accessibilityIdentifier("edit.notes")
-                    }
+                    EditWorkoutDetailsBlock(session: session)
 
                     let ordered = session.orderedExercises
                     VStack(spacing: 12) {
@@ -69,21 +52,14 @@ struct EditWorkoutView: View {
             .revealsFocusedFields()
             .exercisePageDestination()
             .opensExercisePages(on: $path)
-            // A workout always needs a name: cards and exports show it.
-            .onDisappear {
-                if session.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    session.name = WorkoutStarter.defaultName(at: session.startedAt)
-                }
-            }
+            // Also when the sheet is swiped away: cards and exports need a name.
+            .onDisappear { session.tidyAfterEditing() }
             .navigationTitle("Edit Workout")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        session.name = session.name.trimmedNote.isEmpty
-                            ? WorkoutStarter.defaultName(at: session.startedAt)
-                            : session.name.trimmedNote
-                        session.notes = session.notes.trimmedNote
+                        session.tidyAfterEditing()
                         try? modelContext.save()
                         dismiss()
                     }

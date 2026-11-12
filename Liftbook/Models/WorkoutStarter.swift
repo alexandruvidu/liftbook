@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 /// Builds new workout sessions. Callers insert the result into a ModelContext.
 enum WorkoutStarter {
@@ -56,6 +57,18 @@ enum WorkoutStarter {
             session.exercises.append(exercise)
         }
         return session
+    }
+
+    /// Deletes workouts in progress (to start another, or a leftover one) and
+    /// cancels the end-of-rest alert they may have scheduled.
+    @MainActor
+    static func discard(_ sessions: [WorkoutSession], in context: ModelContext,
+                        cancelAlerts: @MainActor () -> Void = RestAlerts.cancel) {
+        cancelAlerts()
+        for session in sessions {
+            context.delete(session)
+        }
+        try? context.save()
     }
 
     static func defaultName(at date: Date, calendar: Calendar = .current) -> String {

@@ -15,6 +15,15 @@ extension WorkoutSession {
         for exercise in exercises { exercise.notes = exercise.notes.trimmedNote }
         endedAt = date
     }
+
+    /// Tidies a workout after editing, however the editor was closed: a
+    /// blank name becomes the time-of-day name (as `displayName` shows it),
+    /// and notes lose surrounding whitespace.
+    func tidyAfterEditing(calendar: Calendar = .current) {
+        let trimmed = name.trimmedNote
+        name = trimmed.isEmpty ? WorkoutStarter.defaultName(at: startedAt, calendar: calendar) : trimmed
+        notes = notes.trimmedNote
+    }
 }
 
 extension PreviousPerformance {

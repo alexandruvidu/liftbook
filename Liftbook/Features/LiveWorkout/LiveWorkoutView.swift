@@ -108,7 +108,10 @@ struct LiveWorkoutView: View {
             }
         }
         .animation(.snappy, value: session.restEndsAt == nil)
-        .task(id: session.restEndsAt) { await runRestTimer(catalog: catalog) }
+        .task(id: session.restEndsAt) {
+            await RestAlerts.run(for: session, exerciseName: session.restExerciseID.map { catalog.name(for: $0) },
+                                 sound: restSound)
+        }
         .navigationTitle(session.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -186,24 +189,5 @@ struct LiveWorkoutView: View {
         summary = WorkoutSummary(session: session, history: finishedSessions) {
             catalog.exercise(id: $0)?.type ?? .weightAndReps
         }
-    }
-
-    /// Schedules the end-of-rest notification, then waits for the rest to end
-    /// to play the sound and hide the timer. Restarted whenever the end changes.
-    private func runRestTimer(catalog: ExerciseCatalog) async {
-        guard let end = session.restEndsAt else {
-            RestAlerts.cancel()
-            return
-        }
-        let name = session.restExerciseID.map { catalog.name(for: $0) } ?? "your workout"
-        RestAlerts.schedule(at: end, exerciseName: name, sound: restSound)
-        let delay = end.timeIntervalSinceNow
-        if delay > 0 {
-            try? await Task.sleep(for: .seconds(delay))
-        }
-        guard !Task.isCancelled, session.restEndsAt == end else { return }
-        // Don't beep for a rest that ended while the app was closed.
-        if restSound && delay > -2 { RestAlerts.playSound() }
-        session.stopRest()
     }
 }

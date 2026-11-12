@@ -101,9 +101,7 @@ private struct WorkoutStartingModifier: ViewModifier {
                 Button("Resume") { starter.presentAfterAlert(session) }
                     .accessibilityIdentifier("leftover.resume")
                 Button("Discard Workout", role: .destructive) {
-                    RestAlerts.cancel()
-                    modelContext.delete(session)
-                    try? modelContext.save()
+                    WorkoutStarter.discard([session], in: modelContext)
                 }
                 .accessibilityIdentifier("leftover.discard")
                 Button("Not Now", role: .cancel) {}
@@ -114,10 +112,7 @@ private struct WorkoutStartingModifier: ViewModifier {
                 Button("Resume Current") { starter.presentAfterAlert(active.last) }
                 Button("Discard and Start New", role: .destructive) {
                     let request = starter.conflicting
-                    RestAlerts.cancel()
-                    for session in active {
-                        modelContext.delete(session)
-                    }
+                    WorkoutStarter.discard(active, in: modelContext)
                     if let request { begin(request, fromAlert: true) }
                 }
                 Button("Cancel", role: .cancel) {}

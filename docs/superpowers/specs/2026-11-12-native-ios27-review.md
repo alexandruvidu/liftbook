@@ -241,3 +241,36 @@ Each step is independently shippable and testable with `scripts/test.sh`.
 Update the UI test identifiers as rows move from custom buttons into `List` rows;
 the helpers in `LiftbookUITests/UITestHelpers.swift` (`openMenu`, `scrollTo`)
 should keep working.
+
+---
+
+## 5. Outcome (2026-11-12)
+
+Implemented with the deployment target raised to **iOS 26**. Where the
+result differs from the plan above:
+
+- **`OnAccent` / `Color.accentForeground` stay.** `.glassProminent` keeps its
+  label white, which is unreadable on the dark-mode mint accent (about 1.6:1).
+  The main action per screen uses `prominentGlassButton()`
+  (`Shared/BrandColors.swift`), which adds the `accentForeground` label. In
+  toolbars the color has to be set on the label's `Text`.
+- **Toolbar confirmation actions aren't tinted by the system**, so Finish and
+  Save use `prominentGlassButton()` explicitly.
+- **The live timer uses `ToolbarItem(placement: .subtitle)`**, not
+  `navigationSubtitle`: a timer-style `Text` passed to `navigationSubtitle`
+  doesn't tick.
+- **The Exercises tab keeps `.navigationBarDrawer(displayMode: .always)`.** In a
+  tab the default placement hides the field until you pull down (the tab bar
+  takes the bottom slot). The exercise picker sheet uses the default placement
+  and gets the bottom search bar. Exercises did not become `Tab(role: .search)`.
+- **Downloaded exercise photos are separate gallery pages**, swiped by hand,
+  instead of cycling on a timer.
+- **The routine editor and edit-workout headers stay `Block` cards** with system
+  controls: the screens' rich exercise blocks use iOS 27 drag reordering and
+  per-set swipe actions that don't fit inside `List` rows.
+- **Home uses `.listStyle(.sidebar)`**, the style in which
+  `Section(isExpanded:)` draws its own disclosure control.
+- **`TabRole.prominent`** wasn't used; the bottom accessory covers Start.
+- Concentric corners: cards use `ConcentricRectangle` with their old radius as
+  the minimum; `Block` sets a container shape for the controls inside it.
+  Screens and sheets keep the system's own container shape.
