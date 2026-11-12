@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Newer system behaviors, applied where the OS has them and skipped before.
+/// iOS 27 behaviors, applied where the OS has them and skipped before.
 extension View {
     /// Lets rows inside this scroll view use `swipeActions` (iOS 27). Before
     /// that, swipe actions only work in a `List`, so rows keep their menus.
@@ -28,16 +28,6 @@ extension View {
                 }
                 .accessibilityIdentifier(identifier)
             }
-        } else {
-            self
-        }
-    }
-
-    /// Shrinks the tab bar while scrolling down, so it covers less (iOS 26).
-    @ViewBuilder
-    func minimizesTabBarOnScroll() -> some View {
-        if #available(iOS 26, *) {
-            tabBarMinimizeBehavior(.onScrollDown)
         } else {
             self
         }

@@ -10,6 +10,25 @@ extension View {
     func exercisePageDestination() -> some View {
         navigationDestination(for: ExercisePageLink.self) { ExerciseDetailView(exerciseID: $0.exerciseID) }
     }
+
+    /// Lets views inside open exercise pages from code (e.g. a menu item) by
+    /// appending to the stack's `path`; pair with `exercisePageDestination()`.
+    func opensExercisePages(on path: Binding<NavigationPath>) -> some View {
+        environment(\.openExercisePage, OpenExercisePage { path.wrappedValue.append(ExercisePageLink(exerciseID: $0)) })
+    }
+}
+
+/// Pushes an exercise's page onto the enclosing stack (see `opensExercisePages(on:)`).
+struct OpenExercisePage {
+    let action: (String) -> Void
+
+    func callAsFunction(_ exerciseID: String) {
+        action(exerciseID)
+    }
+}
+
+extension EnvironmentValues {
+    @Entry var openExercisePage: OpenExercisePage?
 }
 
 /// An exercise's picture and name that open its page, with a line below.
@@ -20,6 +39,8 @@ struct ExerciseHeaderLink: View {
     var equipment: Equipment = .other
     var machinePhoto: String?
     var thumbnailSize: CGFloat = 44
+    /// A `List` row draws its own disclosure chevron.
+    var inList = false
     let identifier: String
 
     var body: some View {
@@ -40,10 +61,12 @@ struct ExerciseHeaderLink: View {
                     }
                 }
                 Spacer(minLength: 4)
-                Image(systemName: "chevron.right")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(.tertiary)
-                    .accessibilityHidden(true)
+                if !inList {
+                    Image(systemName: "chevron.right")
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(.tertiary)
+                        .accessibilityHidden(true)
+                }
             }
             .contentShape(Rectangle())
         }

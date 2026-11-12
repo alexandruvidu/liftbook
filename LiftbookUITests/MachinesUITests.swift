@@ -65,7 +65,8 @@ final class MachinesUITests: XCTestCase {
         row.tap()
 
         // Records for one machine
-        let onA = app.buttons["machineSwitcher.Flat bench A"]
+        // A segmented control with up to four options
+        let onA = app.segmentedControls["machineSwitcher"].buttons["Flat bench A"]
         XCTAssertTrue(onA.waitForExistence(timeout: 10), "No machine switcher")
         onA.tap()
         let heaviest = app.descendants(matching: .any)["exercise.record.heaviestWeight"]
@@ -74,7 +75,7 @@ final class MachinesUITests: XCTestCase {
         snap("machine-progress-\(appearance)")
 
         // A machine never used has no records yet
-        let smith = app.buttons["machineSwitcher.Smith"]
+        let smith = app.segmentedControls["machineSwitcher"].buttons["Smith"]
         if !smith.isHittable { app.swipeDown() }
         smith.tap()
         let empty = app.descendants(matching: .any)["exercise.records.empty"]

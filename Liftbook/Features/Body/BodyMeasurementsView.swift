@@ -11,31 +11,28 @@ struct BodyMeasurementsView: View {
     @State private var isAddingMetric = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+        List {
+            Section {
                 ForEach(metrics) { metric in
                     let history = BodyMetrics.history(of: metric.metricID, in: measurements)
                     NavigationLink {
                         BodyMetricDetailView(metric: metric)
                     } label: {
-                        MetricBlock(metric: metric, history: history, unit: unit)
+                        MetricRow(metric: metric, history: history, unit: unit)
                     }
-                    .buttonStyle(.plain)
                     .accessibilityIdentifier("body.metric.\(metric.name)")
+                    .swipeToDelete("Delete Metric", isEnabled: !metric.isBuiltIn,
+                                   identifier: "body.metric.\(metric.name).delete") { delete(metric) }
                     .contextMenu {
                         if !metric.isBuiltIn {
                             Button("Delete Metric", systemImage: "trash", role: .destructive) { delete(metric) }
                         }
                     }
                 }
-                Text("Track body weight, body fat or anything else, like your waist. Touch and hold a metric you added to delete it.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
+            } footer: {
+                Text("Track body weight, body fat or anything else, like your waist. Swipe left on a metric you added to delete it.")
             }
-            .padding(16)
         }
-        .blockScreenBackground()
         .navigationTitle("Body Measurements")
         .toolbar {
             Button("Add Metric", systemImage: "plus") { isAddingMetric = true }
@@ -56,14 +53,14 @@ struct BodyMeasurementsView: View {
     }
 }
 
-/// A metric's latest value, its change, and a small line of its history.
-private struct MetricBlock: View {
+/// A metric's latest value and a small line of its history.
+private struct MetricRow: View {
     let metric: BodyMetric
     let history: [BodyMeasurement]
     let unit: WeightUnit
 
     var body: some View {
-        Block {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .firstTextBaseline) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(metric.name)
@@ -83,9 +80,6 @@ private struct MetricBlock: View {
                     Text("No entries")
                         .foregroundStyle(.secondary)
                 }
-                Image(systemName: "chevron.right")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(.tertiary)
             }
             if history.count > 1 {
                 Chart(history, id: \.date) { entry in
@@ -100,7 +94,6 @@ private struct MetricBlock: View {
                 .accessibilityHidden(true)
             }
         }
-        .contentShape(Rectangle())
     }
 }
 

@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// One finished workout in Activity: name, when, totals and its exercises.
+/// One finished workout in Activity's list: name, when, totals and its exercises.
 struct WorkoutCard: View {
     let session: WorkoutSession
     let catalog: ExerciseCatalog
@@ -10,18 +10,13 @@ struct WorkoutCard: View {
 
     var body: some View {
         let summary = WorkoutSummary(session: session, history: []) { catalog.exercise(id: $0)?.type ?? .weightAndReps }
-        Block {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(session.displayName)
-                        .font(.headline)
-                    Text("\(session.startedAt.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))) · \(SetMeasurement.clock(summary.duration))")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer(minLength: 8)
-                // Room for the share button laid over the card.
-                Color.clear.frame(width: 40, height: 40)
+        VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(session.displayName)
+                    .font(.headline)
+                Text("\(session.startedAt.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated))) · \(SetMeasurement.clock(summary.duration))")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
             }
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 16) { stats(summary) }
@@ -31,7 +26,7 @@ struct WorkoutCard: View {
             .monospacedDigit()
             exerciseLines
         }
-        .contentShape(Rectangle())
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder

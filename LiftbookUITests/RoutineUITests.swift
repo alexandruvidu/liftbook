@@ -8,6 +8,9 @@ final class RoutineUITests: XCTestCase {
     func testDuplicateFolderNameIsRefused() {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook()
+        // A list section header can show up more than once to accessibility,
+        // so compare against the count after the first folder.
+        var menusAfterFirst = 0
         for name in ["Push", "push"] {
             XCTAssertTrue(app.buttons["workout.add"].waitForExistence(timeout: 10))
             app.buttons["workout.add"].tap()
@@ -16,11 +19,15 @@ final class RoutineUITests: XCTestCase {
             XCTAssertTrue(field.waitForExistence(timeout: 5))
             field.enter(name)
             app.alerts.buttons["Create"].tap()
+            if name == "Push" {
+                XCTAssertTrue(app.buttons["folder.menu.Push"].waitForExistence(timeout: 5))
+                menusAfterFirst = app.buttons.matching(identifier: "folder.menu.Push").count
+            }
         }
         let duplicate = app.alerts["You already have a folder called push"]
         XCTAssertTrue(duplicate.waitForExistence(timeout: 5))
         duplicate.buttons["OK"].tap()
-        XCTAssertEqual(app.buttons.matching(identifier: "folder.menu.Push").count, 1)
+        XCTAssertEqual(app.buttons.matching(identifier: "folder.menu.Push").count, menusAfterFirst)
         XCTAssertFalse(app.buttons["folder.menu.push"].exists)
     }
 

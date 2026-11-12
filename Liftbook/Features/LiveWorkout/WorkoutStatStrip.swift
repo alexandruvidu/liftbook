@@ -15,7 +15,7 @@ struct WorkoutStatStrip: View {
         .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     }
 
-    private func tile(_ title: String, value: Text, id: String, accent: Bool = false) -> some View {
+    private func tile(_ title: String, value: Text, id: String) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
                 .font(.caption)
@@ -23,14 +23,13 @@ struct WorkoutStatStrip: View {
             value
                 .font(.title3.weight(.bold))
                 .monospacedDigit()
-                .foregroundStyle(accent ? AnyShapeStyle(.tint) : AnyShapeStyle(.primary))
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
+        .background(Color(.secondarySystemGroupedBackground), in: .card(minimum: 14))
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(id)
     }

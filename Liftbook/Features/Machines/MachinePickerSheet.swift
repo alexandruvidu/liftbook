@@ -34,21 +34,16 @@ struct MachinePickerSheet: View {
                         Text("No specific machine")
                             .frame(maxWidth: .infinity, minHeight: 44)
                     }
-                    .buttonStyle(.pill)
+                    .buttonStyle(.glass)
                     .accessibilityIdentifier("machine.none")
                 }
                 .padding(16)
             }
             .blockScreenBackground()
             .navigationTitle("Which Machine?")
+            .navigationSubtitle(exerciseName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .principal) {
-                    VStack(spacing: 0) {
-                        Text(exerciseName).font(.caption).foregroundStyle(.secondary)
-                        Text("Which machine?").font(.headline)
-                    }
-                }
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Close", systemImage: "xmark") { dismiss() }
                 }
@@ -112,8 +107,8 @@ struct MachinePickerSheet: View {
             }
             .foregroundStyle(Color.primary)
             .background(Color(.secondarySystemGroupedBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(isSelected ? Color.accentColor : .clear, lineWidth: 2))
+            .clipShape(.card(minimum: 16))
+            .overlay(ConcentricRectangle.card(minimum: 16).stroke(isSelected ? Color.accentColor : .clear, lineWidth: 2))
         }
         .buttonStyle(.plain)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -136,7 +131,7 @@ struct MachinePickerSheet: View {
             }
             .frame(maxWidth: .infinity, minHeight: 190)
             .foregroundStyle(.tint)
-            .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(.tertiary, style: StrokeStyle(lineWidth: 2, dash: [6, 5])))
+            .overlay(ConcentricRectangle.card(minimum: 16).stroke(.tertiary, style: StrokeStyle(lineWidth: 2, dash: [6, 5])))
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("machine.add")

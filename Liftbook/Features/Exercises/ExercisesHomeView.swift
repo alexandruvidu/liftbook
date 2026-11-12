@@ -40,11 +40,10 @@ struct ExercisesHomeView: View {
                     NoMatchingExercisesView { filter = ExerciseFilter() }
                 }
             }
-            .searchable(
-                text: $filter.query,
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search by name, muscle or equipment"
-            )
+            // Kept under the title: in a tab the default placement hides the
+            // field until you pull down, and search is how this screen is used.
+            .searchable(text: $filter.query, placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: "Search by name, muscle or equipment")
             .navigationTitle(AppTab.exercises.title)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -77,9 +76,9 @@ private struct NoMatchingExercisesView: View {
             Text("Try a shorter or different search, or fewer muscle and equipment filters.")
         } actions: {
             Button(action: clear) {
-                Text("Show All Exercises").foregroundStyle(Color.accentForeground)
+                Text("Show All Exercises")
             }
-            .buttonStyle(.borderedProminent)
+            .prominentGlassButton()
             .accessibilityIdentifier("exercises.clearFilters")
         }
     }

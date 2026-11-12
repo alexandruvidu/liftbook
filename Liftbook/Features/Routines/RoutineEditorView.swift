@@ -76,7 +76,7 @@ struct RoutineEditorView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 6)
                     }
-                    .buttonStyle(.pillProminent)
+                    .buttonStyle(.glass)
                     .accessibilityIdentifier("routine.addExercises")
 
                     if routine != nil {
@@ -115,11 +115,13 @@ struct RoutineEditorView: View {
                     }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save", action: save)
-                        .buttonStyle(.borderedProminent)
-                        .foregroundStyle(Color.accentForeground)
-                        .disabled(!draft.problems.isEmpty)
-                        .accessibilityIdentifier("routine.save")
+                    Button(action: save) {
+                        // Set on the text: toolbars ignore the button's own label color.
+                        Text("Save").foregroundStyle(Color.accentForeground)
+                    }
+                    .prominentGlassButton()
+                    .disabled(!draft.problems.isEmpty)
+                    .accessibilityIdentifier("routine.save")
                 }
             }
             .sheet(isPresented: $isPicking) {

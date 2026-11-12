@@ -69,13 +69,12 @@ extension XCUIApplication {
 }
 
 extension XCUIApplication {
-    /// Opens a tab by title; "Start" taps the floating start button.
+    /// Opens a tab by title; "Start" taps Start Workout above the tab bar.
     @MainActor
     func openTab(_ title: String) {
         if title == "Start" {
-            // The start button floats on the Home tab only.
-            if !buttons["startButton"].exists { openTab("Home") }
-            let start = buttons["startButton"]
+            // Start Workout sits above the tab bar on every tab.
+            let start = buttons["startButton"].firstMatch
             XCTAssertTrue(start.waitForExistence(timeout: 10), "No start button")
             start.tap()
             return

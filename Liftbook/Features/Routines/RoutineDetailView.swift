@@ -20,40 +20,40 @@ struct RoutineDetailView: View {
     }
 
     private var content: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+        List {
+            Section {
                 Button(action: onStart) {
                     Label("Start Workout", systemImage: "play.fill")
                         .font(.headline)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 6)
                 }
-                .buttonStyle(.pillProminent)
+                .prominentGlassButton()
                 .accessibilityIdentifier("routine.start")
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+            }
 
-                BlockSection("Exercises") {
-                    ForEach(Array(routine.orderedEntries.enumerated()), id: \.element.persistentModelID) { index, entry in
-                        let sets = entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets"
-                        ExerciseHeaderLink(exerciseID: entry.exerciseID,
-                                           name: catalog.name(for: entry.exerciseID),
-                                           subtitle: [sets, machines.name(for: entry.machineID)]
-                                               .compactMap { $0 }.joined(separator: " · "),
-                                           equipment: catalog.exercise(id: entry.exerciseID)?.equipment ?? .other,
-                                           thumbnailSize: 40,
-                                           identifier: "routine.detail.exercise.\(index)")
-                    }
-                }
-
-                if !routine.notes.isEmpty {
-                    BlockSection("Notes") {
-                        Text(routine.notes)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+            Section("Exercises") {
+                ForEach(Array(routine.orderedEntries.enumerated()), id: \.element.persistentModelID) { index, entry in
+                    let sets = entry.setCount == 1 ? "1 set" : "\(entry.setCount) sets"
+                    ExerciseHeaderLink(exerciseID: entry.exerciseID,
+                                       name: catalog.name(for: entry.exerciseID),
+                                       subtitle: [sets, machines.name(for: entry.machineID)]
+                                           .compactMap { $0 }.joined(separator: " · "),
+                                       equipment: catalog.exercise(id: entry.exerciseID)?.equipment ?? .other,
+                                       thumbnailSize: 40,
+                                       inList: true,
+                                       identifier: "routine.detail.exercise.\(index)")
                 }
             }
-            .padding(16)
+
+            if !routine.notes.isEmpty {
+                Section("Notes") {
+                    Text(routine.notes)
+                }
+            }
         }
-        .blockScreenBackground()
         .navigationTitle(routine.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

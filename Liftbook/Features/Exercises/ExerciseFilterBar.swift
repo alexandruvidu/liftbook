@@ -1,12 +1,13 @@
 import SwiftUI
 
-/// Muscle and equipment filter chips shown above the exercise list.
+/// Muscle and equipment filter menus above the exercise grid, then the
+/// number of results as the grid's header.
 struct ExerciseFilterBar: View {
     @Binding var filter: ExerciseFilter
     let resultCount: Int
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     Menu {
@@ -17,8 +18,9 @@ struct ExerciseFilterBar: View {
                             }
                         }
                     } label: {
-                        FilterChip(title: filter.muscle?.displayName ?? "Muscle", isActive: filter.muscle != nil)
+                        chipLabel(filter.muscle?.displayName ?? "Muscle")
                     }
+                    .chipStyle(isActive: filter.muscle != nil)
                     .accessibilityIdentifier("exercises.filter.muscle")
 
                     Menu {
@@ -29,56 +31,48 @@ struct ExerciseFilterBar: View {
                             }
                         }
                     } label: {
-                        FilterChip(title: filter.equipment?.displayName ?? "Equipment", isActive: filter.equipment != nil)
+                        chipLabel(filter.equipment?.displayName ?? "Equipment")
                     }
+                    .chipStyle(isActive: filter.equipment != nil)
                     .accessibilityIdentifier("exercises.filter.equipment")
 
                     if filter.hasMenuFilters {
-                        Button {
-                            filter.clearMenuFilters()
-                        } label: {
-                            Label("Clear", systemImage: "xmark")
-                                .font(.subheadline.weight(.medium))
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 7)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.tint)
-                        .accessibilityIdentifier("exercises.filter.clear")
+                        Button("Clear", systemImage: "xmark") { filter.clearMenuFilters() }
+                            .chipStyle(isActive: false)
+                            .accessibilityIdentifier("exercises.filter.clear")
                     }
                 }
-                .padding(.horizontal, 20)
             }
+            // Lines the chips up with the grid while letting them scroll to the edge.
+            .scrollClipDisabled()
 
             Text(resultCount == 1 ? "1 exercise" : "\(resultCount) exercises")
-                .font(.footnote)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
-                .padding(.horizontal, 20)
+                .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("exercises.resultCount")
         }
     }
-}
 
-private struct FilterChip: View {
-    let title: String
-    let isActive: Bool
-
-    var body: some View {
+    private func chipLabel(_ title: String) -> some View {
         HStack(spacing: 4) {
             Text(title)
             Image(systemName: "chevron.down")
                 .font(.caption.weight(.semibold))
+                .accessibilityHidden(true)
         }
-        .font(.subheadline.weight(.medium))
-        .padding(.horizontal, 12)
-        .padding(.vertical, 7)
-        .foregroundStyle(isActive ? Color.accentForeground : Color.primary)
-        .background(
-            Capsule().fill(isActive ? Color.accentColor : Color(.secondarySystemGroupedBackground))
-        )
-        .overlay(
-            Capsule().strokeBorder(Color(.separator), lineWidth: isActive ? 0 : 0.5)
-        )
-        .contentShape(Capsule())
+    }
+}
+
+private extension View {
+    /// A small glass button; tinted while its filter is on.
+    @ViewBuilder
+    func chipStyle(isActive: Bool) -> some View {
+        let sized = controlSize(.small)
+        if isActive {
+            sized.prominentGlassButton()
+        } else {
+            sized.buttonStyle(.glass)
+        }
     }
 }

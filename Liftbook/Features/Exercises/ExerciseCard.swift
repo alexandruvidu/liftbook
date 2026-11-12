@@ -52,8 +52,8 @@ struct ExerciseCard: View {
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .background(Color(.secondarySystemGroupedBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
-        .contentShape(RoundedRectangle(cornerRadius: 18))
+        .clipShape(.card)
+        .contentShape(.card)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(exercise.name), \(exercise.summary)")
     }
@@ -77,7 +77,7 @@ struct ExerciseCard: View {
             .brightness(colorScheme == .dark ? -0.14 : 0)
         } else {
             Image(systemName: exercise.equipment.symbolName)
-                .font(.system(size: 40))
+                .font(.largeTitle)
                 .foregroundStyle(.tint)
         }
     }

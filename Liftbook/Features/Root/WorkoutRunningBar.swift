@@ -37,34 +37,35 @@ struct WorkoutRunningBar: View {
     }
 }
 
-extension View {
-    /// Shows the running workout above the tab bar: the iOS 26 bottom
-    /// accessory where available, otherwise a bar inset above the tab bar.
-    @ViewBuilder
-    func workoutRunningAccessory(session: WorkoutSession?, open: @escaping (WorkoutSession) -> Void) -> some View {
-        if #available(iOS 26.1, *) {
-            tabViewBottomAccessory(isEnabled: session != nil) {
-                if let session { WorkoutRunningBar(session: session) { open(session) } }
-            }
-        } else {
-            modifier(RunningBarInset(session: session, open: open))
+/// "Start Workout" in the bottom accessory while nothing is running.
+/// Labelled, not a bare "+", so it isn't confused with the create buttons.
+struct StartWorkoutBar: View {
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Label("Start Workout", systemImage: "play.fill")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.tint)
+                .frame(maxWidth: .infinity, minHeight: 44)
+                .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Start a workout")
+        .accessibilityIdentifier("startButton")
     }
 }
 
-/// Fallback before iOS 26.1: the bar floats just above the tab bar.
-private struct RunningBarInset: ViewModifier {
-    let session: WorkoutSession?
-    let open: (WorkoutSession) -> Void
-
-    func body(content: Content) -> some View {
-        content.overlay(alignment: .bottom) {
+extension View {
+    /// The tab bar's bottom accessory, like a mini player: the running
+    /// workout if there is one, otherwise a button that starts one.
+    func workoutAccessory(session: WorkoutSession?, start: @escaping () -> Void,
+                          open: @escaping (WorkoutSession) -> Void) -> some View {
+        tabViewBottomAccessory {
             if let session {
                 WorkoutRunningBar(session: session) { open(session) }
-                    .padding(.vertical, 8)
-                    .background(.regularMaterial, in: Capsule())
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 60)
+            } else {
+                StartWorkoutBar(action: start)
             }
         }
     }

@@ -50,31 +50,26 @@ struct RecordsOverviewView: View {
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
 
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 12) {
-                ForEach(LoggedExercises.list(in: sessions), id: \.exerciseID) { item in
-                    let type = catalog.exercise(id: item.exerciseID)?.type ?? .weightAndReps
-                    let records = PersonalRecords.records(for: item.exerciseID, type: type, in: sessions)
-                    if !records.isEmpty {
+        List {
+            ForEach(LoggedExercises.list(in: sessions), id: \.exerciseID) { item in
+                let type = catalog.exercise(id: item.exerciseID)?.type ?? .weightAndReps
+                let records = PersonalRecords.records(for: item.exerciseID, type: type, in: sessions)
+                if !records.isEmpty {
+                    Section {
                         NavigationLink(value: item.exerciseID) {
-                            Block {
-                                BlockHeader(catalog.name(for: item.exerciseID))
-                                LazyVGrid(columns: [GridItem(.adaptive(minimum: 140), spacing: 8)], spacing: 8) {
-                                    ForEach(records, id: \.kind) { record in
-                                        StatTile(title: record.kind.title,
-                                                 value: record.kind.formatted(record.value, unit: unit),
-                                                 identifier: "records.\(item.exerciseID).\(record.kind.rawValue)")
-                                    }
-                                }
-                            }
+                            Text(catalog.name(for: item.exerciseID))
+                                .font(.headline)
                         }
-                        .buttonStyle(.plain)
+                        ForEach(records, id: \.kind) { record in
+                            LabeledContent(record.kind.title, value: record.kind.formatted(record.value, unit: unit))
+                                .monospacedDigit()
+                                .accessibilityElement(children: .combine)
+                                .accessibilityIdentifier("records.\(item.exerciseID).\(record.kind.rawValue)")
+                        }
                     }
                 }
             }
-            .padding(16)
         }
-        .blockScreenBackground()
         .navigationTitle("Records")
     }
 }

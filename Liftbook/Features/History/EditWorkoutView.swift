@@ -10,9 +10,11 @@ struct EditWorkoutView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var isPicking = false
     @State private var collapsed: Set<ObjectIdentifier> = []
+    /// Exercise pages opened from a block's menu.
+    @State private var path = NavigationPath()
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ScrollView {
                 VStack(spacing: 12) {
                     Block {
@@ -55,7 +57,7 @@ struct EditWorkoutView: View {
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 6)
                     }
-                    .buttonStyle(.pillProminent)
+                    .buttonStyle(.glass)
                     .accessibilityIdentifier("edit.addExercises")
                 }
                 .padding(16)
@@ -65,6 +67,8 @@ struct EditWorkoutView: View {
             .scrollDismissesKeyboard(.interactively)
             .keyboardDoneButton()
             .revealsFocusedFields()
+            .exercisePageDestination()
+            .opensExercisePages(on: $path)
             // A workout always needs a name: cards and exports show it.
             .onDisappear {
                 if session.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
@@ -76,7 +80,9 @@ struct EditWorkoutView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
-                        session.name = session.name.trimmedNote.isEmpty ? "Workout" : session.name.trimmedNote
+                        session.name = session.name.trimmedNote.isEmpty
+                            ? WorkoutStarter.defaultName(at: session.startedAt)
+                            : session.name.trimmedNote
                         session.notes = session.notes.trimmedNote
                         try? modelContext.save()
                         dismiss()

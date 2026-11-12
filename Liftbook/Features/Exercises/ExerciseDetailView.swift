@@ -27,7 +27,6 @@ struct ExerciseDetailView: View {
                 ContentUnavailableView("Exercise not found", systemImage: "questionmark.circle")
             }
         }
-        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             if custom != nil {
                 ToolbarItem(placement: .primaryAction) {
@@ -59,60 +58,61 @@ private struct ExerciseDetailList: View {
         // Once the exercise has been logged, progress comes first.
         let logged = !PersonalRecords.loggedSets(of: exercise.id, in: sessions).isEmpty
         let media = allMedia.display(for: exercise.id)
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                let art = ExerciseArt.of(exercise.id)
-                if !media.isEmpty || art != nil {
+        List {
+            let art = ExerciseArt.of(exercise.id)
+            if !media.isEmpty || art != nil {
+                Section {
                     MediaGallery(media: media, art: art)
+                        .listRowInsets(EdgeInsets())
                 }
-                HStack {
-                    AddMediaButton(exerciseID: exercise.id)
-                    Spacer()
-                    if media.contains(where: { $0.source == .own }) {
-                        Button("Edit") { isEditingMedia = true }
-                            .accessibilityIdentifier("media.edit")
-                    }
-                }
-                .buttonStyle(.pill)
-
-                Block {
-                    BlockHeader(exercise.equipment.displayName, subtitle: muscleList(exercise.primaryMuscles),
-                                image: Image(systemName: exercise.equipment.symbolName))
-                    if !exercise.secondaryMuscles.isEmpty {
-                        LabeledContent("Also works", value: muscleList(exercise.secondaryMuscles))
-                            .font(.subheadline)
-                    }
-                    if exercise.isCustom {
-                        LabeledContent("Source", value: "Created by you")
-                            .font(.subheadline)
-                    }
-                }
-
-                if logged {
-                    progressSections
-                }
-
-                if !exercise.details.isEmpty {
-                    BlockSection("How to do it") {
-                        Text(exercise.details)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier("exercise.detail.description")
-                    }
-                }
-
-                if !logged {
-                    progressSections
-                }
-
-                MachinesSection(exerciseID: exercise.id)
-
-                SetFieldsSection(type: exercise.type)
-
-                alternativesSection
             }
-            .padding(16)
+
+            Section {
+                Label {
+                    Text(exercise.equipment.displayName)
+                    Text(muscleList(exercise.primaryMuscles))
+                } icon: {
+                    Image(systemName: exercise.equipment.symbolName)
+                        .foregroundStyle(.tint)
+                }
+                if !exercise.secondaryMuscles.isEmpty {
+                    LabeledContent("Also works", value: muscleList(exercise.secondaryMuscles))
+                }
+                if exercise.isCustom {
+                    LabeledContent("Source", value: "Created by you")
+                }
+            }
+
+            if logged {
+                progressSections
+            }
+
+            if !exercise.details.isEmpty {
+                Section("How to do it") {
+                    Text(exercise.details)
+                        .accessibilityIdentifier("exercise.detail.description")
+                }
+            }
+
+            if !logged {
+                progressSections
+            }
+
+            MachinesSection(exerciseID: exercise.id)
+
+            SetFieldsSection(type: exercise.type)
+
+            alternativesSection
         }
-        .blockScreenBackground()
+        .toolbar {
+            ToolbarItemGroup(placement: .primaryAction) {
+                AddMediaButton(exerciseID: exercise.id)
+                if media.contains(where: { $0.source == .own }) {
+                    Button("Edit Media", systemImage: "photo.badge.checkmark") { isEditingMedia = true }
+                        .accessibilityIdentifier("media.edit")
+                }
+            }
+        }
         .sheet(isPresented: $isEditingMedia) {
             EditMediaView(exerciseID: exercise.id)
         }
@@ -122,28 +122,24 @@ private struct ExerciseDetailList: View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         let alternatives = Substitutions.suggestions(for: exercise, among: catalog.exercises)
         if !alternatives.isEmpty {
-            BlockSection("Alternatives", footer: "Exercises that train the same main muscles, for when equipment is busy or you want variety.") {
+            Section {
                 ForEach(alternatives) { alternative in
                     NavigationLink {
                         ExerciseDetailView(exerciseID: alternative.id)
                     } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(alternative.name)
-                                    .foregroundStyle(Color.primary)
-                                Text(alternative.summary)
-                                    .font(.caption)
-                                    .foregroundStyle(Color.secondary)
-                            }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundStyle(.tertiary)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(alternative.name)
+                            Text(alternative.summary)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
                         }
-                        .contentShape(Rectangle())
                     }
-                    .buttonStyle(.plain)
                     .accessibilityIdentifier("exercise.alternative.\(alternative.id)")
                 }
+            } header: {
+                Text("Alternatives")
+            } footer: {
+                Text("Exercises that train the same main muscles, for when equipment is busy or you want variety.")
             }
         }
     }
@@ -151,10 +147,13 @@ private struct ExerciseDetailList: View {
     @ViewBuilder private var progressSections: some View {
         let machines = allMachines.of(exercise.id)
         if !machines.isEmpty {
-            MachineSwitcher(machines: machines,
-                            hasUnassigned: !PersonalRecords.loggedSets(of: exercise.id, machine: .none, in: sessions).isEmpty,
-                            selection: $machineFilter)
-                .padding(.horizontal, -16)
+            Section {
+                MachineSwitcher(machines: machines,
+                                hasUnassigned: !PersonalRecords.loggedSets(of: exercise.id, machine: .none, in: sessions).isEmpty,
+                                selection: $machineFilter)
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.clear)
+            }
         }
         if exercise.type == .weightAndReps {
             ExerciseProgressChart(exerciseID: exercise.id, machine: machineFilter)

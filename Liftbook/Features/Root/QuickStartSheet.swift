@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// Opened by the start button: an empty workout or one of the routines.
+/// Opened by Start Workout: an empty workout or one of the routines.
 struct QuickStartSheet: View {
     let start: (WorkoutStartRequest) -> Void
     @Query(sort: \Routine.name) private var routines: [Routine]
@@ -11,36 +11,38 @@ struct QuickStartSheet: View {
     var body: some View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 12) {
+            List {
+                Section {
                     Button {
                         start(.empty)
                     } label: {
-                        Text("\(Image(systemName: "play.fill")) Start Empty Workout")
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 8)
+                        Label("Start Empty Workout", systemImage: "play.fill")
+                            .font(.headline)
                     }
-                    .buttonStyle(.pillProminent)
-                    .accessibilityLabel("Start Empty Workout")
                     .accessibilityIdentifier("quickStart.empty")
+                }
 
-                    if !routines.isEmpty {
-                        SectionTitle("Routines")
+                if !routines.isEmpty {
+                    Section("Routines") {
                         ForEach(routines) { routine in
-                            Block {
-                                BlockHeader(routine.name, subtitle: summary(of: routine, catalog: catalog)) {
-                                    Button("Start") { start(.routine(routine)) }
-                                        .buttonStyle(.pillProminent)
-                                        .accessibilityIdentifier("quickStart.routine.\(routine.name)")
+                            Button {
+                                start(.routine(routine))
+                            } label: {
+                                HStack {
+                                    RoutineRow(routine: routine, catalog: catalog)
+                                        .foregroundStyle(Color.primary)
+                                    Spacer(minLength: 8)
+                                    Image(systemName: "play.circle.fill")
+                                        .imageScale(.large)
+                                        .accessibilityHidden(true)
                                 }
                             }
+                            .accessibilityLabel("Start \(routine.name)")
+                            .accessibilityIdentifier("quickStart.routine.\(routine.name)")
                         }
                     }
                 }
-                .padding(16)
             }
-            .blockScreenBackground()
             .navigationTitle("Start a Workout")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -50,10 +52,5 @@ struct QuickStartSheet: View {
             }
         }
         .presentationDetents([.medium, .large])
-    }
-
-    private func summary(of routine: Routine, catalog: ExerciseCatalog) -> String {
-        let names = routine.orderedEntries.map { catalog.name(for: $0.exerciseID) }
-        return names.isEmpty ? "No exercises yet" : names.joined(separator: ", ")
     }
 }

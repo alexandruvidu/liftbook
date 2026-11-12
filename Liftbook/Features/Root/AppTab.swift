@@ -1,7 +1,7 @@
 import Foundation
 
 /// The top-level sections of the app, in tab bar order. Starting a workout
-/// is the floating button beside the bar, not a tab.
+/// is the tab bar's bottom accessory, not a tab.
 enum AppTab: String, CaseIterable, Identifiable, Hashable {
     case home
     case exercises

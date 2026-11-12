@@ -40,9 +40,9 @@ struct NoRoutinesSection: View {
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
             Button(action: create) {
-                Text("New Routine").foregroundStyle(Color.accentForeground)
+                Text("New Routine")
             }
-            .buttonStyle(.borderedProminent)
+            .prominentGlassButton()
             .accessibilityIdentifier("workout.emptyNewRoutine")
         }
         .frame(maxWidth: .infinity)

@@ -1,7 +1,7 @@
 import SwiftData
 import SwiftUI
 
-/// History and progress in one place: this week, shortcuts into the charts,
+/// History and progress in one place: this week, links into the charts,
 /// then every finished workout.
 struct ActivityHomeView: View {
     enum Destination: Hashable {
@@ -20,14 +20,21 @@ struct ActivityHomeView: View {
     var body: some View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: 12) {
-                    let week = WeekActivity.week(containing: .now, sessions: sessions, goal: goal) {
-                        catalog.exercise(id: $0)?.type ?? .weightAndReps
-                    }
+            List {
+                let week = WeekActivity.week(containing: .now, sessions: sessions, goal: goal) {
+                    catalog.exercise(id: $0)?.type ?? .weightAndReps
+                }
+                Section {
                     WeekStrip(week: week)
-                    shortcuts
-                    SectionTitle("History")
+                }
+
+                Section {
+                    shortcut("Exercise Progress", systemImage: "chart.line.uptrend.xyaxis", id: "exercises", destination: .exercises)
+                    shortcut("Muscles", systemImage: "chart.bar.fill", id: "muscles", destination: .muscles)
+                    shortcut("Records", systemImage: "trophy.fill", id: "records", destination: .records)
+                }
+
+                Section("History") {
                     if sessions.isEmpty {
                         ContentUnavailableView {
                             Label("No sessions logged", systemImage: "clock.arrow.circlepath")
@@ -40,16 +47,7 @@ struct ActivityHomeView: View {
                             NavigationLink(value: session) {
                                 WorkoutCard(session: session, catalog: catalog)
                             }
-                            .buttonStyle(.plain)
                             .accessibilityIdentifier("history.row")
-                            // Beside the link, not inside it, so it gets its own taps.
-                            .overlay(alignment: .topTrailing) {
-                                ShareWorkoutButton(session: session, catalog: catalog, compact: true)
-                                    .padding(10)
-                                    .accessibilityIdentifier("workoutCard.share.\(index)")
-                            }
-                            // Swipe actions on iOS 27 (the scroll view is their container);
-                            // the workout's page has the same actions everywhere.
                             .swipeActions(edge: .trailing) {
                                 Button(role: .destructive) { pendingDelete = session } label: {
                                     Label("Delete", systemImage: "trash")
@@ -63,14 +61,15 @@ struct ActivityHomeView: View {
                                 .tint(.accentColor)
                                 .accessibilityIdentifier("history.repeat.\(index)")
                             }
+                            .contextMenu {
+                                Button("Repeat Workout", systemImage: "arrow.clockwise") { starter.start(.repeating(session)) }
+                                ShareWorkoutButton(session: session, catalog: catalog)
+                                Button("Delete Workout", systemImage: "trash", role: .destructive) { pendingDelete = session }
+                            }
                         }
                     }
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
             }
-            .swipeActionsContainerIfAvailable()
-            .blockScreenBackground()
             .deleteWorkoutConfirmation($pendingDelete) { session in
                 modelContext.delete(session)
                 try? modelContext.save()
@@ -102,33 +101,16 @@ struct ActivityHomeView: View {
         }
     }
 
-    private var shortcuts: some View {
-        HStack(spacing: 8) {
-            shortcut("Exercises", systemImage: "chart.line.uptrend.xyaxis", destination: .exercises)
-            shortcut("Muscles", systemImage: "chart.bar.fill", destination: .muscles)
-            shortcut("Records", systemImage: "trophy.fill", destination: .records)
-        }
-    }
-
-    private func shortcut(_ title: String, systemImage: String, destination: Destination) -> some View {
+    private func shortcut(_ title: String, systemImage: String, id: String, destination: Destination) -> some View {
         NavigationLink(value: destination) {
-            VStack(spacing: 6) {
-                Image(systemName: systemImage)
-                    .font(.title3)
-                    .foregroundStyle(.tint)
-                    .accessibilityHidden(true)
+            Label {
                 Text(title)
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Color.primary)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+            } icon: {
+                Image(systemName: systemImage)
+                    .foregroundStyle(.tint)
             }
-            .frame(maxWidth: .infinity, minHeight: 64)
-            .padding(.vertical, 6)
-            .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
         }
-        .buttonStyle(.plain)
-        .accessibilityIdentifier("activity.shortcut.\(title.lowercased())")
+        .accessibilityIdentifier("activity.shortcut.\(id)")
     }
 }
 

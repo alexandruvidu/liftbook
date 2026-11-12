@@ -17,60 +17,54 @@ struct WorkoutDetailView: View {
 
     var body: some View {
         let summary = WorkoutSummary(session: session, history: []) { type(of: $0) }
-        ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
-                Text(session.startedAt.formatted(date: .complete, time: .shortened))
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
+        List {
+            Section {
                 HStack(spacing: 8) {
                     StatTile(title: "Duration", value: SetMeasurement.clock(summary.duration), identifier: "detail.duration")
                     StatTile(title: "Volume", value: unit.volumeText(kilograms: summary.volume), identifier: "detail.volume")
                     StatTile(title: "Sets", value: "\(summary.setCount)", identifier: "detail.sets")
                 }
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+            } header: {
+                Text(session.startedAt.formatted(date: .complete, time: .shortened))
+            }
 
-                if !session.notes.isEmpty {
-                    BlockSection("Notes") {
-                        Text(session.notes)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier("detail.notes")
-                    }
+            if !session.notes.isEmpty {
+                Section("Notes") {
+                    Text(session.notes)
+                        .accessibilityIdentifier("detail.notes")
                 }
+            }
 
-                ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
-                    exerciseBlock(exercise, index: index)
-                }
+            ForEach(Array(session.orderedExercises.enumerated()), id: \.element.stableID) { index, exercise in
+                exerciseSection(exercise, index: index)
+            }
 
+            Section {
                 Button(action: onRepeat) {
                     Label("Repeat Workout", systemImage: "arrow.clockwise")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
                 }
-                .buttonStyle(.pillProminent)
                 .accessibilityIdentifier("detail.repeat")
                 Button {
                     isSavingRoutine = true
                 } label: {
                     Label("Save as Routine", systemImage: "list.bullet.rectangle")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 6)
                 }
-                .buttonStyle(.pill)
                 .accessibilityIdentifier("detail.saveRoutine")
-                Button("Delete Workout", role: .destructive) { isConfirmingDelete = true }
-                    .frame(maxWidth: .infinity, minHeight: 44)
+            }
+
+            Section {
+                Button("Delete Workout", systemImage: "trash", role: .destructive) { isConfirmingDelete = true }
                     .accessibilityIdentifier("detail.delete")
             }
-            .padding(16)
         }
-        .blockScreenBackground()
         .navigationTitle(session.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
                 ShareWorkoutButton(session: session, catalog: catalog)
                     .accessibilityIdentifier("detail.share")
-            }
-            ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") { isEditing = true }
                     .accessibilityIdentifier("detail.edit")
             }
@@ -103,16 +97,19 @@ struct WorkoutDetailView: View {
         catalog.exercise(id: exerciseID)?.type ?? .weightAndReps
     }
 
-    private func exerciseBlock(_ exercise: WorkoutExercise, index: Int) -> some View {
+    /// One section per exercise: its header links to the exercise page,
+    /// then a row per set.
+    private func exerciseSection(_ exercise: WorkoutExercise, index: Int) -> some View {
         let type = type(of: exercise.exerciseID)
         let labels = exercise.setLabels
         let machinePhoto = machines.first { $0.machineID == exercise.machineID }?.photoFileName
-        return Block {
+        return Section {
             ExerciseHeaderLink(exerciseID: exercise.exerciseID,
                                name: exercise.displayName(catalog: catalog, machines: machines),
                                subtitle: session.supersetLetter(for: exercise).map { "Superset \($0)" },
                                equipment: catalog.exercise(id: exercise.exerciseID)?.equipment ?? .other,
                                machinePhoto: machinePhoto,
+                               inList: true,
                                identifier: "detail.exercise.\(index).page")
             if !exercise.notes.isEmpty {
                 Text(exercise.notes)
@@ -125,7 +122,7 @@ struct WorkoutDetailView: View {
                         .font(.subheadline.weight(.semibold))
                         .monospacedDigit()
                         .foregroundStyle(.secondary)
-                        .frame(width: 26)
+                        .frame(minWidth: 26)
                     Text(set.measurement.formatted(for: type, unit: unit))
                         .monospacedDigit()
                     if let rpe = set.rpe {

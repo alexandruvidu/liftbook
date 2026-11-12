@@ -15,7 +15,8 @@ struct FinishSummaryView: View {
             VStack(spacing: 24) {
                 VStack(spacing: 8) {
                     Image(systemName: "checkmark.seal.fill")
-                        .font(.system(size: 56))
+                        .font(.largeTitle)
+                        .imageScale(.large)
                         .foregroundStyle(Color.accentColor)
                         .accessibilityHidden(true)
                     Text("Workout Complete")
@@ -57,7 +58,7 @@ struct FinishSummaryView: View {
                     }
                     .padding(16)
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
+                    .background(Color(.secondarySystemGroupedBackground), in: .card(minimum: 16))
                 } else if summary.setCount == 0 {
                     Text("No sets were checked off, so this workout won't count towards your totals.")
                         .font(.subheadline)
@@ -75,11 +76,10 @@ struct FinishSummaryView: View {
             Button(action: onDone) {
                 Text("Done")
                     .font(.headline)
-                    .foregroundStyle(Color.accentForeground)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 6)
             }
-            .buttonStyle(.borderedProminent)
+            .prominentGlassButton()
             .padding(16)
             .accessibilityIdentifier("summary.done")
         }

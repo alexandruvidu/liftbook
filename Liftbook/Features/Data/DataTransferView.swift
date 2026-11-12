@@ -19,50 +19,52 @@ struct DataTransferView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
+        Form {
+            Section {
                 HStack(spacing: 8) {
                     StatTile(title: "Workouts", value: "\(sessions.count)", identifier: "data.workoutCount")
                     StatTile(title: "Sets", value: "\(sessions.reduce(0) { $0 + $1.exercises.reduce(0) { $0 + $1.sets.count } })",
                              identifier: "data.setCount")
                 }
-
-                BlockSection("Export", footer: "CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises, machines and body measurements. Photos and videos aren't included.") {
-                    if let csvURL {
-                        ShareLink(item: csvURL) {
-                            Label("Export Workouts (CSV)", systemImage: "tablecells")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .buttonStyle(.pill)
-                        .accessibilityIdentifier("data.exportCSV")
-                    }
-                    if let jsonURL {
-                        ShareLink(item: jsonURL) {
-                            Label("Export Full Backup (JSON)", systemImage: "curlybraces")
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        .buttonStyle(.pill)
-                        .accessibilityIdentifier("data.exportJSON")
-                    }
-                    if let exportError {
-                        Text(exportError).foregroundStyle(.red)
-                    }
-                }
-
-                BlockSection("Import", footer: "Use a CSV in the same format as the export. Workouts already in Liftbook are skipped.") {
-                    Button {
-                        isImporting = true
-                    } label: {
-                        Label("Import Workouts from CSV", systemImage: "square.and.arrow.down")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    }
-                    .buttonStyle(.pill)
-                    .accessibilityIdentifier("data.import")
-                }
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
             }
-            .padding(16)
+
+            Section {
+                if let csvURL {
+                    ShareLink(item: csvURL) {
+                        Label("Export Workouts (CSV)", systemImage: "tablecells")
+                    }
+                    .accessibilityIdentifier("data.exportCSV")
+                }
+                if let jsonURL {
+                    ShareLink(item: jsonURL) {
+                        Label("Export Full Backup (JSON)", systemImage: "curlybraces")
+                    }
+                    .accessibilityIdentifier("data.exportJSON")
+                }
+                if let exportError {
+                    Text(exportError).foregroundStyle(.red)
+                }
+            } header: {
+                Text("Export")
+            } footer: {
+                Text("CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises, machines and body measurements. Photos and videos aren't included.")
+            }
+
+            Section {
+                Button {
+                    isImporting = true
+                } label: {
+                    Label("Import Workouts from CSV", systemImage: "square.and.arrow.down")
+                }
+                .accessibilityIdentifier("data.import")
+            } header: {
+                Text("Import")
+            } footer: {
+                Text("Use a CSV in the same format as the export. Workouts already in Liftbook are skipped.")
+            }
         }
-        .blockScreenBackground()
         .navigationTitle("Export & Import")
         .navigationBarTitleDisplayMode(.inline)
         .task { prepareExports() }

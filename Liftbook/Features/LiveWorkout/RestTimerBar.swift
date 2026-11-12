@@ -37,11 +37,7 @@ struct RestTimerBar: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
-        // Thick enough that the set rows scrolling underneath don't show through.
-        .background(.thickMaterial, in: RoundedRectangle(cornerRadius: 20))
-        // An edge, so it stands apart from same-gray cards in dark mode.
-        .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(Color(.separator)))
-        .shadow(color: .black.opacity(0.12), radius: 8, y: 2)
+        .glassEffect(.regular, in: .rect(cornerRadius: 24))
         .padding(.horizontal, 12)
         .padding(.bottom, 4)
         .accessibilityElement(children: .contain)
@@ -57,11 +53,10 @@ struct RestTimerBar: View {
                 .accessibilityLabel("\(Int(RestTimer.step)) seconds more")
                 .accessibilityIdentifier("rest.plus")
             Button("Skip") { session.stopRest() }
-                .buttonStyle(.borderedProminent)
-                .foregroundStyle(Color.accentForeground)
+                .prominentGlassButton()
                 .accessibilityIdentifier("rest.skip")
         }
-        .buttonStyle(.bordered)
+        .buttonStyle(.glass)
         .controlSize(.small)
         .lineLimit(1)
         .font(.subheadline.weight(.semibold))
@@ -96,11 +91,8 @@ struct RestSecondsMenu: View {
                 // Kept on one line beside a long machine name, which wraps instead.
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
-                .foregroundStyle(Color.primary)
-                .padding(.horizontal, 14)
-                .frame(minHeight: 34)
-                .background(.fill.tertiary, in: Capsule())
         }
+        .buttonStyle(.glass)
         .accessibilityLabel("Rest: \(RestTimer.label(seconds: current))")
     }
 }

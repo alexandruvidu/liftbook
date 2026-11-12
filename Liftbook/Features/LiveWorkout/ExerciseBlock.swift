@@ -24,12 +24,12 @@ struct ExerciseBlock: View {
 
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openExercisePage) private var openExercisePage
     @State private var isShowingPlates = false
     @State private var isSwapping = false
     @State private var isNoteOpen = false
     @State private var isPickingMachine = false
     @State private var isAddingMachine = false
-    @State private var isShowingExercise = false
     @Query private var customExercises: [CustomExercise]
 
     private var type: ExerciseType { info?.type ?? .weightAndReps }
@@ -51,12 +51,9 @@ struct ExerciseBlock: View {
                     Label("Add Set", systemImage: "plus")
                         .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.pill)
+                .buttonStyle(.glass)
                 .accessibilityIdentifier("\(identifier).addSet")
             }
-        }
-        .navigationDestination(isPresented: $isShowingExercise) {
-            ExerciseDetailView(exerciseID: exercise.exerciseID)
         }
         .sheet(isPresented: $isPickingMachine) {
             MachinePickerSheet(exerciseID: exercise.exerciseID, exerciseName: info?.name ?? fallbackName, type: type,
@@ -133,7 +130,7 @@ struct ExerciseBlock: View {
                 ExerciseOptionsMenu(exercise: exercise, session: session,
                                     showsPlates: type == .weightAndReps,
                                     onSwap: info == nil ? nil : { isSwapping = true },
-                                    onViewExercise: info == nil ? nil : { isShowingExercise = true },
+                                    onViewExercise: info == nil || openExercisePage == nil ? nil : { openExercisePage?(exercise.exerciseID) },
                                     onAddMachine: machines.isEmpty && startsRest ? { isAddingMachine = true } : nil) {
                     isShowingPlates = true
                 }
@@ -189,7 +186,7 @@ struct ExerciseBlock: View {
             Label("Note", systemImage: "square.and.pencil")
                 .fixedSize(horizontal: true, vertical: false)
         }
-        .buttonStyle(.pill)
+        .buttonStyle(.glass)
         .accessibilityIdentifier("\(identifier).note")
     }
 
@@ -204,7 +201,7 @@ struct ExerciseBlock: View {
             .font(.subheadline)
             .lineLimit(1...4)
             .padding(10)
-            .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 10))
+            .background(.fill.tertiary, in: .card(minimum: 10))
             .accessibilityIdentifier("\(identifier).notes")
     }
 

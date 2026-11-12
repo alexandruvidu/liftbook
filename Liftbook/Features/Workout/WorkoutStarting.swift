@@ -114,6 +114,7 @@ private struct WorkoutStartingModifier: ViewModifier {
                 Button("Resume Current") { starter.presentAfterAlert(active.last) }
                 Button("Discard and Start New", role: .destructive) {
                     let request = starter.conflicting
+                    RestAlerts.cancel()
                     for session in active {
                         modelContext.delete(session)
                     }

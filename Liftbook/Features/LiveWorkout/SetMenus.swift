@@ -32,7 +32,7 @@ struct SetKindMenu: View {
                 .foregroundStyle(set.kind == .normal ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
                 .frame(width: 28, height: 32)
                 .background(set.kind.tint.opacity(set.kind == .normal ? 0 : 0.28),
-                            in: RoundedRectangle(cornerRadius: 7))
+                            in: .card(minimum: 7))
         }
         // Menus tint their label with the accent color; keep the tag readable.
         .tint(set.kind == .normal ? Color.secondary : Color.primary)
@@ -65,7 +65,7 @@ struct RPEPicker: View {
             Text(set.rpe.map { SetMeasurement.decimal($0) } ?? "–")
                 .monospacedDigit()
                 .frame(maxWidth: .infinity, minHeight: 34)
-                .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))
+                .background(.fill.tertiary, in: .card(minimum: 8))
         }
         .buttonStyle(.borderless)
         .accessibilityLabel(set.rpe.map { "RPE \(SetMeasurement.decimal($0))" } ?? "RPE not set")
@@ -128,7 +128,7 @@ private struct RPESheet: View {
                 } label: {
                     Text("No RPE").frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.pill)
+                .buttonStyle(.glass)
                 .accessibilityIdentifier("rpe.clear")
                 Button {
                     save(value)
@@ -136,7 +136,7 @@ private struct RPESheet: View {
                 } label: {
                     Text("Save").frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.pillProminent)
+                .prominentGlassButton()
                 .accessibilityIdentifier("rpe.save")
             }
         }

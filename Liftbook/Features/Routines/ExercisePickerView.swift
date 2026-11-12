@@ -46,8 +46,7 @@ struct ExercisePickerView: View {
             .safeAreaInset(edge: .bottom) {
                 if !selection.isEmpty { addButton }
             }
-            .searchable(text: $filter.query, placement: .navigationBarDrawer(displayMode: .always),
-                        prompt: "Search by name, muscle or equipment")
+            .searchable(text: $filter.query, prompt: "Search by name, muscle or equipment")
             .navigationTitle("Add Exercises")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -68,8 +67,8 @@ struct ExercisePickerView: View {
             } label: {
                 card
                     .overlay {
-                        RoundedRectangle(cornerRadius: 18)
-                            .strokeBorder(Color.accentColor, lineWidth: order == nil ? 0 : 3)
+                        ConcentricRectangle.card
+                            .stroke(Color.accentColor, lineWidth: order == nil ? 0 : 3)
                     }
                     .overlay(alignment: .topLeading) {
                         if let order { OrderBadge(number: order + 1) }
@@ -88,11 +87,10 @@ struct ExercisePickerView: View {
         } label: {
             Text(selection.count == 1 ? "Add 1 Exercise" : "Add \(selection.count) Exercises")
                 .font(.headline)
-                .foregroundStyle(Color.accentForeground)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 6)
         }
-        .buttonStyle(.borderedProminent)
+        .prominentGlassButton()
         .padding(.horizontal, 20)
         .padding(.vertical, 8)
         .accessibilityIdentifier("picker.add")

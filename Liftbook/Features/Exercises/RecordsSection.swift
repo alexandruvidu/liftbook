@@ -14,7 +14,7 @@ struct RecordsSection: View {
     var body: some View {
         if !RecordKind.kinds(for: exercise.type).isEmpty {
             let records = PersonalRecords.records(for: exercise.id, type: exercise.type, machine: machine, in: sessions)
-            BlockSection("Personal Records") {
+            Section("Personal Records") {
                 if records.isEmpty {
                     Text("Finish a workout \(machine.emptyStateScope) to set your first records.")
                         .foregroundStyle(.secondary)

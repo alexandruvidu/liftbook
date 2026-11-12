@@ -25,14 +25,18 @@ struct LiveWorkoutView: View {
     @State private var collapsed: Set<ObjectIdentifier> = []
     /// Set when the workout is finished; shows the summary instead of the list.
     @State private var summary: WorkoutSummary?
+    /// Exercise pages opened from a block's menu.
+    @State private var path = NavigationPath()
 
     var body: some View {
         let catalog = ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
-        NavigationStack {
+        NavigationStack(path: $path) {
             if let summary {
                 FinishSummaryView(session: session, summary: summary, catalog: catalog) { dismiss() }
             } else {
                 liveList(catalog: catalog)
+                    .exercisePageDestination()
+                    .opensExercisePages(on: $path)
             }
         }
     }
@@ -82,7 +86,7 @@ struct LiveWorkoutView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                 }
-                .buttonStyle(.pillProminent)
+                .buttonStyle(.glass)
                 .accessibilityIdentifier("live.addExercises")
 
                 Button("Discard Workout", role: .destructive) { isConfirmingDiscard = true }
@@ -108,19 +112,13 @@ struct LiveWorkoutView: View {
         .navigationTitle(session.displayName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                VStack(spacing: 0) {
-                    Text(session.displayName)
-                        .font(.headline)
-                        .lineLimit(1)
-                    // A timer-style Text ticks on its own without re-rendering
-                    // views, so open menus and focused fields aren't disturbed.
-                    Text(session.startedAt, style: .timer)
-                        .font(.caption)
-                        .monospacedDigit()
-                        .foregroundStyle(.secondary)
-                        .accessibilityIdentifier("live.elapsed")
-                }
+            // A view, not `navigationSubtitle`, so the timer keeps ticking. A
+            // timer-style Text updates on its own without re-rendering views,
+            // so open menus and focused fields aren't disturbed.
+            ToolbarItem(placement: .subtitle) {
+                Text(session.startedAt, style: .timer)
+                    .monospacedDigit()
+                    .accessibilityIdentifier("live.elapsed")
             }
             ToolbarItem(placement: .cancellationAction) {
                 Button("Minimize", systemImage: "chevron.down") { dismiss() }
@@ -132,11 +130,14 @@ struct LiveWorkoutView: View {
                 }
                 .accessibilityIdentifier("live.noteButton")
             }
+            ToolbarSpacer(.fixed, placement: .topBarTrailing)
             ToolbarItem(placement: .confirmationAction) {
-                Button("Finish") { finish(catalog: catalog) }
-                    .buttonStyle(.borderedProminent)
-                    .foregroundStyle(Color.accentForeground)
-                    .accessibilityIdentifier("live.finish")
+                Button { finish(catalog: catalog) } label: {
+                    // Set on the text: toolbars ignore the button's own label color.
+                    Text("Finish").foregroundStyle(Color.accentForeground)
+                }
+                .prominentGlassButton()
+                .accessibilityIdentifier("live.finish")
             }
             // Finish never moves into the overflow menu when space is tight.
             .keepsVisibleIfAvailable()

@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// A raised rounded surface that groups related content. The building block
-/// of every screen, in place of grouped list sections.
+/// A raised rounded surface for rich content that a list row can't hold,
+/// like an exercise's sets in the live workout. List-like screens use
+/// `List` sections instead.
 struct Block<Content: View>: View {
     @ViewBuilder var content: Content
 
@@ -15,89 +16,20 @@ struct Block<Content: View>: View {
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 18))
+        .background(Color(.secondarySystemGroupedBackground), in: .card)
+        // Controls inside round their corners concentric with the block.
+        .containerShape(.rect(cornerRadius: 18))
     }
 }
 
-/// A block's title row: optional image, title, subtitle, trailing action.
-struct BlockHeader<Trailing: View>: View {
-    let title: String
-    var subtitle: String?
-    var image: Image?
-    @ViewBuilder var trailing: Trailing
-    @Environment(\.dynamicTypeSize) private var typeSize
-
-    init(_ title: String, subtitle: String? = nil, image: Image? = nil, @ViewBuilder trailing: () -> Trailing) {
-        self.title = title
-        self.subtitle = subtitle
-        self.image = image
-        self.trailing = trailing()
+extension Shape where Self == ConcentricRectangle {
+    /// A card's corners: concentric with its container, never tighter than
+    /// `minimum` (the radius a card had before concentric corners).
+    static func card(minimum: CGFloat) -> ConcentricRectangle {
+        ConcentricRectangle(corners: .concentric(minimum: .fixed(minimum)), isUniform: true)
     }
 
-    var body: some View {
-        // At accessibility sizes the trailing control goes under the title,
-        // which otherwise gets squeezed to a word per line.
-        let stacked = typeSize.isAccessibilitySize
-        let layout = stacked
-            ? AnyLayout(VStackLayout(alignment: .leading, spacing: 8))
-            : AnyLayout(HStackLayout(spacing: 12))
-        return layout {
-            if let image {
-                image
-                    .font(.title3)
-                    .foregroundStyle(.tint)
-                    .frame(width: 44, height: 44)
-                    .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 12))
-                    .accessibilityHidden(true)
-            }
-            VStack(alignment: .leading, spacing: 2) {
-                Text(title)
-                    .font(.headline)
-                if let subtitle {
-                    Text(subtitle)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            }
-            if !stacked { Spacer(minLength: 8) }
-            trailing
-        }
-    }
-}
-
-extension BlockHeader where Trailing == EmptyView {
-    init(_ title: String, subtitle: String? = nil, image: Image? = nil) {
-        self.init(title, subtitle: subtitle, image: image) { EmptyView() }
-    }
-}
-
-/// A titled block for screens built from blocks instead of a list: a small
-/// bold title, the block, then an optional note.
-struct BlockSection<Content: View>: View {
-    let title: String
-    var footer: String?
-    @ViewBuilder var content: Content
-
-    init(_ title: String, footer: String? = nil, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.footer = footer
-        self.content = content()
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text(title)
-                .font(.headline)
-                .accessibilityAddTraits(.isHeader)
-            Block { content }
-            if let footer {
-                Text(footer)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 4)
-            }
-        }
-    }
+    static var card: ConcentricRectangle { card(minimum: 18) }
 }
 
 /// A bold section title between blocks, e.g. "History".
@@ -115,34 +47,6 @@ struct SectionTitle: View {
             .padding(.top, 8)
             .accessibilityAddTraits(.isHeader)
     }
-}
-
-/// A capsule button: quiet fill, or the accent when prominent.
-struct PillButtonStyle: ButtonStyle {
-    var prominent = false
-    @Environment(\.isEnabled) private var isEnabled
-    @Environment(\.dynamicTypeSize) private var typeSize
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.subheadline.weight(.semibold))
-            // Wraps at accessibility sizes rather than "Start Worko…".
-            .lineLimit(typeSize.isAccessibilitySize ? 3 : 1)
-            .multilineTextAlignment(.center)
-            .padding(.horizontal, 14)
-            .frame(minHeight: 34)
-            .foregroundStyle(prominent ? Color.accentForeground : Color.primary)
-            .background {
-                Capsule().fill(prominent ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.fill.tertiary))
-            }
-            .opacity(configuration.isPressed ? 0.7 : (isEnabled ? 1 : 0.4))
-            .contentShape(Capsule())
-    }
-}
-
-extension ButtonStyle where Self == PillButtonStyle {
-    static var pill: PillButtonStyle { PillButtonStyle() }
-    static var pillProminent: PillButtonStyle { PillButtonStyle(prominent: true) }
 }
 
 /// The page background behind blocks.

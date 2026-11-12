@@ -20,7 +20,7 @@ struct SetValueField: View {
             .multilineTextAlignment(.center)
             .monospacedDigit()
             .padding(.vertical, 7)
-            .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))
+            .background(.fill.tertiary, in: .card(minimum: 8))
             .accessibilityLabel(accessibilityName)
             .focused($isFocused)
             .id(revealID)

@@ -12,8 +12,8 @@ struct MediaGallery: View {
         let pages = Self.pages(for: media)
         let count = pages.count + (art == nil ? 0 : 1)
         TabView {
-            ForEach(pages, id: \.first!.mediaID) { page in
-                pageView(page)
+            ForEach(pages, id: \.mediaID) { item in
+                pageView(item)
             }
             if let art {
                 ExerciseArtView(art: art)
@@ -23,30 +23,24 @@ struct MediaGallery: View {
         .tabViewStyle(.page(indexDisplayMode: count > 1 ? .always : .never))
         .aspectRatio(4 / 3, contentMode: .fit)
         .background(Color(.tertiarySystemFill))
-        .clipShape(RoundedRectangle(cornerRadius: 18))
+        .clipShape(.card)
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("media.gallery")
     }
 
-    /// Own media one per page; downloaded photos together on one page.
-    static func pages(for media: [ExerciseMedia]) -> [[ExerciseMedia]] {
-        let own = media.filter { $0.source == .own }.map { [$0] }
+    /// Own media first, then downloaded photos, one per page. Swiped by hand
+    /// rather than cycled on a timer: a periodic re-render closes open menus.
+    static func pages(for media: [ExerciseMedia]) -> [ExerciseMedia] {
+        let own = media.filter { $0.source == .own }
         let downloaded = media.filter { $0.source == .downloaded && $0.kind == .photo }
-        return own + (downloaded.isEmpty ? [] : [downloaded])
+        return own + downloaded
     }
 
     @ViewBuilder
-    private func pageView(_ page: [ExerciseMedia]) -> some View {
-        if page.count > 1 {
-            TimelineView(.periodic(from: .now, by: 1.2)) { context in
-                let index = Int(context.date.timeIntervalSinceReferenceDate / 1.2) % page.count
-                photo(page[index])
-            }
-        } else if let item = page.first {
-            switch item.kind {
-            case .photo: photo(item)
-            case .video: LoopingVideoPlayer(url: store.url(for: item.fileName))
-            }
+    private func pageView(_ item: ExerciseMedia) -> some View {
+        switch item.kind {
+        case .photo: photo(item)
+        case .video: LoopingVideoPlayer(url: store.url(for: item.fileName))
         }
     }
 

@@ -6,7 +6,7 @@ struct SetFieldsSection: View {
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
 
     var body: some View {
-        BlockSection("Logged as \(type.displayName)", footer: type.explanation) {
+        Section {
             ForEach(type.fieldSpecs, id: \.self) { spec in
                 LabeledContent {
                     Text(spec.isOptional ? "Optional" : "Required")
@@ -16,6 +16,10 @@ struct SetFieldsSection: View {
             }
             LabeledContent("Example set", value: type.example.formatted(for: type, unit: unit))
                 .accessibilityIdentifier("exercise.detail.example")
+        } header: {
+            Text("Logged as \(type.displayName)")
+        } footer: {
+            Text(type.explanation)
         }
     }
 }

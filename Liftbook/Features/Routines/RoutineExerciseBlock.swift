@@ -52,7 +52,7 @@ struct RoutineExerciseBlock: View {
                 Label("Add Set", systemImage: "plus")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.pill)
+            .buttonStyle(.glass)
             .disabled(entry.setCount >= RoutineDraft.setCountRange.upperBound)
             .accessibilityIdentifier("\(identifier).addSet")
         }
@@ -116,7 +116,7 @@ struct RoutineExerciseBlock: View {
                 .foregroundStyle(last == nil ? .tertiary : .secondary)
                 .frame(maxWidth: .infinity, minHeight: 36, alignment: .leading)
                 .padding(.horizontal, 10)
-                .background(.fill.tertiary, in: RoundedRectangle(cornerRadius: 8))
+                .background(.fill.tertiary, in: .card(minimum: 8))
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(last.map { "Set \(index + 1). Last time: \($0.formatted(for: type, unit: unit))" }

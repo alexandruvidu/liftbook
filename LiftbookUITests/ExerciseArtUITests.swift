@@ -28,9 +28,10 @@ final class ExerciseArtUITests: XCTestCase {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook()
         app.openTab("Profile")
+        XCTAssertTrue(app.buttons["profile.body"].waitForExistence(timeout: 10), "Profile did not load")
+        // Last in the list, which only builds rows as they scroll in.
         let credit = app.descendants(matching: .any)["profile.credits"]
-        XCTAssertTrue(credit.waitForExistence(timeout: 10), "No credit link")
-        XCTAssertTrue(app.scrollTo(credit), "Credit link not reachable")
+        XCTAssertTrue(app.scrollTo(credit), "No credit link")
         snap("profile-credits-light")
     }
 }

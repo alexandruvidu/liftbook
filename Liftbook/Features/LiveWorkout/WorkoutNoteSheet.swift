@@ -10,7 +10,7 @@ struct WorkoutNoteSheet: View {
             TextField("How did it go?", text: $session.notes, axis: .vertical)
                 .lineLimit(3...10)
                 .padding(14)
-                .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 14))
+                .background(Color(.secondarySystemGroupedBackground), in: .card(minimum: 14))
                 .padding(16)
                 .frame(maxHeight: .infinity, alignment: .top)
                 .blockScreenBackground()

@@ -80,7 +80,7 @@ struct SetRow: View {
         .padding(.vertical, 4)
         .padding(.horizontal, 6)
         .background(set.isCompleted ? Color.accentColor.opacity(0.14) : Color.clear,
-                    in: RoundedRectangle(cornerRadius: 10))
+                    in: .card(minimum: 10))
         .padding(.horizontal, -6)
         .dynamicTypeSize(...Self.largestTextSize)
         .onChange(of: set.measurement) { set.uncheckIfIncomplete(for: type) }
@@ -124,7 +124,7 @@ struct SetRow: View {
                 .foregroundStyle(set.isCompleted ? Color.accentForeground : Color.secondary)
                 .frame(width: SetColumns.check, height: 36)
                 .background(set.isCompleted ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.fill.tertiary),
-                            in: RoundedRectangle(cornerRadius: 10))
+                            in: .card(minimum: 10))
                 .contentShape(Rectangle())
         }
         .buttonStyle(.borderless)

@@ -19,7 +19,7 @@ struct StatTile: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
+        .background(Color(.secondarySystemGroupedBackground), in: .card(minimum: 16))
         .accessibilityElement(children: .combine)
         .accessibilityIdentifier(identifier)
     }
