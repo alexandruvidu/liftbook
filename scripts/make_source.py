@@ -4,6 +4,11 @@
 against the source: bundle ID, version, build number, size and SHA-256. All of
 them are read from the built app so they always match.
 
+The download URL is the build's own file, Liftbook-<build>.ipa, never replaced
+once uploaded: a source fetched before or during the next publish still points
+at the IPA its SHA-256 describes. (The rolling Liftbook.ipa is replaced on every
+build, so a cached source and a newer IPA there wouldn't match.)
+
 No top-level "version": 2 on purpose: SideStore only enforces declared
 permissions/entitlements for v2 sources, and an unsigned build has none.
 
@@ -26,6 +31,11 @@ DESCRIPTION = (
 )
 
 
+def build_ipa_name(build):
+    """The per-build IPA asset the source points at."""
+    return f"Liftbook-{build}.ipa"
+
+
 def main(info_plist, ipa, out):
     with open(info_plist, "rb") as f:
         info = plistlib.load(f)
@@ -33,7 +43,7 @@ def main(info_plist, ipa, out):
     bundle_id = info["CFBundleIdentifier"]
     version = info["CFBundleShortVersionString"]
     build = info["CFBundleVersion"]
-    min_os = info.get("MinimumOSVersion", "18.0")
+    min_os = info.get("MinimumOSVersion", "26.0")
     size = os.path.getsize(ipa)
     with open(ipa, "rb") as f:
         sha256 = hashlib.sha256(f.read()).hexdigest()
@@ -41,7 +51,7 @@ def main(info_plist, ipa, out):
     privacy = {k: v for k, v in info.items() if k.startswith("NS") and k.endswith("UsageDescription")}
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     sha = os.environ.get("GITHUB_SHA", "local")[:7]
-    download = f"{RELEASE}/Liftbook.ipa"
+    download = f"{RELEASE}/{build_ipa_name(build)}"
 
     source = {
         "name": "Liftbook",
