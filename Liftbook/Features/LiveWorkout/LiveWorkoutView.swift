@@ -108,6 +108,10 @@ struct LiveWorkoutView: View {
             }
         }
         .animation(.snappy, value: session.restEndsAt == nil)
+        // Sets checked, rest started or skipped here show in the Live Activity.
+        .onChange(of: WorkoutActivitySnapshot(session)) {
+            WorkoutLiveActivity.sync(session, in: modelContext)
+        }
         .task(id: session.restEndsAt) {
             await RestAlerts.run(for: session, exerciseName: session.restExerciseID.map { catalog.name(for: $0) },
                                  sound: restSound)

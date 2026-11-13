@@ -10,8 +10,9 @@ extension XCUIApplication {
     static func launchLiftbook(appearance: String = "light", seedSampleData: Bool = false,
                                storeFile: String? = nil, seedHistory: Bool = false,
                                seedPhotos: Bool = false, seedMachines: Bool = false, seedMedia: Bool = false,
-                               textSize: String? = nil) -> XCUIApplication {
+                               textSize: String? = nil, extraArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
+        app.launchArguments += extraArguments
         app.launchArguments += ["-uiTestAppearance", appearance]
         if let storeFile {
             app.launchArguments += ["-uiTestStoreFile", storeFile]

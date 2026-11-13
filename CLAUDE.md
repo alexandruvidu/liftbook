@@ -42,6 +42,8 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
     (Activity, Machines and Media included); shared building blocks
     (`Block`, the concentric `.card` shape) are in `Features/Shared/Blocks.swift`
   - `Liftbook/Models/` — SwiftData models and domain logic
+  - `LiftbookWidgets/` — the widget extension (the workout's Live Activity);
+    `Shared/` — code compiled into both the app and the extension
   - `Liftbook/Resources/` — assets, bundled JSON
   - `LiftbookTests/` — unit tests (Swift Testing)
   - `LiftbookUITests/` — UI tests
@@ -54,6 +56,11 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   `.glassProminent`: the system keeps that label white, unreadable on the
   dark-mode mint accent. In toolbars, also set the color on the label's `Text`.
 - Start Workout and the running workout live in the tab bar's bottom accessory.
+- The workout in progress is a Live Activity (`LiftbookWidgets` extension,
+  types and intents in `Shared/`). Its buttons are `LiveActivityIntent`s that
+  run in the app (`WorkoutLiveActivity`); the logic is `WorkoutSession.logNextSet`.
+  UI tests skip it unless launched with `-uiTestLiveActivity YES`
+  (`LiveActivityUITests`, which locks the simulator and taps Log Set).
 
 ## Testing
 - Test locally before **every** commit: `scripts/test.sh` runs the unit tests,

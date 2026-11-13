@@ -33,6 +33,21 @@ targets:
       - path: Liftbook/Resources/ExerciseArt
         type: folder
         optional: true
+      # The Live Activity's data and buttons, shared with the widget extension.
+      - path: Shared
+    dependencies:
+      - target: LiftbookWidgets
+        embed: true
+    info:
+      path: Liftbook/Info.plist
+      properties:
+        # From the build settings, which CI sets per build (x.y.<run>).
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        # liftbook://workout, opened by tapping the Live Activity.
+        CFBundleURLTypes:
+          - CFBundleURLName: io.github.alexandruvidu.liftbook
+            CFBundleURLSchemes: [liftbook]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: io.github.alexandruvidu.liftbook
@@ -48,6 +63,30 @@ targets:
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_NSCameraUsageDescription: "Take photos and videos of exercises and machines."
         INFOPLIST_KEY_NSMicrophoneUsageDescription: "Record sound with exercise videos."
+        INFOPLIST_KEY_NSSupportsLiveActivities: YES
+
+  # The workout's Live Activity (Lock Screen and Dynamic Island).
+  LiftbookWidgets:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: LiftbookWidgets
+      - path: Shared
+    info:
+      path: LiftbookWidgets/Info.plist
+      properties:
+        # From the build settings, which CI sets per build (x.y.<run>).
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        CFBundleDisplayName: Liftbook
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: io.github.alexandruvidu.liftbook.widgets
+        PRODUCT_NAME: LiftbookWidgets
+        TARGETED_DEVICE_FAMILY: "1"
+        SKIP_INSTALL: YES
 
   LiftbookTests:
     type: bundle.unit-test

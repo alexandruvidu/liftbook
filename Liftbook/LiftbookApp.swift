@@ -21,6 +21,8 @@ struct LiftbookApp: App {
         if UITestOverrides.seedHistory {
             Persistence.seedHistory(in: container.mainContext)
         }
+        // The Live Activity's buttons can run with the app in the background.
+        WorkoutLiveActivity.registerActions(container: container)
     }
 
     var body: some Scene {
@@ -87,6 +89,11 @@ enum UITestOverrides {
     /// can relaunch the app and find it again.
     static var storeFile: String? {
         UserDefaults.standard.string(forKey: "uiTestStoreFile").flatMap { $0.isEmpty ? nil : $0 }
+    }
+
+    /// `-uiTestLiveActivity YES` shows the Live Activity, which other UI tests skip.
+    static var showsLiveActivity: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestLiveActivity")
     }
 
     /// UI tests launch with a test store; treat that as "under test".

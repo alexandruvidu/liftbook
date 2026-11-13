@@ -46,7 +46,7 @@ look right in the simulator, and CI builds the IPA.
 
 ## Phase 4 — Optional (skipped: widgets, Live Activities and HealthKit don't work inside LiveContainer)
 - [ ] Apple Health workout export (HealthKit)
-- [ ] Live Activity for the rest timer
+- [x] Live Activity for the rest timer (the whole workout: next set with Log Set, rest with Skip)
 - [ ] Home screen widget for streak and last workout
 
 ## Phase 5 — Redesign (spec: docs/superpowers/specs/2026-11-06-redesign-design.md, plan: docs/superpowers/plans/2026-11-06-redesign.md)

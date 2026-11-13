@@ -5,6 +5,7 @@ struct RootView: View {
     @State private var selection: AppTab = .home
     @State private var starter = WorkoutStartController()
     @State private var isQuickStarting = false
+    @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt == nil }, sort: \WorkoutSession.startedAt)
     private var active: [WorkoutSession]
 
@@ -42,6 +43,17 @@ struct RootView: View {
             }
         }
         .workoutStarting(starter, offersLeftover: true)
+        // The Live Activity follows the workout in progress: it starts with
+        // one (also one left from last launch) and ends when it's finished.
+        .onChange(of: active.last?.sessionID, initial: true) {
+            WorkoutLiveActivity.sync(active.last, in: modelContext)
+        }
+        // Tapping the Live Activity opens the workout.
+        .onOpenURL { url in
+            if url == LiftbookBrand.workoutURL, let session = active.last {
+                starter.resume(session)
+            }
+        }
     }
 }
 
