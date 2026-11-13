@@ -11,8 +11,10 @@ enum ExerciseArt: Equatable {
     /// A looping GIF.
     case animation(URL)
 
-    /// The bundled folder of pictures, if the build has one.
-    nonisolated static let bundledDirectory = Bundle.main.url(forResource: "ExerciseArt", withExtension: nil)
+    /// The bundled folder of pictures, if the build has one. None for the
+    /// store screenshots: RepDB's license doesn't allow republishing them.
+    nonisolated static let bundledDirectory = UITestOverrides.hidesExerciseArt
+        ? nil : Bundle.main.url(forResource: "ExerciseArt", withExtension: nil)
 
     static func of(_ exerciseID: String, in directory: URL? = bundledDirectory) -> ExerciseArt? {
         guard let directory else { return nil }

@@ -99,6 +99,12 @@ enum UITestOverrides {
         UserDefaults.standard.bool(forKey: "uiTestLiveActivity")
     }
 
+    /// `-uiTestHideExerciseArt YES` shows no bundled exercise pictures, as
+    /// when they aren't fetched (for the public store screenshots).
+    nonisolated static var hidesExerciseArt: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestHideExerciseArt")
+    }
+
     /// UI tests launch with a test store; treat that as "under test".
     static var isUITesting: Bool { useInMemoryStore || storeFile != nil }
 

@@ -19,11 +19,32 @@ import hashlib
 import json
 import os
 import plistlib
+import struct
 import sys
 
 REPO = os.environ.get("GITHUB_REPOSITORY", "alexandruvidu/liftbook")
 RELEASE = f"https://github.com/{REPO}/releases/download/latest-build"
 ICON = f"https://raw.githubusercontent.com/{REPO}/main/Liftbook/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png"
+
+# Store screenshots, committed by StoreScreenshotsUITests; shown in SideStore.
+SCREENSHOTS_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "docs", "screenshots", "store")
+SCREENSHOTS_URL = f"https://raw.githubusercontent.com/{REPO}/main/docs/screenshots/store"
+
+
+def screenshots():
+    """The store screenshots in name order, with their pixel sizes from the PNG header."""
+    if not os.path.isdir(SCREENSHOTS_DIR):
+        return []
+    shots = []
+    for name in sorted(os.listdir(SCREENSHOTS_DIR)):
+        if not name.endswith(".png"):
+            continue
+        with open(os.path.join(SCREENSHOTS_DIR, name), "rb") as f:
+            header = f.read(24)
+        width, height = struct.unpack(">II", header[16:24])
+        shots.append({"imageURL": f"{SCREENSHOTS_URL}/{name}", "width": width, "height": height})
+    return shots
+
 
 DESCRIPTION = (
     "Liftbook is an offline-first workout log. Plan routines, record sets as you "
@@ -51,7 +72,10 @@ def main(info_plist, ipa, out):
     privacy = {k: v for k, v in info.items() if k.startswith("NS") and k.endswith("UsageDescription")}
     date = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     sha = os.environ.get("GITHUB_SHA", "local")[:7]
+    notes = os.environ.get("RELEASE_NOTES", "").strip()
+    description = f"{notes}\n\nBuild {build} ({sha}) from main." if notes else f"Build {build} ({sha}) from main."
     download = f"{RELEASE}/{build_ipa_name(build)}"
+    shots = screenshots()
 
     source = {
         "name": "Liftbook",
@@ -70,12 +94,15 @@ def main(info_plist, ipa, out):
                 "iconURL": ICON,
                 "tintColor": "0B7A6D",
                 "category": "lifestyle",
+                "screenshots": shots,
+                # Older clients read plain URLs.
+                "screenshotURLs": [shot["imageURL"] for shot in shots],
                 "versions": [
                     {
                         "version": version,
                         "buildVersion": build,
                         "date": date,
-                        "localizedDescription": f"Build {build} ({sha}) from main.",
+                        "localizedDescription": description,
                         "downloadURL": download,
                         "size": size,
                         "sha256": sha256,
@@ -85,7 +112,7 @@ def main(info_plist, ipa, out):
                 # Legacy fields for older clients.
                 "version": version,
                 "versionDate": date,
-                "versionDescription": f"Build {build} ({sha}) from main.",
+                "versionDescription": description,
                 "downloadURL": download,
                 "size": size,
                 "appPermissions": {"entitlements": [], "privacy": privacy},
