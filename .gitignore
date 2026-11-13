@@ -13,6 +13,8 @@ Payload/
 # Screenshots
 screenshots/
 ci-screenshots/
+# ...except the store screenshots listed in the SideStore source.
+!docs/screenshots/
 
 # macOS
 .DS_Store
