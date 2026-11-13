@@ -12,11 +12,12 @@ permissions:
   contents: read
 
 jobs:
-  # Tests run locally before every push (scripts/test.sh); CI only packages the IPA.
+  # The full suite runs locally before every push (scripts/test.sh all); CI
+  # runs the unit tests as a safety net, then packages the IPA.
   build-package:
     # Xcode 27 image (macOS 27). See actions/runner-images README.
     runs-on: xcode-27
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write  # publish the rolling "latest-build" release (built-in token only)
 
@@ -54,6 +55,10 @@ jobs:
           brew install xcodegen
           xcodegen generate
 
+      # A few minutes; a failing unit test stops the IPA from being published.
+      - name: Unit tests
+        run: scripts/test.sh
+
       - name: Archive unsigned Release build
         run: |
           set -o pipefail
@@ -81,7 +86,9 @@ jobs:
           ls -lh Liftbook.ipa
           # The source points at this build's own copy (see make_source.py).
           cp Liftbook.ipa "Liftbook-${GITHUB_RUN_NUMBER}.ipa"
-          python3 scripts/make_source.py build/Payload/Liftbook.app/Info.plist Liftbook.ipa source.json
+          # What changed, for SideStore's version notes: the commit's subject.
+          RELEASE_NOTES="$(git log -1 --format=%s)" \
+            python3 scripts/make_source.py build/Payload/Liftbook.app/Info.plist Liftbook.ipa source.json
 
       - name: Upload IPA
         # The rolling release below is the main download; don't let an

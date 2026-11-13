@@ -48,4 +48,51 @@ final class AccessibilityUITests: XCTestCase {
 
         XCTAssertTrue(issues.isEmpty, "Accessibility issues:\n" + issues.joined(separator: "\n"))
     }
+
+    /// The list screens at a large text size: nothing clipped, text that
+    /// scales, and every element described.
+    func testListScreensAtLargeTextSize() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication.launchLiftbook(appearance: "light", seedSampleData: true, seedHistory: true,
+                                                 textSize: "UICTContentSizeCategoryAccessibilityL")
+        let types: XCUIAccessibilityAuditType = [.sufficientElementDescription, .textClipped, .dynamicType]
+        func check(_ screen: String) throws {
+            try app.performAccessibilityAudit(for: types) { issue in
+                let element = issue.element.map {
+                    "\($0.elementType.rawValue) '\($0.identifier)' '\($0.label)' at \(Int($0.frame.minY))pt"
+                } ?? "no element"
+                self.issues.append("\(screen): \(issue.compactDescription) — \(element)")
+                return true
+            }
+        }
+
+        XCTAssertTrue(app.buttons["routine.row.Upper Body"].waitForExistence(timeout: 10))
+        app.buttons["routine.row.Upper Body"].tap()
+        XCTAssertTrue(app.buttons["routine.start"].waitForExistence(timeout: 5))
+        snap("accessibility-routine-detail")
+        try check("Routine detail")
+
+        app.openTab("Activity")
+        let row = app.buttons.matching(identifier: "history.row").firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5))
+        row.tap()
+        XCTAssertTrue(app.buttons["detail.edit"].waitForExistence(timeout: 5))
+        snap("accessibility-workout-detail")
+        try check("Workout detail")
+
+        app.openTab("Profile")
+        XCTAssertTrue(app.buttons["profile.body"].waitForExistence(timeout: 5))
+        snap("accessibility-profile")
+        try check("Profile")
+
+        app.openTab("Exercises")
+        let exercise = app.firstExerciseRow
+        XCTAssertTrue(exercise.waitForExistence(timeout: 5))
+        exercise.tap()
+        XCTAssertTrue(app.navigationBars.firstMatch.waitForExistence(timeout: 5))
+        snap("accessibility-exercise-detail")
+        try check("Exercise detail")
+
+        XCTAssertTrue(issues.isEmpty, "Accessibility issues:\n" + issues.joined(separator: "\n"))
+    }
 }

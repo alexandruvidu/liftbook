@@ -23,12 +23,16 @@ struct RoutineDetailView: View {
         List {
             Section {
                 Button(action: onStart) {
-                    Label("Start Workout", systemImage: "play.fill")
+                    // One Text with the icon inline, so it wraps as a whole at
+                    // accessibility sizes instead of clipping.
+                    Text("\(Image(systemName: "play.fill")) Start Workout")
                         .font(.headline)
+                        .multilineTextAlignment(.center)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 6)
                 }
                 .prominentGlassButton()
+                .accessibilityLabel("Start Workout")
                 .accessibilityIdentifier("routine.start")
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.clear)
@@ -57,7 +61,9 @@ struct RoutineDetailView: View {
         .navigationTitle(routine.name)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
-                Button("Edit") { isEditing = true }
+                // An icon: toolbar text stops growing with Dynamic Type, icons
+                // show in the large content viewer.
+                Button("Edit", systemImage: "pencil") { isEditing = true }
                     .accessibilityIdentifier("routine.edit")
             }
         }

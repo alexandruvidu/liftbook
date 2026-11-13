@@ -6,7 +6,7 @@ description: Use before every commit in the Liftbook repo to build and test on t
 # Local test loop for Liftbook
 
 All building and testing happens on this Mac. GitHub Actions
-(`.github/workflows/ios.yml`) only packages the IPA. Run this loop before
+(`.github/workflows/ios.yml`) only reruns the unit tests and packages the IPA. Run this loop before
 **every** commit; never commit or push code that hasn't passed it.
 
 ## 1. Run the tests

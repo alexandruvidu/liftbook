@@ -5,8 +5,8 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
 ## Environment
 - Development happens on a Mac with Xcode and an iOS simulator. **All building
   and testing happens locally** (`scripts/test.sh`, see the `local-test`
-  skill). GitHub Actions (`.github/workflows/ios.yml`) only builds the IPA and
-  publishes it; it runs no tests.
+  skill). GitHub Actions (`.github/workflows/ios.yml`) runs only the unit
+  tests as a safety net, then builds and publishes the IPA.
 - The repo is **public**. The app is sideloaded unsigned with SideStore /
   LiveContainer. **Never add signing, certificates, provisioning profiles, or
   secrets.**
@@ -75,6 +75,12 @@ Liftbook is an original, offline-first gym workout tracker for iOS.
   fresh in-memory SwiftData store, so tests never share data.
 - UI tests run on one simulator, not in parallel; keep tests independent of
   each other.
+
+## Store screenshots
+- The SideStore source lists `docs/screenshots/store/*.png` (in name order).
+  Refresh them after visible changes:
+  `TEST_RUNNER_SCREENSHOT_DIR="$PWD/docs/screenshots/store" scripts/test.sh StoreScreenshotsUITests`,
+  then commit the PNGs.
 
 ## UI test helpers and pitfalls
 - `LiftbookUITests/UITestHelpers.swift`: `field.enter(text)` (waits for

@@ -65,7 +65,8 @@ struct WorkoutDetailView: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 ShareWorkoutButton(session: session, catalog: catalog)
                     .accessibilityIdentifier("detail.share")
-                Button("Edit") { isEditing = true }
+                // An icon: toolbar text stops growing with Dynamic Type.
+                Button("Edit", systemImage: "pencil") { isEditing = true }
                     .accessibilityIdentifier("detail.edit")
             }
         }
