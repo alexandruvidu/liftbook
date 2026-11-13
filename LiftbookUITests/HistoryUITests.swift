@@ -5,12 +5,12 @@ final class HistoryUITests: XCTestCase {
     func testHistoryLight() { history(appearance: "light") }
     func testHistoryDark() { history(appearance: "dark") }
 
-    /// "2026-11-05" for a day `daysAgo` before today, matching the app's IDs.
-    private func dayID(daysAgo: Int) -> (id: String, date: Date) {
+    /// The system calendar's label for a day `daysAgo` before today, e.g.
+    /// "Thursday, November 5" (tests run in English, US).
+    private func dayLabel(daysAgo: Int) -> String {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: -daysAgo, to: calendar.startOfDay(for: .now))!
-        let c = calendar.dateComponents([.year, .month, .day], from: date)
-        return (String(format: "%04d-%02d-%02d", c.year!, c.month!, c.day!), date)
+        return date.formatted(Date.FormatStyle(locale: Locale(identifier: "en_US")).weekday(.wide).month(.wide).day())
     }
 
     private func history(appearance: String) {
@@ -25,15 +25,13 @@ final class HistoryUITests: XCTestCase {
         XCTAssertTrue(rows.element(boundBy: 0).label.contains("52:00"), "Duration missing")
         snap("history-list-\(appearance)")
 
-        // Calendar
+        // Calendar: the system's, one button per day
         app.buttons["activity.calendar"].tap()
-        let target = dayID(daysAgo: 9)
-        let day = app.buttons["calendar.day.\(target.id)"]
+        let day = app.buttons.matching(NSPredicate(format: "label ENDSWITH %@", dayLabel(daysAgo: 9))).firstMatch
         if !day.waitForExistence(timeout: 3) {
-            app.buttons["calendar.previous"].tap()
+            app.buttons["DatePicker.PreviousMonth"].tap()
         }
-        XCTAssertTrue(day.waitForExistence(timeout: 5), "Day \(target.id) not in the calendar")
-        XCTAssertTrue(day.label.contains("workout logged"), "No workout marker on \(target.id)")
+        XCTAssertTrue(day.waitForExistence(timeout: 5), "\(dayLabel(daysAgo: 9)) not in the calendar")
         day.tap()
         XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 5), "No workout listed for the day")
         XCTAssertEqual(rows.count, 1, "Only one workout on that day")

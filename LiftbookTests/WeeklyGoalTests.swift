@@ -56,4 +56,12 @@ struct WeeklyGoalTests {
         let running = WorkoutSession(name: "Now", startedAt: now)
         #expect(goal.workouts(inWeekOf: now, sessions: [running]) == 0)
     }
+
+    @Test func summaryForSiriShowsTheWeekAndStreak() {
+        // Two this week and two in each of the last two weeks, goal 2.
+        #expect(goal.summary(goal: 2, sessions: sessions(weeksBack: [0, 1, 2]), now: now)
+                == "2 of 2 workouts this week · 3-week streak")
+        #expect(goal.summary(goal: 3, sessions: [], now: now) == "0 of 3 workouts this week")
+        #expect(goal.summary(goal: 1, sessions: [], now: now) == "0 of 1 workout this week")
+    }
 }

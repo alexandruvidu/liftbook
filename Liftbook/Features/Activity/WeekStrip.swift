@@ -19,10 +19,12 @@ struct WeekStrip: View {
                     status
                 }
             }
+            // Rest days get a faint stub, so the week reads as seven days.
+            let stub = max((week.days.map(\.volume).max() ?? 0) * 0.06, 1)
             Chart(week.days, id: \.date) { day in
                 BarMark(x: .value("Day", day.date, unit: .day),
-                        y: .value("Volume", day.volume))
-                    .foregroundStyle(Color.accentColor)
+                        y: .value("Volume", day.volume > 0 ? day.volume : stub))
+                    .foregroundStyle(day.volume > 0 ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.fill.secondary))
                     .clipShape(.rect(cornerRadius: 4))
                     .accessibilityLabel(day.date.formatted(.dateTime.weekday(.wide)))
                     .accessibilityValue(day.volume > 0 ? "Trained" : "Rest day")

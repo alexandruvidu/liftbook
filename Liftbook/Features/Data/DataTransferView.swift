@@ -13,6 +13,9 @@ struct DataTransferView: View {
     @State private var exportError: String?
     @State private var isImporting = false
     @State private var importMessage: String?
+    @AppStorage(AutoBackup.enabledKey) private var autoBackup = true
+    @AppStorage(AutoBackup.lastDateKey) private var lastBackup: Date?
+    @State private var backupError: String?
 
     private var catalog: ExerciseCatalog {
         ExerciseCatalog(custom: customExercises.map(\.asLibraryExercise))
@@ -50,6 +53,32 @@ struct DataTransferView: View {
                 Text("Export")
             } footer: {
                 Text("CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises, machines and body measurements. Photos and videos aren't included.")
+            }
+
+            Section {
+                Toggle(isOn: $autoBackup) {
+                    Label("Weekly Backup", systemImage: "clock.arrow.circlepath")
+                }
+                .accessibilityIdentifier("data.autoBackup")
+                Button {
+                    do {
+                        try AutoBackup.backUp(from: modelContext)
+                        backupError = nil
+                    } catch {
+                        backupError = "Couldn't save the backup: \(error.localizedDescription)"
+                    }
+                } label: {
+                    Label("Back Up Now", systemImage: "externaldrive.badge.checkmark")
+                }
+                .accessibilityIdentifier("data.backUpNow")
+                if let backupError {
+                    Text(backupError).foregroundStyle(.red)
+                }
+            } header: {
+                Text("Automatic Backup")
+            } footer: {
+                Text("A full JSON backup goes to Files › On My iPhone › Liftbook › Backups once a week; the last \(AutoBackup.kept) are kept. "
+                     + (lastBackup.map { "Last backup: \($0.formatted(date: .abbreviated, time: .shortened))." } ?? "No backup yet."))
             }
 
             Section {

@@ -35,6 +35,14 @@ struct WeeklyGoal {
         return streak
     }
 
+    /// "2 of 3 workouts this week · 4-week streak", for Siri and Shortcuts.
+    func summary(goal: Int, sessions: [WorkoutSession], now: Date = .now) -> String {
+        let done = workouts(inWeekOf: now, sessions: sessions)
+        let streak = currentStreak(goal: goal, sessions: sessions, now: now)
+        let week = "\(done) of \(goal) workout\(goal == 1 ? "" : "s") this week"
+        return streak > 0 ? "\(week) · \(streak)-week streak" : week
+    }
+
     /// Finished workouts per week, keyed by week start.
     private func weeklyCounts(_ sessions: [WorkoutSession]) -> [Date: Int] {
         var counts: [Date: Int] = [:]

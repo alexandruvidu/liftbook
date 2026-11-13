@@ -1,4 +1,5 @@
 import AudioToolbox
+import UIKit
 import UserNotifications
 
 /// Sound and local notification for the end of a rest.
@@ -51,8 +52,12 @@ extension RestAlerts {
             try? await Task.sleep(for: .seconds(delay))
         }
         guard !Task.isCancelled, session.restEndsAt == end else { return }
-        // Don't beep for a rest that ended while the app was closed.
-        if sound && delay > -2 { playSound() }
+        // Don't beep or buzz for a rest that ended while the app was closed.
+        if delay > -2 {
+            // A tap you feel, for a phone in a pocket or with the sound off.
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            if sound { playSound() }
+        }
         session.stopRest()
     }
 }

@@ -6,6 +6,8 @@ enum RestTimer {
     static let defaultSecondsKey = "restTimer.defaultSeconds"
     /// UserDefaults key for playing a sound when rest ends.
     static let soundKey = "restTimer.sound"
+    /// Settings key: keep the screen on while the live workout is open.
+    static let keepScreenOnKey = "workout.keepScreenOn"
     static let fallbackSeconds = 90
     /// Rest lengths offered in pickers, in seconds (0 = off).
     static let options = [0, 30, 45, 60, 75, 90, 120, 150, 180, 240, 300]

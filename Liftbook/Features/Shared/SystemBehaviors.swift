@@ -34,6 +34,15 @@ extension View {
     }
 }
 
+extension View {
+    /// Stops the screen locking while this view is shown and `isOn`.
+    func keepsScreenOn(_ isOn: Bool) -> some View {
+        onAppear { UIApplication.shared.isIdleTimerDisabled = isOn }
+            .onChange(of: isOn) { UIApplication.shared.isIdleTimerDisabled = isOn }
+            .onDisappear { UIApplication.shared.isIdleTimerDisabled = false }
+    }
+}
+
 extension ToolbarContent {
     /// Keeps this item in the bar ahead of others when space is tight (iOS 27).
     @ToolbarContentBuilder

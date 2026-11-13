@@ -1,23 +1,19 @@
 import SwiftUI
 
-/// A month grid with a dot on each workout day; tap a day to list its workouts.
+/// The system calendar with a dot on each workout day; tap a day to list its workouts.
 struct HistoryCalendarView: View {
     let sessions: [WorkoutSession]
     let catalog: ExerciseCatalog
 
     private let history = HistoryCalendar()
-    @State private var month = HistoryCalendar().startOfMonth(.now)
     @State private var selectedDay: Date?
 
     var body: some View {
-        let workoutDays = history.workoutDays(in: sessions)
         List {
             Section {
-                VStack(spacing: 12) {
-                    header
-                    grid(workoutDays: workoutDays)
-                }
-                .padding(.vertical, 4)
+                WorkoutCalendar(calendar: history.calendar, workoutDays: history.workoutDays(in: sessions),
+                                selectedDay: $selectedDay)
+                    .accessibilityIdentifier("calendar")
             }
 
             if let selectedDay {
@@ -41,74 +37,71 @@ struct HistoryCalendarView: View {
             // Start on the most recent workout's day.
             if selectedDay == nil, let latest = sessions.first {
                 selectedDay = history.calendar.startOfDay(for: latest.startedAt)
-                month = history.startOfMonth(latest.startedAt)
             }
         }
     }
+}
 
-    private var header: some View {
-        HStack {
-            Button("Previous Month", systemImage: "chevron.left") { month = history.month(month, offsetBy: -1) }
-                .labelStyle(.iconOnly)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
-                .accessibilityIdentifier("calendar.previous")
-            Spacer()
-            Text(month.formatted(.dateTime.month(.wide).year()))
-                .font(.headline)
-                .accessibilityIdentifier("calendar.month")
-            Spacer()
-            Button("Next Month", systemImage: "chevron.right") { month = history.month(month, offsetBy: 1) }
-                .labelStyle(.iconOnly)
-                .frame(minWidth: 44, minHeight: 44)
-                .contentShape(Rectangle())
-                .accessibilityIdentifier("calendar.next")
-        }
-        .buttonStyle(.borderless)
+/// `UICalendarView`: month paging, today, Dynamic Type and VoiceOver come
+/// with it. Workout days get a dot; up to today can be picked.
+private struct WorkoutCalendar: UIViewRepresentable {
+    let calendar: Calendar
+    let workoutDays: Set<Date>
+    @Binding var selectedDay: Date?
+
+    func makeUIView(context: Context) -> UICalendarView {
+        let view = UICalendarView()
+        view.calendar = calendar
+        view.fontDesign = .rounded
+        view.availableDateRange = DateInterval(start: .distantPast, end: .now)
+        view.delegate = context.coordinator
+        let selection = UICalendarSelectionSingleDate(delegate: context.coordinator)
+        view.selectionBehavior = selection
+        context.coordinator.selection = selection
+        // Fills the row's width instead of its own preferred width.
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        return view
     }
 
-    private func grid(workoutDays: Set<Date>) -> some View {
-        let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 7)
-        return LazyVGrid(columns: columns, spacing: 6) {
-            ForEach(Array(history.weekdaySymbols.enumerated()), id: \.offset) { _, symbol in
-                Text(symbol)
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(.secondary)
-                    .accessibilityHidden(true)
-            }
-            ForEach(Array(history.grid(for: month).enumerated()), id: \.offset) { _, day in
-                if let day {
-                    dayCell(day, hasWorkout: workoutDays.contains(day))
-                } else {
-                    Color.clear.frame(height: 40)
-                }
-            }
+    func updateUIView(_ view: UICalendarView, context: Context) {
+        let coordinator = context.coordinator
+        coordinator.parent = self
+        if coordinator.shownDays != workoutDays {
+            coordinator.shownDays = workoutDays
+            view.reloadDecorations(forDateComponents: workoutDays.map(components), animated: true)
+        }
+        let selected = selectedDay.map(components)
+        if coordinator.selection?.selectedDate != selected {
+            coordinator.selection?.setSelected(selected, animated: false)
+            if let selected { view.visibleDateComponents = selected }
         }
     }
 
-    private func dayCell(_ day: Date, hasWorkout: Bool) -> some View {
-        let isSelected = selectedDay == day
-        let isToday = history.calendar.isDateInToday(day)
-        return Button {
-            selectedDay = day
-        } label: {
-            VStack(spacing: 3) {
-                Text(day.formatted(.dateTime.day()))
-                    .font(.callout.weight(isToday ? .bold : .regular))
-                    .monospacedDigit()
-                    .foregroundStyle(isSelected ? Color.accentForeground : (isToday ? Color.accentColor : Color.primary))
-                Circle()
-                    .fill(hasWorkout ? (isSelected ? Color.accentForeground : Color.accentColor) : Color.clear)
-                    .frame(width: 5, height: 5)
-            }
-            .frame(maxWidth: .infinity, minHeight: 40)
-            .background(isSelected ? Color.accentColor : Color.clear, in: RoundedRectangle(cornerRadius: 10))
-            .contentShape(Rectangle())
+    func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
+
+    private func components(_ day: Date) -> DateComponents {
+        calendar.dateComponents([.calendar, .era, .year, .month, .day], from: day)
+    }
+
+    final class Coordinator: NSObject, UICalendarViewDelegate, UICalendarSelectionSingleDateDelegate {
+        var parent: WorkoutCalendar
+        var shownDays: Set<Date> = []
+        weak var selection: UICalendarSelectionSingleDate?
+
+        init(parent: WorkoutCalendar) {
+            self.parent = parent
         }
-        .buttonStyle(.plain)
-        .accessibilityLabel(day.formatted(date: .complete, time: .omitted) + (hasWorkout ? ", workout logged" : ""))
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-        .accessibilityIdentifier("calendar.day.\(history.dayID(day))")
+
+        func calendarView(_ calendarView: UICalendarView,
+                          decorationFor dateComponents: DateComponents) -> UICalendarView.Decoration? {
+            guard let day = parent.calendar.date(from: dateComponents),
+                  parent.workoutDays.contains(parent.calendar.startOfDay(for: day)) else { return nil }
+            return .default(color: .tintColor, size: .medium)
+        }
+
+        func dateSelection(_ selection: UICalendarSelectionSingleDate, didSelectDate dateComponents: DateComponents?) {
+            parent.selectedDay = dateComponents.flatMap { parent.calendar.date(from: $0) }.map(parent.calendar.startOfDay)
+        }
     }
 }
 

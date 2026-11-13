@@ -48,6 +48,18 @@ struct RootView: View {
         .onChange(of: active.last?.sessionID, initial: true) {
             WorkoutLiveActivity.sync(active.last, in: modelContext)
         }
+        // "Start Workout" from Siri or Shortcuts.
+        .onChange(of: ShortcutRequests.shared.start, initial: true) { _, request in
+            guard let request else { return }
+            ShortcutRequests.shared.start = nil
+            switch request {
+            case .empty:
+                starter.start(.empty)
+            case .routine(let id):
+                let routines = (try? modelContext.fetch(FetchDescriptor<Routine>(predicate: #Predicate { $0.routineID == id }))) ?? []
+                starter.start(routines.first.map(WorkoutStartRequest.routine) ?? .empty)
+            }
+        }
         // Tapping the Live Activity opens the workout.
         .onOpenURL { url in
             if url == LiftbookBrand.workoutURL, let session = active.last {

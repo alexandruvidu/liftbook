@@ -23,6 +23,7 @@ struct LiftbookApp: App {
         }
         // The Live Activity's buttons can run with the app in the background.
         WorkoutLiveActivity.registerActions(container: container)
+        ShortcutRequests.shared.container = container
     }
 
     var body: some Scene {
@@ -37,6 +38,7 @@ struct LiftbookApp: App {
                     if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
                     if UITestOverrides.seedMachines { Persistence.seedMachines(in: container.mainContext) }
                     if UITestOverrides.seedMedia { Persistence.seedMedia(in: container.mainContext) }
+                    AutoBackup.runIfDue(from: container.mainContext)
                 }
         }
         .modelContainer(container)
@@ -44,6 +46,7 @@ struct LiftbookApp: App {
         // workout is there after a relaunch.
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { try? container.mainContext.save() }
+            if phase == .background { AutoBackup.runIfDue(from: container.mainContext) }
         }
     }
 }

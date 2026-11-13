@@ -64,6 +64,9 @@ targets:
         INFOPLIST_KEY_NSCameraUsageDescription: "Take photos and videos of exercises and machines."
         INFOPLIST_KEY_NSMicrophoneUsageDescription: "Record sound with exercise videos."
         INFOPLIST_KEY_NSSupportsLiveActivities: YES
+        # Automatic backups are saved to Documents, shown in the Files app.
+        INFOPLIST_KEY_UIFileSharingEnabled: YES
+        INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace: YES
 
   # The workout's Live Activity (Lock Screen and Dynamic Island).
   LiftbookWidgets:

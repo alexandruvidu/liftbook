@@ -18,6 +18,7 @@ struct LiveWorkoutView: View {
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }, sort: \WorkoutSession.startedAt, order: .reverse)
     private var finishedSessions: [WorkoutSession]
     @AppStorage(RestTimer.soundKey) private var restSound = true
+    @AppStorage(RestTimer.keepScreenOnKey) private var keepScreenOn = false
     @State private var isPicking = false
     @State private var isConfirmingDiscard = false
     @State private var isEditingNote = false
@@ -108,6 +109,7 @@ struct LiveWorkoutView: View {
             }
         }
         .animation(.snappy, value: session.restEndsAt == nil)
+        .keepsScreenOn(keepScreenOn)
         // Sets checked, rest started or skipped here show in the Live Activity.
         .onChange(of: WorkoutActivitySnapshot(session)) {
             WorkoutLiveActivity.sync(session, in: modelContext)

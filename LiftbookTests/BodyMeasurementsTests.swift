@@ -57,3 +57,26 @@ struct BodyMeasurementsTests {
         #expect(BodyMetrics.lastChange(of: "other", in: measurements) == nil)
     }
 }
+
+@MainActor
+struct LogBodyWeightTests {
+    private let container = Persistence.makeContainer(inMemory: true)
+
+    @Test func bodyWeightFromSiriIsSaved() throws {
+        let context = container.mainContext
+        #expect(BodyMetrics.logBodyWeight(kilograms: 81.6, in: context))
+        let saved = try context.fetch(FetchDescriptor<BodyMeasurement>())
+        #expect(saved.map(\.metricID) == [BodyMetric.bodyWeightID])
+        #expect(saved.first?.value == 81.6)
+        // The built-in metric exists for the value to show under.
+        let metrics = try context.fetch(FetchDescriptor<BodyMetric>())
+        #expect(metrics.contains { $0.metricID == BodyMetric.bodyWeightID })
+    }
+
+    @Test func implausibleBodyWeightIsRefused() throws {
+        let context = container.mainContext
+        #expect(!BodyMetrics.logBodyWeight(kilograms: 0, in: context))
+        #expect(!BodyMetrics.logBodyWeight(kilograms: 900, in: context))
+        #expect(try context.fetch(FetchDescriptor<BodyMeasurement>()).isEmpty)
+    }
+}

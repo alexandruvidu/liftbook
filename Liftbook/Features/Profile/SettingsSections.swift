@@ -4,6 +4,7 @@ import SwiftUI
 struct SettingsSections: View {
     @AppStorage(RestTimer.defaultSecondsKey) private var defaultRest = RestTimer.fallbackSeconds
     @AppStorage(RestTimer.soundKey) private var restSound = true
+    @AppStorage(RestTimer.keepScreenOnKey) private var keepScreenOn = false
     @AppStorage(WeightUnit.storageKey) private var unit: WeightUnit = .kilograms
     @AppStorage(WeeklyGoal.storageKey) private var weeklyGoal = WeeklyGoal.defaultGoal
 
@@ -45,12 +46,17 @@ struct SettingsSections: View {
                 Label("Sound When Rest Ends", systemImage: "speaker.wave.2")
             }
             .accessibilityIdentifier("settings.restSound")
+            Toggle(isOn: $keepScreenOn) {
+                Label("Keep Screen On", systemImage: "sun.max")
+            }
+            .accessibilityIdentifier("settings.keepScreenOn")
         } header: {
-            Text("Rest Timer")
+            Text("Workout")
         } footer: {
-            Text(defaultRest == 0
-                 ? "Off: no timer after a set, unless an exercise sets its own."
-                 : "Starts when you check off a set; each exercise can set its own.")
+            Text((defaultRest == 0
+                  ? "Off: no timer after a set, unless an exercise sets its own."
+                  : "Rest starts when you check off a set; each exercise can set its own. Your phone also taps when it ends.")
+                 + " Keep Screen On stops the screen locking while a workout is open.")
         }
     }
 }

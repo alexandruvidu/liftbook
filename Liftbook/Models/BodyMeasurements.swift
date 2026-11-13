@@ -126,6 +126,18 @@ enum BodyMetrics {
         try? context.save()
     }
 
+    /// Logs a body weight (e.g. from Siri). Returns false for a value no
+    /// body has, which isn't saved.
+    @MainActor
+    @discardableResult
+    static func logBodyWeight(kilograms: Double, at date: Date = .now, in context: ModelContext) -> Bool {
+        guard BodyMetricKind.weight.accepts(stored: kilograms) else { return false }
+        ensureBuiltIns(in: context)
+        context.insert(BodyMeasurement(metricID: BodyMetric.bodyWeightID, value: kilograms, date: date))
+        try? context.save()
+        return true
+    }
+
     /// Why a new metric name can't be used, if it can't.
     static func problem(withName name: String, existing: [BodyMetric]) -> Problem? {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
