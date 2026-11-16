@@ -62,7 +62,7 @@ look right in the simulator, and CI builds the IPA.
 - [x] Phase 5 cleanup and full UI run
 
 ## Phase 6 — Data safety
-- [ ] Restore a JSON backup (replaces all data; the current data is saved first)
+- [x] Restore a JSON backup (replaces all data; the current data is saved first)
 - [ ] Backups include progress photos, settings, and copies of photo and video files
 - [ ] Recovery screen when the data store can't be opened (restore the latest backup or start empty)
 - [ ] Back up after every finished workout; keep recent daily and older weekly backups
