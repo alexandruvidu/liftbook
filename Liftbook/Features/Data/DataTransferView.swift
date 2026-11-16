@@ -2,7 +2,8 @@ import SwiftData
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// Export workouts as CSV or everything as JSON, and import workouts from CSV.
+/// Export workouts as CSV or everything as JSON, restore a JSON backup, and
+/// import workouts from CSV.
 struct DataTransferView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(filter: #Predicate<WorkoutSession> { $0.endedAt != nil }) private var sessions: [WorkoutSession]
@@ -79,6 +80,17 @@ struct DataTransferView: View {
             } footer: {
                 Text("A full JSON backup goes to Files › On My iPhone › Liftbook › Backups once a week; the last \(AutoBackup.kept) are kept. "
                      + (lastBackup.map { "Last backup: \($0.formatted(date: .abbreviated, time: .shortened))." } ?? "No backup yet."))
+            }
+
+            Section {
+                NavigationLink {
+                    RestoreBackupView()
+                } label: {
+                    Label("Restore from Backup", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
+                }
+                .accessibilityIdentifier("data.restore")
+            } footer: {
+                Text("Replaces all data with a JSON backup.")
             }
 
             Section {

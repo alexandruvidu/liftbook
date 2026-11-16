@@ -53,9 +53,12 @@ enum DataExport {
 
     // MARK: JSON backup
 
-    struct Backup: Codable {
-        var format = "liftbook-backup"
-        var version = 1
+    struct Backup: Codable, Equatable {
+        static let formatName = "liftbook-backup"
+        static let currentVersion = 1
+
+        var format = formatName
+        var version = currentVersion
         var exportedAt: Date
         var customExercises: [CustomExerciseRecord]
         var folders: [FolderRecord]
@@ -69,48 +72,48 @@ enum DataExport {
         var media: [MediaRecord]?
     }
 
-    struct MachineRecord: Codable {
+    struct MachineRecord: Codable, Equatable {
         var id: UUID
         var exerciseID, name, location: String
         var photoFileName: String?
     }
 
-    struct MediaRecord: Codable {
+    struct MediaRecord: Codable, Equatable {
         var id: UUID
         var exerciseID, kind, source, fileName: String
         var position: Int
     }
 
-    struct CustomExerciseRecord: Codable {
+    struct CustomExerciseRecord: Codable, Equatable {
         var id, name, equipment, type, details: String
         var primaryMuscles, secondaryMuscles: [String]
     }
 
-    struct FolderRecord: Codable { var id: UUID; var name: String; var sortIndex: Int }
+    struct FolderRecord: Codable, Equatable { var id: UUID; var name: String; var sortIndex: Int }
 
-    struct RoutineRecord: Codable {
+    struct RoutineRecord: Codable, Equatable {
         var id: UUID
         var name, notes: String
         var folderID: UUID?
         var exercises: [Entry]
-        struct Entry: Codable { var exerciseID: String; var sets: Int; var machineID: UUID? }
+        struct Entry: Codable, Equatable { var exerciseID: String; var sets: Int; var machineID: UUID? }
     }
 
-    struct WorkoutRecord: Codable {
+    struct WorkoutRecord: Codable, Equatable {
         var id: UUID
         var name, notes: String
         var startedAt: Date
         var endedAt: Date?
         var routineID: UUID?
         var exercises: [Exercise]
-        struct Exercise: Codable {
+        struct Exercise: Codable, Equatable {
             var exerciseID, notes: String
             var machineID: UUID?
             var restSeconds: Int?
             var supersetGroup: UUID?
             var sets: [SetRecord]
         }
-        struct SetRecord: Codable {
+        struct SetRecord: Codable, Equatable {
             var type: String
             var weightKg: Double?, reps: Int?, seconds: Double?, meters: Double?, rpe: Double?
             var done: Bool
@@ -118,8 +121,8 @@ enum DataExport {
         }
     }
 
-    struct BodyMetricRecord: Codable { var id, name, kind: String; var sortIndex: Int }
-    struct BodyMeasurementRecord: Codable { var metricID: String; var value: Double; var date: Date }
+    struct BodyMetricRecord: Codable, Equatable { var id, name, kind: String; var sortIndex: Int }
+    struct BodyMeasurementRecord: Codable, Equatable { var metricID: String; var value: Double; var date: Date }
 
     @MainActor
     static func backup(from context: ModelContext, now: Date = .now) throws -> Backup {
