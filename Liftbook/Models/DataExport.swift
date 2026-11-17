@@ -15,7 +15,6 @@ enum DataExport {
         return String(format: "%g", value)
     }
 
-    /// Finished workouts, oldest first, one row per set.
     /// Every finished workout, one row per set, oldest first.
     static func workoutsCSV(_ sessions: [WorkoutSession], catalog: ExerciseCatalog, machines: [Machine] = []) -> String {
         let finished = sessions.filter { $0.endedAt != nil }.sorted { $0.startedAt < $1.startedAt }

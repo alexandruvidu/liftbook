@@ -24,7 +24,7 @@ enum WorkoutLiveActivity {
             return
         }
         let id = session.sessionID.uuidString
-        let content = ActivityContent(state: state(for: session, in: context), staleDate: nil)
+        let content = Self.content(for: state(for: session, in: context))
         end(activities.filter { $0.attributes.sessionID != id })
         if let activityID = activities.first(where: { $0.attributes.sessionID == id })?.id {
             Task { await update(activityID, with: content) }
@@ -58,21 +58,35 @@ enum WorkoutLiveActivity {
             sync(nil, in: context)
             return
         }
+        let lookup = Lookup(session: session, context: context)
         switch action {
         case .logNextSet:
-            let lookup = Lookup(session: session, context: context)
-            if session.logNextSet(type: lookup.type, placeholder: lookup.placeholder, defaultRest: Settings.defaultRest),
-               let end = session.restEndsAt {
-                // The live workout screen schedules this when it's open; it may not be.
-                RestAlerts.schedule(at: end, exerciseName: session.restExerciseID.map(lookup.name) ?? "your workout",
-                                    sound: Settings.restSound)
+            if session.logNextSet(type: lookup.type, placeholder: lookup.placeholder, defaultRest: Settings.defaultRest) {
+                scheduleRestAlert(for: session, lookup: lookup)
             }
         case .skipRest:
             session.stopRest()
             RestAlerts.cancel()
+        case .addRest:
+            session.adjustRest(by: WorkoutActivityActions.addedRest)
+            scheduleRestAlert(for: session, lookup: lookup)
         }
         try? context.save()
         sync(session, in: context)
+    }
+
+    /// The live workout screen schedules this when it's open; it may not be.
+    private static func scheduleRestAlert(for session: WorkoutSession, lookup: Lookup) {
+        guard let end = session.restEndsAt else { return }
+        RestAlerts.schedule(at: end, exerciseName: session.restExerciseID.map(lookup.name) ?? "your workout",
+                            sound: Settings.restSound)
+    }
+
+    /// The activity's content. It goes stale when the rest ends, so the
+    /// system redraws it with the next set even while the app is suspended.
+    static func content(for state: WorkoutActivityAttributes.ContentState)
+        -> ActivityContent<WorkoutActivityAttributes.ContentState> {
+        ActivityContent(state: state, staleDate: state.restEndsAt)
     }
 
     private static func state(for session: WorkoutSession, in context: ModelContext) -> WorkoutActivityAttributes.ContentState {

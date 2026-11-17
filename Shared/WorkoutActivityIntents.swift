@@ -8,7 +8,11 @@ enum WorkoutActivityActions {
     enum Action: Sendable {
         case logNextSet
         case skipRest
+        case addRest
     }
+
+    /// How much Add Rest adds.
+    static let addedRest: TimeInterval = 30
 
     static var handler: ((Action) -> Void)?
 
@@ -36,6 +40,17 @@ struct SkipRestIntent: LiveActivityIntent {
 
     func perform() async throws -> some IntentResult {
         await WorkoutActivityActions.perform(.skipRest)
+        return .result()
+    }
+}
+
+/// Adds 30 seconds to the rest timer of the workout in progress.
+struct AddRestIntent: LiveActivityIntent {
+    static let title: LocalizedStringResource = "Add Rest"
+    static let description = IntentDescription("Adds 30 seconds to the rest timer of the workout in progress.")
+
+    func perform() async throws -> some IntentResult {
+        await WorkoutActivityActions.perform(.addRest)
         return .result()
     }
 }

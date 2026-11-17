@@ -27,6 +27,20 @@ struct WorkoutActivityAttributes: ActivityAttributes {
     var sessionID: String
 }
 
+extension WorkoutActivityAttributes.ContentState {
+    /// The rest running now, if any. The activity goes stale when the rest
+    /// ends (see `WorkoutLiveActivity.content`), so a stale one isn't resting.
+    func rest(isStale: Bool) -> ClosedRange<Date>? {
+        guard !isStale, let end = restEndsAt, let start = restStartedAt, end > .now, start < end else { return nil }
+        return start...end
+    }
+
+    /// "Set 2 of 4 · 60 kg × 8".
+    var setLine: String {
+        target.isEmpty ? setLabel : "\(setLabel) · \(target)"
+    }
+}
+
 /// Liftbook's accent outside the app's asset catalog (the widget extension
 /// has none): deep teal in light mode, mint in dark mode.
 enum LiftbookBrand {

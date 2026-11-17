@@ -100,4 +100,45 @@ struct NextSetTests {
         #expect(state.restEndsAt == start.addingTimeInterval(120))
         #expect(state.restStartedAt == start)
     }
+
+    /// A state resting from `restStart` for 90 s, with bench press next.
+    private func restingState(from restStart: Date) -> WorkoutActivityAttributes.ContentState {
+        .init(workoutName: "Push", startedAt: start, exerciseName: "Bench Press", setLabel: "Set 2 of 2",
+              target: "60 kg × 8", canLog: true, completedSets: 1, totalSets: 3,
+              restEndsAt: restStart.addingTimeInterval(90), restStartedAt: restStart)
+    }
+
+    @Test func theActivityRestsOnlyUntilTheRestEnds() {
+        let resting = restingState(from: .now)
+        #expect(resting.rest(isStale: false) == resting.restStartedAt!...resting.restEndsAt!)
+        // Once stale (the system's sign the rest is over) or past the end, it shows the next set.
+        #expect(resting.rest(isStale: true) == nil)
+        #expect(restingState(from: .now.addingTimeInterval(-120)).rest(isStale: false) == nil)
+        var notResting = resting
+        notResting.restEndsAt = nil
+        #expect(notResting.rest(isStale: false) == nil)
+    }
+
+    @Test func theActivityGoesStaleWhenTheRestEnds() {
+        let resting = restingState(from: start)
+        #expect(WorkoutLiveActivity.content(for: resting).staleDate == start.addingTimeInterval(90))
+        var notResting = resting
+        notResting.restEndsAt = nil
+        #expect(WorkoutLiveActivity.content(for: notResting).staleDate == nil)
+    }
+
+    @Test func theSetLineJoinsTheSetAndItsValues() {
+        var state = restingState(from: start)
+        #expect(state.setLine == "Set 2 of 2 · 60 kg × 8")
+        state.target = ""
+        #expect(state.setLine == "Set 2 of 2")
+    }
+
+    @Test func addingRestExtendsTheTimer() {
+        let session = workout()
+        session.startRest(seconds: 60, for: "bench", at: start)
+        session.adjustRest(by: WorkoutActivityActions.addedRest, at: start)
+        #expect(session.restEndsAt == start.addingTimeInterval(90))
+        #expect(session.restDuration == 90)
+    }
 }
