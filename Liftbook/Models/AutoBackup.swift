@@ -1,7 +1,8 @@
 import Foundation
 import SwiftData
 
-/// A full JSON backup saved once a week to the app's Documents folder, which
+/// A full JSON backup saved after every finished workout and at least once a
+/// day the app is used, in the app's Documents folder, which
 /// the Files app shows under On My iPhone › Liftbook › Backups, with copies of
 /// the photo and video files in Backups › Files. Sideloaded apps can expire
 /// or get reinstalled; the backups survive in Files.
@@ -10,9 +11,7 @@ enum AutoBackup {
     static let enabledKey = "backup.automatic"
     /// Settings key: when the last backup was saved.
     static let lastDateKey = "backup.lastDate"
-    static let interval: TimeInterval = 7 * 86_400
-    /// How many backups to keep; older ones are deleted.
-    static let kept = 4
+    static let interval: TimeInterval = 86_400
 
     /// Documents › Backups. UI tests get an empty temporary folder instead
     /// (kept across a relaunch with the same store file).
@@ -49,7 +48,7 @@ enum AutoBackup {
     /// Safety copies don't use the backup prefix, so rotation never deletes them.
     static let safetyCopyPrefix = "liftbook-before-restore-"
 
-    /// Whether a week has passed since `last` (or there's never been one).
+    /// Whether a day has passed since `last` (or there's never been one).
     static func isDue(last: Date?, now: Date = .now) -> Bool {
         guard let last else { return true }
         return now.timeIntervalSince(last) >= interval
@@ -60,14 +59,9 @@ enum AutoBackup {
         "liftbook-backup-\(date.formatted(Date.ISO8601FormatStyle(timeZone: timeZone).year().month().day())).json"
     }
 
-    /// Backup files beyond the newest `kept` (names sort by date).
-    static func outdated(_ names: [String], keeping count: Int = kept) -> [String] {
-        let backups = names.filter { $0.hasPrefix("liftbook-backup-") && $0.hasSuffix(".json") }.sorted()
-        return Array(backups.dropLast(count))
-    }
-
     /// Saves a backup now with copies of its photo and video files, and
-    /// deletes the oldest beyond `kept` with the copies no other backup needs.
+    /// deletes those the rotation drops (`outdated(_:now:)`) with the copies
+    /// no other backup needs.
     @MainActor
     @discardableResult
     static func backUp(from context: ModelContext, to folder: URL = folder, now: Date = .now,
@@ -77,7 +71,7 @@ enum AutoBackup {
         let url = try write(DataExport.backup(from: context, now: now, defaults: defaults),
                             named: fileName(at: now), to: folder, stores: stores)
         let names = (try? files.contentsOfDirectory(atPath: folder.path())) ?? []
-        for name in outdated(names) {
+        for name in outdated(names, now: now) {
             try? files.removeItem(at: folder.appending(path: name))
         }
         pruneFiles(in: folder, stores: stores)
@@ -153,6 +147,14 @@ enum AutoBackup {
             backups.append(backup)
         }
         BackupFiles(folder: filesFolder(in: folder), stores: stores).prune(keeping: backups)
+    }
+
+    /// Backs up right after a workout is finished, if automatic backups are on.
+    /// Runs in UI tests too: they back up into their own temporary folder.
+    @MainActor
+    static func runAfterWorkout(from context: ModelContext, now: Date = .now, defaults: UserDefaults = AppSettings.store) {
+        guard defaults.object(forKey: enabledKey) as? Bool ?? true else { return }
+        try? backUp(from: context, now: now, defaults: defaults)
     }
 
     /// Backs up if automatic backups are on and one is due. Skipped in UI tests.

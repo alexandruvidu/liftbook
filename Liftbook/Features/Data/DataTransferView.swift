@@ -58,7 +58,7 @@ struct DataTransferView: View {
 
             Section {
                 Toggle(isOn: $autoBackup) {
-                    Label("Weekly Backup", systemImage: "clock.arrow.circlepath")
+                    Label("Automatic Backups", systemImage: "clock.arrow.circlepath")
                 }
                 .accessibilityIdentifier("data.autoBackup")
                 Button {
@@ -78,7 +78,7 @@ struct DataTransferView: View {
             } header: {
                 Text("Automatic Backup")
             } footer: {
-                Text("A full backup, with copies of your photos and videos, goes to Files › On My iPhone › Liftbook › Backups once a week; the last \(AutoBackup.kept) are kept. "
+                Text("A full backup, with copies of your photos and videos, goes to Files › On My iPhone › Liftbook › Backups after every workout and once a day. Every backup from the last \(AutoBackup.dailyDays) days is kept, then one a week for \(AutoBackup.weeklyWeeks) weeks. "
                      + (lastBackup.map { "Last backup: \($0.formatted(date: .abbreviated, time: .shortened))." } ?? "No backup yet."))
             }
 

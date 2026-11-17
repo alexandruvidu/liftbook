@@ -104,14 +104,13 @@ struct BackupFilesTests {
         try AutoBackup.backUp(from: context, to: folder, now: now, defaults: defaults, stores: stores)
         #expect(exists(copy("old.jpg", .progressPhotos)))
 
-        // The photo is deleted; once every backup with it has rotated away,
-        // so has its copy.
+        // The photo is deleted; once the backup with it has rotated away, so
+        // has its copy.
         context.delete(photo)
         try context.save()
-        for week in 1...AutoBackup.kept {
-            try AutoBackup.backUp(from: context, to: folder, now: now.addingTimeInterval(Double(week) * AutoBackup.interval),
-                                  defaults: defaults, stores: stores)
-        }
+        let later = Double(AutoBackup.dailyDays + 7 * AutoBackup.weeklyWeeks + 1) * 86_400
+        try AutoBackup.backUp(from: context, to: folder, now: now.addingTimeInterval(later),
+                              defaults: defaults, stores: stores)
         #expect(!exists(copy("old.jpg", .progressPhotos)))
     }
 

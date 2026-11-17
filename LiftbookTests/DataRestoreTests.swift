@@ -163,7 +163,7 @@ struct DataRestoreTests {
         #expect(safety.url.lastPathComponent.hasPrefix(AutoBackup.safetyCopyPrefix))
         #expect(try String(contentsOf: safety.url, encoding: .utf8).contains("Chest Day"))
         // Safety copies are never rotated away.
-        #expect(AutoBackup.outdated([safety.url.lastPathComponent], keeping: 0).isEmpty)
+        #expect(AutoBackup.outdated([safety.url.lastPathComponent], now: now.addingTimeInterval(365 * 86_400)).isEmpty)
     }
 
     @Test func aBadFileChangesNothing() throws {

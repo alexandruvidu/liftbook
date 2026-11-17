@@ -192,6 +192,7 @@ struct LiveWorkoutView: View {
         RestAlerts.cancel()
         session.finish()
         try? modelContext.save()
+        AutoBackup.runAfterWorkout(from: modelContext)
         summary = WorkoutSummary(session: session, history: finishedSessions) {
             catalog.exercise(id: $0)?.type ?? .weightAndReps
         }

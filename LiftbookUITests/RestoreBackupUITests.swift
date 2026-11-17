@@ -57,6 +57,26 @@ final class RestoreBackupUITests: XCTestCase {
                       "Safety copy isn't marked")
     }
 
+    /// Finishing a workout saves a backup on its own.
+    func testFinishingAWorkoutBacksUp() {
+        continueAfterFailure = false
+        let app = XCUIApplication.launchLiftbook(seedSampleData: true)
+        let routine = app.buttons["routine.row.Upper Body"]
+        XCTAssertTrue(routine.waitForExistence(timeout: 10), "Seeded routine missing")
+        routine.tap()
+        let start = app.buttons["routine.start"]
+        XCTAssertTrue(start.waitForExistence(timeout: 5), "Routine detail did not open")
+        start.tap()
+        XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
+        app.finishWorkout()
+
+        openDataScreen(app)
+        openRestore(app)
+        XCTAssertTrue(app.buttons["restore.file"].firstMatch.waitForExistence(timeout: 5),
+                      "No backup after finishing the workout")
+        XCTAssertFalse(app.staticTexts["restore.empty"].exists)
+    }
+
     /// A restore brings back settings and progress photos, including the file
     /// of a photo deleted after the backup.
     func testRestoreBringsBackPhotosAndSettings() {
