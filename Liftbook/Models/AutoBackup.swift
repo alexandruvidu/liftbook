@@ -92,11 +92,15 @@ enum AutoBackup {
     static func saveSafetyCopy(from context: ModelContext, to folder: URL = folder, now: Date = .now,
                                timeZone: TimeZone = .current, defaults: UserDefaults = AppSettings.store,
                                stores: [BackupFiles.Kind: URL] = BackupFiles.appStores) throws -> URL {
+        try write(DataExport.backup(from: context, now: now, defaults: defaults),
+                  named: "\(safetyCopyPrefix)\(stamp(now, timeZone: timeZone)).json", to: folder, stores: stores)
+    }
+
+    /// "2026-11-13-183005": the local date and time, for file names.
+    static func stamp(_ date: Date, timeZone: TimeZone = .current) -> String {
         let style = Date.ISO8601FormatStyle(dateSeparator: .dash, timeSeparator: .omitted, timeZone: timeZone)
             .year().month().day().time(includingFractionalSeconds: false)
-        let stamp = now.formatted(style).replacingOccurrences(of: "T", with: "-")
-        return try write(DataExport.backup(from: context, now: now, defaults: defaults),
-                         named: "\(safetyCopyPrefix)\(stamp).json", to: folder, stores: stores)
+        return date.formatted(style).replacingOccurrences(of: "T", with: "-")
     }
 
     /// Replaces all data and settings with the backup at `url`, saving a
@@ -109,6 +113,16 @@ enum AutoBackup {
                         stores: [BackupFiles.Kind: URL] = BackupFiles.appStores) throws -> DataRestore.Summary {
         let backup = try DataRestore.decode(Data(contentsOf: url))
         try saveSafetyCopy(from: context, to: folder, now: now, defaults: defaults, stores: stores)
+        return try putBack(backup, into: context, folder: folder, defaults: defaults, stores: stores)
+    }
+
+    /// Replaces all data and settings with `backup` and puts back its files,
+    /// without a safety copy.
+    @MainActor
+    @discardableResult
+    static func putBack(_ backup: DataExport.Backup, into context: ModelContext, folder: URL = folder,
+                        defaults: UserDefaults = AppSettings.store,
+                        stores: [BackupFiles.Kind: URL] = BackupFiles.appStores) throws -> DataRestore.Summary {
         // Files first: if a copy fails, the data is still untouched.
         try BackupFiles(folder: filesFolder(in: folder), stores: stores).restore(for: backup)
         return try DataRestore.restore(backup, into: context, defaults: defaults)

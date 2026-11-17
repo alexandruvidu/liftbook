@@ -3,16 +3,26 @@ import SwiftUI
 
 @main
 struct LiftbookApp: App {
-    private let container: ModelContainer
+    @State private var store: DataStore
     @Environment(\.scenePhase) private var scenePhase
 
     init() {
+        var url: URL? = Persistence.defaultStoreURL
         if let file = UITestOverrides.storeFile {
-            let url = URL.temporaryDirectory.appending(path: "\(file).store")
-            container = Persistence.makeContainer(url: url)
-        } else {
-            container = Persistence.makeContainer(inMemory: UITestOverrides.useInMemoryStore)
+            url = URL.temporaryDirectory.appending(path: "\(file).store")
+        } else if UITestOverrides.useInMemoryStore {
+            url = nil
         }
+        // Only ever a UI test's own store file, never the real one.
+        if UITestOverrides.corruptsStore, UITestOverrides.storeFile != nil, let url {
+            try? Data("not a database".utf8).write(to: url)
+        }
+        _store = State(initialValue: DataStore(url: url, onOpen: Self.prepare))
+    }
+
+    /// Runs once the store is open, at launch or after a recovery.
+    @MainActor
+    private static func prepare(_ container: ModelContainer) {
         // Logged data may point at duplicates removed from the catalog.
         ExerciseAliases.migrate(in: container.mainContext)
         if UITestOverrides.seedSampleData {
@@ -28,25 +38,32 @@ struct LiftbookApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootView()
-                .preferredColorScheme(UITestOverrides.colorScheme)
-                .defaultAppStorage(AppSettings.store)
-                // Seeded after launch: drawing with UIKit in init, before any
-                // window exists, made the app lose its accent color.
-                .task {
-                    ExerciseMedia.removeDownloaded(in: container.mainContext)
-                    if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
-                    if UITestOverrides.seedMachines { Persistence.seedMachines(in: container.mainContext) }
-                    if UITestOverrides.seedMedia { Persistence.seedMedia(in: container.mainContext) }
-                    AutoBackup.runIfDue(from: container.mainContext)
+            Group {
+                if let container = store.container {
+                    RootView()
+                        // Seeded after launch: drawing with UIKit in init, before any
+                        // window exists, made the app lose its accent color.
+                        .task {
+                            ExerciseMedia.removeDownloaded(in: container.mainContext)
+                            if UITestOverrides.seedPhotos { Persistence.seedPhotos(in: container.mainContext) }
+                            if UITestOverrides.seedMachines { Persistence.seedMachines(in: container.mainContext) }
+                            if UITestOverrides.seedMedia { Persistence.seedMedia(in: container.mainContext) }
+                            AutoBackup.runIfDue(from: container.mainContext)
+                        }
+                        .modelContainer(container)
+                } else {
+                    StoreRecoveryView(store: store)
                 }
+            }
+            .preferredColorScheme(UITestOverrides.colorScheme)
+            .defaultAppStorage(AppSettings.store)
         }
-        .modelContainer(container)
         // Save before the app can be suspended or quit, so an in-progress
         // workout is there after a relaunch.
         .onChange(of: scenePhase) { _, phase in
-            if phase != .active { try? container.mainContext.save() }
-            if phase == .background { AutoBackup.runIfDue(from: container.mainContext) }
+            guard let context = store.container?.mainContext else { return }
+            if phase != .active { try? context.save() }
+            if phase == .background { AutoBackup.runIfDue(from: context) }
         }
     }
 }
@@ -92,6 +109,12 @@ enum UITestOverrides {
     /// can relaunch the app and find it again.
     static var storeFile: String? {
         UserDefaults.standard.string(forKey: "uiTestStoreFile").flatMap { $0.isEmpty ? nil : $0 }
+    }
+
+    /// `-uiTestCorruptStore YES` overwrites the store file with junk before
+    /// opening it, to show the recovery screen.
+    static var corruptsStore: Bool {
+        UserDefaults.standard.bool(forKey: "uiTestCorruptStore")
     }
 
     /// `-uiTestLiveActivity YES` shows the Live Activity, which other UI tests skip.

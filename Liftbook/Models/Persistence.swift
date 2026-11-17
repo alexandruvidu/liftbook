@@ -19,11 +19,23 @@ enum Persistence {
         ExerciseMedia.self,
     ])
 
+    /// Where the app's data lives (Application Support › default.store).
+    static let defaultStoreURL = ModelConfiguration(schema: schema).url
+
+    /// Opens the store in `url`, or one in memory when `url` is nil. Throws
+    /// when the file can't be read; the app then shows the recovery screen.
+    static func openStore(at url: URL?) throws -> ModelContainer {
+        let configuration = url.map { ModelConfiguration(schema: schema, url: $0) }
+            ?? ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+        return try ModelContainer(for: schema, configurations: configuration)
+    }
+
+    /// A store for tests and previews, which can't do without one.
     static func makeContainer(inMemory: Bool) -> ModelContainer {
         open(ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory))
     }
 
-    /// A store in a specific file; UI tests use this to survive a relaunch.
+    /// A store in a specific file, for tests.
     static func makeContainer(url: URL) -> ModelContainer {
         open(ModelConfiguration(schema: schema, url: url))
     }
