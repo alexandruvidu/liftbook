@@ -57,6 +57,73 @@ final class RestoreBackupUITests: XCTestCase {
                       "Safety copy isn't marked")
     }
 
+    /// A restore brings back settings and progress photos, including the file
+    /// of a photo deleted after the backup.
+    func testRestoreBringsBackPhotosAndSettings() {
+        continueAfterFailure = false
+        let app = XCUIApplication.launchLiftbook(seedPhotos: true)
+        app.openTab("Profile")
+        setUnit(app, "Pounds (lb)")
+        openDataScreen(app)
+        let backUp = app.buttons["data.backUpNow"]
+        XCTAssertTrue(app.scrollTo(backUp), "No Back Up Now")
+        backUp.tap()
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        // Changes after the backup: kilograms again and one photo fewer.
+        setUnit(app, "Kilograms (kg)")
+        let photos = openPhotos(app)
+        photos.element(boundBy: 0).tap()
+        app.buttons["photo.delete"].tap()
+        let delete = app.buttons["photo.confirmDelete"].firstMatch
+        XCTAssertTrue(delete.waitForExistence(timeout: 5), "No delete confirmation")
+        delete.tap()
+        expectation(for: NSPredicate(format: "count == 1"), evaluatedWith: photos)
+        waitForExpectations(timeout: 5)
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        openDataScreen(app)
+        openRestore(app)
+        let file = app.buttons["restore.file"].firstMatch
+        XCTAssertTrue(file.waitForExistence(timeout: 5), "The backup isn't listed")
+        file.tap()
+        let confirm = app.buttons["restore.confirm"].firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5), "No confirmation")
+        confirm.tap()
+        let alert = app.alerts["Backup Restored"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 10), "Restore didn't finish")
+        alert.buttons["OK"].tap()
+        XCTAssertTrue(app.descendants(matching: .any)["data.workoutCount"].waitForExistence(timeout: 5),
+                      "Didn't return to the data screen")
+        app.navigationBars.buttons.element(boundBy: 0).tap()
+
+        XCTAssertTrue(app.buttons["settings.unit"].waitForExistence(timeout: 5), "Not back on Profile")
+        XCTAssertTrue(app.buttons["settings.unit"].label.contains("Pounds"), "Unit wasn't restored")
+        let restored = openPhotos(app)
+        expectation(for: NSPredicate(format: "count == 2"), evaluatedWith: restored)
+        waitForExpectations(timeout: 5)
+        for index in 0..<2 {
+            restored.element(boundBy: index).tap()
+            XCTAssertTrue(app.images["photo.image"].waitForExistence(timeout: 5), "Photo \(index) has no image")
+            app.navigationBars.buttons.element(boundBy: 0).tap()
+        }
+    }
+
+    private func setUnit(_ app: XCUIApplication, _ name: String) {
+        let option = app.buttons[name]
+        XCTAssertTrue(app.buttons["settings.unit"].openMenu(showing: option), "Unit picker did not open")
+        option.tap()
+    }
+
+    private func openPhotos(_ app: XCUIApplication) -> XCUIElementQuery {
+        let link = app.buttons["profile.photos"]
+        XCTAssertTrue(app.scrollTo(link), "No progress photos link")
+        link.tap()
+        let items = app.buttons.matching(identifier: "photos.item")
+        XCTAssertTrue(items.firstMatch.waitForExistence(timeout: 5), "No photos in the grid")
+        return items
+    }
+
     func testRestoreWaitsForTheRunningWorkout() {
         continueAfterFailure = false
         let app = XCUIApplication.launchLiftbook()

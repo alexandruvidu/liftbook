@@ -2,8 +2,9 @@ import Foundation
 import SwiftData
 
 /// A full JSON backup saved once a week to the app's Documents folder, which
-/// the Files app shows under On My iPhone › Liftbook › Backups. Sideloaded
-/// apps can expire or get reinstalled; the backups survive in Files.
+/// the Files app shows under On My iPhone › Liftbook › Backups, with copies of
+/// the photo and video files in Backups › Files. Sideloaded apps can expire
+/// or get reinstalled; the backups survive in Files.
 enum AutoBackup {
     /// Settings key: whether backups happen on their own (on by default).
     static let enabledKey = "backup.automatic"
@@ -65,19 +66,21 @@ enum AutoBackup {
         return Array(backups.dropLast(count))
     }
 
-    /// Saves a backup now and deletes the oldest beyond `kept`.
+    /// Saves a backup now with copies of its photo and video files, and
+    /// deletes the oldest beyond `kept` with the copies no other backup needs.
     @MainActor
     @discardableResult
     static func backUp(from context: ModelContext, to folder: URL = folder, now: Date = .now,
-                       defaults: UserDefaults = AppSettings.store) throws -> URL {
+                       defaults: UserDefaults = AppSettings.store,
+                       stores: [BackupFiles.Kind: URL] = BackupFiles.appStores) throws -> URL {
         let files = FileManager.default
-        try files.createDirectory(at: folder, withIntermediateDirectories: true)
-        let url = folder.appending(path: fileName(at: now))
-        try DataExport.json(DataExport.backup(from: context, now: now)).write(to: url, options: .atomic)
+        let url = try write(DataExport.backup(from: context, now: now, defaults: defaults),
+                            named: fileName(at: now), to: folder, stores: stores)
         let names = (try? files.contentsOfDirectory(atPath: folder.path())) ?? []
         for name in outdated(names) {
             try? files.removeItem(at: folder.appending(path: name))
         }
+        pruneFiles(in: folder, stores: stores)
         defaults.set(now, forKey: lastDateKey)
         return url
     }
@@ -87,25 +90,55 @@ enum AutoBackup {
     @MainActor
     @discardableResult
     static func saveSafetyCopy(from context: ModelContext, to folder: URL = folder, now: Date = .now,
-                               timeZone: TimeZone = .current) throws -> URL {
-        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+                               timeZone: TimeZone = .current, defaults: UserDefaults = AppSettings.store,
+                               stores: [BackupFiles.Kind: URL] = BackupFiles.appStores) throws -> URL {
         let style = Date.ISO8601FormatStyle(dateSeparator: .dash, timeSeparator: .omitted, timeZone: timeZone)
             .year().month().day().time(includingFractionalSeconds: false)
         let stamp = now.formatted(style).replacingOccurrences(of: "T", with: "-")
-        let url = folder.appending(path: "\(safetyCopyPrefix)\(stamp).json")
-        try DataExport.json(DataExport.backup(from: context, now: now)).write(to: url, options: .atomic)
+        return try write(DataExport.backup(from: context, now: now, defaults: defaults),
+                         named: "\(safetyCopyPrefix)\(stamp).json", to: folder, stores: stores)
+    }
+
+    /// Replaces all data and settings with the backup at `url`, saving a
+    /// safety copy of the current data first, and puts back the backup's
+    /// photo and video files. Nothing changes if the file can't be read.
+    @MainActor
+    @discardableResult
+    static func restore(from url: URL, into context: ModelContext, folder: URL = folder, now: Date = .now,
+                        defaults: UserDefaults = AppSettings.store,
+                        stores: [BackupFiles.Kind: URL] = BackupFiles.appStores) throws -> DataRestore.Summary {
+        let backup = try DataRestore.decode(Data(contentsOf: url))
+        try saveSafetyCopy(from: context, to: folder, now: now, defaults: defaults, stores: stores)
+        // Files first: if a copy fails, the data is still untouched.
+        try BackupFiles(folder: filesFolder(in: folder), stores: stores).restore(for: backup)
+        return try DataRestore.restore(backup, into: context, defaults: defaults)
+    }
+
+    /// Backups › Files, the copies of photos and videos.
+    static func filesFolder(in folder: URL) -> URL {
+        folder.appending(path: "Files", directoryHint: .isDirectory)
+    }
+
+    /// Copies the backup's files, then writes its JSON (so a backup never
+    /// lists files that weren't copied).
+    private static func write(_ backup: DataExport.Backup, named name: String, to folder: URL,
+                              stores: [BackupFiles.Kind: URL]) throws -> URL {
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        try BackupFiles(folder: filesFolder(in: folder), stores: stores).save(for: backup)
+        let url = folder.appending(path: name)
+        try DataExport.json(backup).write(to: url, options: .atomic)
         return url
     }
 
-    /// Replaces all data with the backup at `url`, saving a safety copy of the
-    /// current data first. Nothing changes if the file can't be read.
-    @MainActor
-    @discardableResult
-    static func restore(from url: URL, into context: ModelContext, folder: URL = folder,
-                        now: Date = .now) throws -> DataRestore.Summary {
-        let backup = try DataRestore.decode(Data(contentsOf: url))
-        try saveSafetyCopy(from: context, to: folder, now: now)
-        return try DataRestore.restore(backup, into: context)
+    /// Deletes file copies no remaining backup points at. Skipped if any
+    /// backup can't be read, so its files are never lost.
+    private static func pruneFiles(in folder: URL, stores: [BackupFiles.Kind: URL]) {
+        var backups: [DataExport.Backup] = []
+        for file in files(in: folder) {
+            guard let data = try? Data(contentsOf: file.url), let backup = try? DataRestore.decode(data) else { return }
+            backups.append(backup)
+        }
+        BackupFiles(folder: filesFolder(in: folder), stores: stores).prune(keeping: backups)
     }
 
     /// Backs up if automatic backups are on and one is due. Skipped in UI tests.

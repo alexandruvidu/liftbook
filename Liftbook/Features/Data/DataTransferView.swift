@@ -53,7 +53,7 @@ struct DataTransferView: View {
             } header: {
                 Text("Export")
             } footer: {
-                Text("CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises, machines and body measurements. Photos and videos aren't included.")
+                Text("CSV has one row per set and opens in any spreadsheet. The JSON backup also includes routines, custom exercises, machines, body measurements and settings, but not the photo and video files.")
             }
 
             Section {
@@ -78,7 +78,7 @@ struct DataTransferView: View {
             } header: {
                 Text("Automatic Backup")
             } footer: {
-                Text("A full JSON backup goes to Files › On My iPhone › Liftbook › Backups once a week; the last \(AutoBackup.kept) are kept. "
+                Text("A full backup, with copies of your photos and videos, goes to Files › On My iPhone › Liftbook › Backups once a week; the last \(AutoBackup.kept) are kept. "
                      + (lastBackup.map { "Last backup: \($0.formatted(date: .abbreviated, time: .shortened))." } ?? "No backup yet."))
             }
 

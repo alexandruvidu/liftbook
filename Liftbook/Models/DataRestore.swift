@@ -40,7 +40,8 @@ enum DataRestore {
     /// Deletes everything in the store and inserts the backup's contents.
     @MainActor
     @discardableResult
-    static func restore(_ backup: DataExport.Backup, into context: ModelContext) throws -> Summary {
+    static func restore(_ backup: DataExport.Backup, into context: ModelContext,
+                        defaults: UserDefaults = AppSettings.store) throws -> Summary {
         try deleteEverything(in: context)
         // Saved in between: the backup reuses the deleted rows' unique IDs.
         try context.save()
@@ -132,7 +133,13 @@ enum DataRestore {
             context.insert(media)
         }
 
+        for record in backup.progressPhotos ?? [] {
+            context.insert(ProgressPhoto(photoID: record.id, date: record.date, fileName: record.fileName))
+        }
+
         try context.save()
+        // Older backups have no settings; the current ones stay.
+        backup.settings?.apply(to: defaults)
         BodyMetrics.ensureBuiltIns(in: context)
         return Summary(workouts: backup.workouts.count, routines: backup.routines.count)
     }
@@ -151,5 +158,6 @@ enum DataRestore {
         try deleteAll(BodyMetric.self)
         try deleteAll(Machine.self)
         try deleteAll(ExerciseMedia.self)
+        try deleteAll(ProgressPhoto.self)
     }
 }

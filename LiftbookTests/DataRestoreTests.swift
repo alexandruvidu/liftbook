@@ -10,6 +10,11 @@ struct DataRestoreTests {
     private let containers = (0..<2).map { _ in Persistence.makeContainer(inMemory: true) }
     private var context: ModelContext { containers[0].mainContext }
     private var otherContext: ModelContext { containers[1].mainContext }
+    /// Settings for the backups, never the app's own.
+    private let defaults = UserDefaults(suiteName: "restore-test-\(UUID().uuidString)") ?? UserDefaults()
+    private let stores: [BackupFiles.Kind: URL] = Dictionary(uniqueKeysWithValues: BackupFiles.Kind.allCases.map {
+        ($0, URL.temporaryDirectory.appending(path: "restore-stores-\(UUID().uuidString)/\($0.rawValue)"))
+    })
 
     /// One of everything a backup holds.
     private func fillStore(_ context: ModelContext) throws {
@@ -52,7 +57,10 @@ struct DataRestoreTests {
         context.insert(BodyMeasurement(metricID: BodyMetric.bodyWeightID, value: 81.5, date: now))
         context.insert(ExerciseMedia(exerciseID: "barbell-bench-press", kind: .video, source: .own,
                                      fileName: "clip.mov", position: 0))
+        context.insert(ProgressPhoto(date: now, fileName: "front.jpg"))
         try context.save()
+        defaults.set(WeightUnit.pounds.rawValue, forKey: WeightUnit.storageKey)
+        defaults.set(4, forKey: WeeklyGoal.storageKey)
     }
 
     /// A backup with every list in a fixed order, to compare two backups.
@@ -63,31 +71,46 @@ struct DataRestoreTests {
         copy.routines.sort { $0.id.uuidString < $1.id.uuidString }
         copy.bodyMetrics.sort { $0.id < $1.id }
         copy.media?.sort { $0.id.uuidString < $1.id.uuidString }
+        copy.progressPhotos?.sort { $0.id.uuidString < $1.id.uuidString }
         return copy
     }
 
     @Test func restoringABackupGivesBackTheSameData() throws {
         let source = context
         try fillStore(source)
-        let original = try DataExport.backup(from: source, now: now)
+        let original = try DataExport.backup(from: source, now: now, defaults: defaults)
         let decoded = try DataRestore.decode(DataExport.json(original))
 
         let target = otherContext
-        let summary = try DataRestore.restore(decoded, into: target)
+        let summary = try DataRestore.restore(decoded, into: target, defaults: defaults)
 
         #expect(summary == DataRestore.Summary(workouts: 1, routines: 1))
-        #expect(normalized(try DataExport.backup(from: target, now: now)) == normalized(original))
+        #expect(normalized(try DataExport.backup(from: target, now: now, defaults: defaults)) == normalized(original))
+    }
+
+    @Test func restoreBringsBackPhotosAndSettings() throws {
+        try fillStore(context)
+        let backup = try DataExport.backup(from: context, now: now, defaults: defaults)
+        let phone = try #require(UserDefaults(suiteName: "restore-test-\(UUID().uuidString)"))
+        phone.set(true, forKey: RestTimer.keepScreenOnKey)
+
+        try DataRestore.restore(backup, into: otherContext, defaults: phone)
+
+        #expect(try otherContext.fetch(FetchDescriptor<ProgressPhoto>()).map(\.fileName) == ["front.jpg"])
+        #expect(phone.string(forKey: WeightUnit.storageKey) == WeightUnit.pounds.rawValue)
+        #expect(phone.integer(forKey: WeeklyGoal.storageKey) == 4)
+        #expect(phone.object(forKey: RestTimer.keepScreenOnKey) == nil)
     }
 
     @Test func restoreReplacesWhatWasThere() throws {
         try fillStore(context)
-        let backup = try DataExport.backup(from: context, now: now)
+        let backup = try DataExport.backup(from: context, now: now, defaults: defaults)
         // Changes after the backup: a new workout and a renamed routine.
         context.insert(WorkoutSession(name: "Extra", startedAt: now.addingTimeInterval(86_400)))
         try context.fetch(FetchDescriptor<Routine>())[0].name = "Renamed"
         try context.save()
 
-        try DataRestore.restore(backup, into: context)
+        try DataRestore.restore(backup, into: context, defaults: defaults)
 
         let sessions = try context.fetch(FetchDescriptor<WorkoutSession>())
         #expect(sessions.map(\.name) == ["Chest Day"])
@@ -99,18 +122,23 @@ struct DataRestoreTests {
     }
 
     @Test func oldBackupsWithoutMachinesOrMediaRestore() throws {
-        var backup = try DataExport.backup(from: otherContext, now: now)
+        var backup = try DataExport.backup(from: otherContext, now: now, defaults: defaults)
         backup.machines = nil
         backup.media = nil
+        backup.progressPhotos = nil
+        backup.settings = nil
         try fillStore(context)
-        try DataRestore.restore(backup, into: context)
+        try DataRestore.restore(backup, into: context, defaults: defaults)
         #expect(try context.fetchCount(FetchDescriptor<WorkoutSession>()) == 0)
         #expect(try context.fetchCount(FetchDescriptor<Machine>()) == 0)
+        #expect(try context.fetchCount(FetchDescriptor<ProgressPhoto>()) == 0)
+        // No settings in the backup: the current ones stay.
+        #expect(defaults.string(forKey: WeightUnit.storageKey) == WeightUnit.pounds.rawValue)
     }
 
     @Test func otherFilesAreRejected() throws {
         #expect(throws: DataRestore.Failure.self) { try DataRestore.decode(Data("date,workout\n".utf8)) }
-        var backup = try DataExport.backup(from: otherContext, now: now)
+        var backup = try DataExport.backup(from: otherContext, now: now, defaults: defaults)
         backup.format = "something-else"
         #expect(throws: DataRestore.Failure.self) { try DataRestore.decode(DataExport.json(backup)) }
         backup.format = DataExport.Backup.formatName
@@ -121,12 +149,13 @@ struct DataRestoreTests {
     @Test func restoringAFileSavesTheCurrentDataFirst() throws {
         let folder = URL.temporaryDirectory.appending(path: "restore-\(UUID().uuidString)", directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        let empty = try DataExport.json(DataExport.backup(from: otherContext, now: now))
+        let empty = try DataExport.json(DataExport.backup(from: otherContext, now: now, defaults: defaults))
         let file = folder.appending(path: "liftbook-backup-2026-11-01.json")
         try empty.write(to: file)
         try fillStore(context)
 
-        try AutoBackup.restore(from: file, into: context, folder: folder, now: now)
+        try AutoBackup.restore(from: file, into: context, folder: folder, now: now,
+                               defaults: defaults, stores: stores)
 
         #expect(try context.fetchCount(FetchDescriptor<WorkoutSession>()) == 0)
         let safetyCopies = AutoBackup.files(in: folder).filter(\.isSafetyCopy)
@@ -144,7 +173,9 @@ struct DataRestoreTests {
         try Data("{}".utf8).write(to: file)
         try fillStore(context)
 
-        #expect(throws: DataRestore.Failure.self) { try AutoBackup.restore(from: file, into: context, folder: folder) }
+        #expect(throws: DataRestore.Failure.self) {
+            try AutoBackup.restore(from: file, into: context, folder: folder, defaults: defaults, stores: stores)
+        }
         #expect(try context.fetchCount(FetchDescriptor<WorkoutSession>()) == 1)
         #expect(AutoBackup.files(in: folder).isEmpty)
     }
@@ -152,8 +183,8 @@ struct DataRestoreTests {
     @Test func safetyCopyNameHasTheLocalTime() throws {
         let folder = URL.temporaryDirectory.appending(path: "restore-\(UUID().uuidString)", directoryHint: .isDirectory)
         let utc = try #require(TimeZone(identifier: "UTC"))
-        let url = try AutoBackup.saveSafetyCopy(from: otherContext, to: folder,
-                                                now: now, timeZone: utc)
+        let url = try AutoBackup.saveSafetyCopy(from: otherContext, to: folder, now: now, timeZone: utc,
+                                                defaults: defaults, stores: stores)
         #expect(url.lastPathComponent == "liftbook-before-restore-2026-11-05-120000.json")
     }
 }

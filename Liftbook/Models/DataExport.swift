@@ -68,8 +68,11 @@ enum DataExport {
         var bodyMeasurements: [BodyMeasurementRecord]
         /// Added later; missing in older backups.
         var machines: [MachineRecord]?
-        /// Photo and video records (not the files themselves).
+        /// Photo and video records. Automatic backups copy the files into
+        /// Backups › Files (`BackupFiles`); shared exports have only the records.
         var media: [MediaRecord]?
+        var progressPhotos: [ProgressPhotoRecord]?
+        var settings: SettingsRecord?
     }
 
     struct MachineRecord: Codable, Equatable {
@@ -125,7 +128,8 @@ enum DataExport {
     struct BodyMeasurementRecord: Codable, Equatable { var metricID: String; var value: Double; var date: Date }
 
     @MainActor
-    static func backup(from context: ModelContext, now: Date = .now) throws -> Backup {
+    static func backup(from context: ModelContext, now: Date = .now,
+                       defaults: UserDefaults = AppSettings.store) throws -> Backup {
         let customs = try context.fetch(FetchDescriptor<CustomExercise>())
         let folders = try context.fetch(FetchDescriptor<RoutineFolder>())
         let routines = try context.fetch(FetchDescriptor<Routine>())
@@ -134,6 +138,7 @@ enum DataExport {
         let measurements = try context.fetch(FetchDescriptor<BodyMeasurement>(sortBy: [SortDescriptor(\.date)]))
         let machines = try context.fetch(FetchDescriptor<Machine>(sortBy: [SortDescriptor(\.createdAt)]))
         let media = try context.fetch(FetchDescriptor<ExerciseMedia>())
+        let photos = try context.fetch(FetchDescriptor<ProgressPhoto>(sortBy: [SortDescriptor(\.date)]))
         return Backup(
             exportedAt: now,
             customExercises: customs.map {
@@ -170,7 +175,9 @@ enum DataExport {
             media: media.map {
                 MediaRecord(id: $0.mediaID, exerciseID: $0.exerciseID, kind: $0.kindID, source: $0.sourceID,
                             fileName: $0.fileName, position: $0.position)
-            }
+            },
+            progressPhotos: photos.map { ProgressPhotoRecord(id: $0.photoID, date: $0.date, fileName: $0.fileName) },
+            settings: SettingsRecord(defaults: defaults)
         )
     }
 

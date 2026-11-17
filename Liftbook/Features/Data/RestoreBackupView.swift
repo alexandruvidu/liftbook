@@ -111,7 +111,7 @@ private extension View {
             }
             .accessibilityIdentifier("restore.confirm")
         } message: {
-            Text("Workouts, routines, exercises, machines and body measurements are replaced. Your current data is saved first.")
+            Text("Workouts, routines, exercises, machines, body measurements, photos and settings are replaced. Your current data is saved first.")
         }
     }
 }
