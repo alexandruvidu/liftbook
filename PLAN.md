@@ -65,6 +65,6 @@ look right in the simulator, and CI builds the IPA.
 - [x] Restore a JSON backup (replaces all data; the current data is saved first)
 - [x] Backups include progress photos, settings, and copies of photo and video files
 - [x] Recovery screen when the data store can't be opened (restore the latest backup or start empty)
-- [ ] Back up after every finished workout; keep recent daily and older weekly backups
+- [x] Back up after every finished workout; keep recent daily and older weekly backups
 
 Out of scope: social feed, followers, cloud sync, accounts.
