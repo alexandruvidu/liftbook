@@ -4,6 +4,7 @@ import SwiftUI
 /// Edits a finished workout in place: name, time, length, notes and sets.
 struct EditWorkoutView: View {
     @Bindable var session: WorkoutSession
+    @State private var keypad = SetKeypadSession()
     let catalog: ExerciseCatalog
 
     @Environment(\.dismiss) private var dismiss
@@ -48,8 +49,10 @@ struct EditWorkoutView: View {
             .swipeActionsContainerIfAvailable()
             .blockScreenBackground()
             .scrollDismissesKeyboard(.interactively)
+            // Done for the note fields; set fields use the keypad's own.
             .keyboardDoneButton()
             .revealsFocusedFields()
+            .setKeypad(keypad)
             .exercisePageDestination()
             .opensExercisePages(on: $path)
             // Also when the sheet is swiped away: cards and exports need a name.

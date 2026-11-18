@@ -8,6 +8,7 @@ struct LiveWorkoutView: View {
     let onDiscard: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @State private var keypad = SetKeypadSession()
     @Environment(\.modelContext) private var modelContext
     @Query private var customExercises: [CustomExercise]
     @Query(sort: \Machine.createdAt) private var allMachines: [Machine]
@@ -99,8 +100,10 @@ struct LiveWorkoutView: View {
         .swipeActionsContainerIfAvailable()
         .blockScreenBackground()
         .scrollDismissesKeyboard(.interactively)
+        // Done for the note fields; set fields use the keypad's own.
         .keyboardDoneButton()
         .revealsFocusedFields()
+        .setKeypad(keypad)
         .safeAreaInset(edge: .bottom) {
             if session.restEndsAt != nil {
                 RestTimerBar(session: session,

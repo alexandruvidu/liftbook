@@ -72,12 +72,12 @@ final class RoutineFromWorkoutUITests: XCTestCase {
         guard #available(iOS 27, *) else { return }
         let delete = app.buttons.matching(NSPredicate(format: "label == 'Delete Set'")).firstMatch
         for _ in 0..<2 {
-            app.textFields["live.exercise.2.set.0.reps"].firstMatch.swipeLeft()
+            app.buttons["live.exercise.2.set.0.reps"].firstMatch.swipeLeft()
             if delete.waitForExistence(timeout: 3) { delete.tap() }
         }
         XCTAssertTrue(app.buttons["live.exercise.2.collapse"].label.contains("0 / 1 set"),
                       app.buttons["live.exercise.2.collapse"].label)
-        app.textFields["live.exercise.2.set.0.reps"].swipeLeft()
+        app.buttons["live.exercise.2.set.0.reps"].swipeLeft()
         XCTAssertFalse(delete.waitForExistence(timeout: 2), "The only set could be swiped away")
     }
 }

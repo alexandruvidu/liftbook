@@ -64,11 +64,13 @@ struct SetRow: View {
             lastTime
                 .frame(width: SetColumns.last)
 
-            ForEach(type.fieldSpecs, id: \.self) { spec in
+            ForEach(Array(type.fieldSpecs.enumerated()), id: \.element) { index, spec in
                 SetValueField(set: set, spec: spec, unit: unit,
                               placeholder: previous.map { $0.inputText(for: spec.field, unit: unit) },
-                              accessibilityName: "Set \(number) \(spec.label.lowercased())")
-                    .accessibilityIdentifier("\(identifier).\(spec.field.rawValue)")
+                              accessibilityName: "Set \(number) \(spec.label.lowercased())",
+                              identifier: "\(identifier).\(spec.field.rawValue)",
+                              // "live.exercise.0.set.1" orders as [0, 1], then the field.
+                              order: identifier.split(separator: ".").compactMap { Int($0) } + [index])
             }
 
             RPEPicker(set: set, number: number)

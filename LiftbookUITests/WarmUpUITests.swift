@@ -34,14 +34,14 @@ final class WarmUpUITests: XCTestCase {
         routine.tap()
         app.buttons["routine.start"].tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
-        app.textFields["live.exercise.0.set.0.weight"].enter("100")
-        app.textFields["live.exercise.0.set.0.reps"].enter("5")
+        app.buttons["live.exercise.0.set.0.weight"].enter("100")
+        app.buttons["live.exercise.0.set.0.reps"].enter("5")
         app.dismissKeyboard()
 
         let option = app.buttons["Add Warm-up Sets"]
         XCTAssertTrue(app.buttons["live.exercise.0.options"].openMenu(showing: option), "No warm-up option")
         option.tap()
-        let firstWeight = app.textFields["live.exercise.0.set.0.weight"]
+        let firstWeight = app.buttons["live.exercise.0.set.0.weight"]
         XCTAssertTrue(firstWeight.waitForExistence(timeout: 5))
         XCTAssertEqual(firstWeight.value as? String, "20", "First warm-up should be the bar")
         XCTAssertEqual(app.buttons["live.exercise.0.set.0.kind"].label, "Warm-up: W")

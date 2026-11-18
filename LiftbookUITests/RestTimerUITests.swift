@@ -33,10 +33,10 @@ final class RestTimerUITests: XCTestCase {
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
 
         // Checking off a set starts the default rest
-        let weight = app.textFields["live.exercise.0.set.0.weight"]
+        let weight = app.buttons["live.exercise.0.set.0.weight"]
         XCTAssertTrue(weight.waitForExistence(timeout: 5), "No weight field")
         weight.enter("60")
-        let reps = app.textFields["live.exercise.0.set.0.reps"]
+        let reps = app.buttons["live.exercise.0.set.0.reps"]
         reps.enter("8")
         app.dismissKeyboard()
         let check = app.buttons["live.exercise.0.set.0.check"]
@@ -55,6 +55,13 @@ final class RestTimerUITests: XCTestCase {
 
         // Rest can be turned off for one exercise
         let off = app.buttons["Off"]
+        // Typing on the keypad can leave the list scrolled so the button sits
+        // under the (see-through) top bar; drag the list back a little.
+        let rest = app.buttons["live.exercise.0.rest"]
+        for _ in 0..<3 where rest.frame.minY < 140 {
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.4))
+                .press(forDuration: 0.05, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.6)))
+        }
         XCTAssertTrue(app.buttons["live.exercise.0.rest"].openMenu(showing: off), "Rest menu did not open")
         off.tap()
         XCTAssertEqual(app.buttons["live.exercise.0.rest"].label, "Rest: Off")

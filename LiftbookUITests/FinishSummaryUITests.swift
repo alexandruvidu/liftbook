@@ -13,8 +13,8 @@ final class FinishSummaryUITests: XCTestCase {
     }
 
     private func logBenchSet(_ app: XCUIApplication, weight: String, reps: String) {
-        app.textFields["live.exercise.0.set.0.weight"].enter(weight)
-        app.textFields["live.exercise.0.set.0.reps"].enter(reps)
+        app.buttons["live.exercise.0.set.0.weight"].enter(weight)
+        app.buttons["live.exercise.0.set.0.reps"].enter(reps)
         app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
     }

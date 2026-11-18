@@ -20,10 +20,10 @@ final class PreviousPerformanceUITests: XCTestCase {
         let finish = app.buttons["live.finish"]
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Live workout did not open")
         XCTAssertFalse(app.buttons["live.exercise.0.set.0.previous"].exists, "Previous shown on the first workout")
-        let weight = app.textFields["live.exercise.0.set.0.weight"]
+        let weight = app.buttons["live.exercise.0.set.0.weight"]
         XCTAssertTrue(weight.waitForExistence(timeout: 5), "No weight field")
         weight.enter("62.5")
-        let reps = app.textFields["live.exercise.0.set.0.reps"]
+        let reps = app.buttons["live.exercise.0.set.0.reps"]
         reps.enter("6")
         app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
@@ -41,8 +41,8 @@ final class PreviousPerformanceUITests: XCTestCase {
 
         // Tapping it copies the values into the set
         previous.tap()
-        XCTAssertEqual(app.textFields["live.exercise.0.set.0.weight"].value as? String, "62.5")
-        XCTAssertEqual(app.textFields["live.exercise.0.set.0.reps"].value as? String, "6")
+        XCTAssertEqual(app.buttons["live.exercise.0.set.0.weight"].value as? String, "62.5")
+        XCTAssertEqual(app.buttons["live.exercise.0.set.0.reps"].value as? String, "6")
         snap("previous-performance-\(appearance)")
     }
 }

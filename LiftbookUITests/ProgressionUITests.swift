@@ -28,7 +28,7 @@ final class ProgressionUITests: XCTestCase {
         snap("progression-\(appearance)")
 
         app.buttons["live.exercise.0.suggestion.apply"].tap()
-        XCTAssertEqual(app.textFields["live.exercise.0.set.0.weight"].value as? String, "65")
-        XCTAssertEqual(app.textFields["live.exercise.0.set.0.reps"].value as? String, "5")
+        XCTAssertEqual(app.buttons["live.exercise.0.set.0.weight"].value as? String, "65")
+        XCTAssertEqual(app.buttons["live.exercise.0.set.0.reps"].value as? String, "5")
     }
 }

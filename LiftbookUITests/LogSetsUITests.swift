@@ -28,8 +28,8 @@ final class LogSetsUITests: XCTestCase {
         XCTAssertFalse(check.isEnabled, "Empty set can be checked off")
 
         // Log weight, reps and RPE, then check the set off
-        type("60", into: app.textFields["live.exercise.0.set.0.weight"])
-        type("8", into: app.textFields["live.exercise.0.set.0.reps"])
+        type("60", into: app.buttons["live.exercise.0.set.0.weight"])
+        type("8", into: app.buttons["live.exercise.0.set.0.reps"])
         app.dismissKeyboard()
 
         // The RPE slider runs 6 to 10, so the middle is 8
@@ -52,7 +52,7 @@ final class LogSetsUITests: XCTestCase {
 
         // Add Set copies the latest logged values
         app.buttons["live.exercise.0.addSet"].tap()
-        let newWeight = app.textFields["live.exercise.0.set.3.weight"]
+        let newWeight = app.buttons["live.exercise.0.set.3.weight"]
         XCTAssertTrue(newWeight.waitForExistence(timeout: 5), "Add Set did not add a row")
         XCTAssertEqual(newWeight.value as? String, "60", "New set did not copy the weight")
 

@@ -30,7 +30,7 @@ final class SwipeAndReorderUITests: XCTestCase {
         XCTAssertTrue(progress.label.contains("0 / 3 sets"), "Unexpected start: \(progress.label)")
 
         // Swipe from the middle of the row; once more if the first swipe was too short.
-        let reps = app.textFields["live.exercise.0.set.1.reps"]
+        let reps = app.buttons["live.exercise.0.set.1.reps"]
         let delete = app.buttons.matching(NSPredicate(
             format: "identifier == 'live.exercise.0.set.1.delete' OR label == 'Delete Set'")).firstMatch
         reps.swipeLeft()
@@ -45,7 +45,11 @@ final class SwipeAndReorderUITests: XCTestCase {
         continueAfterFailure = false
         let app = startRoutine(appearance: "light")
         // Fold all three so they fit on screen, then drag the last to the top.
-        for index in 0..<3 { app.buttons["live.exercise.\(index).collapse"].tap() }
+        for index in 0..<3 {
+            let header = app.buttons["live.exercise.\(index).collapse"]
+            XCTAssertTrue(app.scrollTo(header), "Exercise \(index) not found")
+            header.tap()
+        }
         let last = app.buttons["live.exercise.2.collapse"]
         XCTAssertTrue(last.label.contains("Overhead Press"), "Unexpected order: \(last.label)")
         let first = app.buttons["live.exercise.0.collapse"]

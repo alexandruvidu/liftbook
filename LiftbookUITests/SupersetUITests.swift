@@ -15,10 +15,10 @@ final class SupersetUITests: XCTestCase {
     }
 
     private func logFirstSet(ofExercise index: Int, weight: String, reps: String, in app: XCUIApplication) {
-        let weightField = app.textFields["live.exercise.\(index).set.0.weight"]
+        let weightField = app.buttons["live.exercise.\(index).set.0.weight"]
         XCTAssertTrue(weightField.waitForExistence(timeout: 5), "No weight field for exercise \(index)")
         weightField.enter(weight)
-        let repsField = app.textFields["live.exercise.\(index).set.0.reps"]
+        let repsField = app.buttons["live.exercise.\(index).set.0.reps"]
         repsField.enter(reps)
         app.dismissKeyboard()
         app.buttons["live.exercise.\(index).set.0.check"].tap()

@@ -16,8 +16,8 @@ extension View {
         }
     }
 
-    /// Lets set fields in this scroll view move themselves to the middle of
-    /// the screen when focused, so the keyboard and its toolbar don't hide them.
+    /// Lets set fields in this scroll view scroll into view when focused, so
+    /// the keypad doesn't hide them.
     func revealsFocusedFields() -> some View {
         ScrollViewReader { proxy in
             environment(\.revealField, RevealField(proxy: proxy))
@@ -30,7 +30,8 @@ struct RevealField {
     let proxy: ScrollViewProxy
 
     func callAsFunction(_ id: some Hashable) {
-        withAnimation { proxy.scrollTo(id, anchor: .center) }
+        // Only as far as needed: a field already in view stays put.
+        withAnimation { proxy.scrollTo(id, anchor: nil) }
     }
 }
 

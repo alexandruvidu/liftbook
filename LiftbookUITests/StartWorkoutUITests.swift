@@ -30,7 +30,7 @@ final class StartWorkoutUITests: XCTestCase {
         XCTAssertTrue(app.buttons["picker.row.plank"].waitForExistence(timeout: 5), "Plank not in picker")
         app.buttons["picker.row.plank"].tap()
         app.buttons["picker.add"].tap()
-        XCTAssertTrue(app.textFields["live.exercise.0.set.0.duration"].waitForExistence(timeout: 5), "Added exercise has no set")
+        XCTAssertTrue(app.buttons["live.exercise.0.set.0.duration"].waitForExistence(timeout: 5), "Added exercise has no set")
 
         // Minimize, then resume from the running bar
         app.buttons["live.minimize"].tap()
@@ -76,8 +76,8 @@ final class StartWorkoutUITests: XCTestCase {
         let finish = app.buttons["live.finish"]
         XCTAssertTrue(finish.waitForExistence(timeout: 10), "Live workout did not open from routine")
         XCTAssertTrue(app.buttons["live.exercise.1.collapse"].label.contains("Bent-Over Barbell Row"), "Routine exercises not copied")
-        XCTAssertTrue(app.textFields["live.exercise.0.set.2.weight"].waitForExistence(timeout: 5), "Bench press should have 3 sets")
-        XCTAssertFalse(app.textFields["live.exercise.0.set.3.weight"].exists, "Bench press has more than 3 sets")
+        XCTAssertTrue(app.buttons["live.exercise.0.set.2.weight"].waitForExistence(timeout: 5), "Bench press should have 3 sets")
+        XCTAssertFalse(app.buttons["live.exercise.0.set.3.weight"].exists, "Bench press has more than 3 sets")
         snap("live-workout-routine-\(appearance)")
 
         // Starting again while one is running asks what to do

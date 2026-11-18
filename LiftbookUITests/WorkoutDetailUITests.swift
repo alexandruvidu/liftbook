@@ -54,7 +54,7 @@ final class WorkoutDetailUITests: XCTestCase {
         app.scrollTo(app.buttons["detail.repeat"])
         app.buttons["detail.repeat"].tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Repeat did not start a workout")
-        XCTAssertEqual(app.textFields["live.exercise.0.set.0.weight"].value as? String, "62.5")
+        XCTAssertEqual(app.buttons["live.exercise.0.set.0.weight"].value as? String, "62.5")
         XCTAssertEqual(app.buttons["live.exercise.0.set.0.check"].label, "Mark set 1 done")
         app.scrollTo(app.buttons["live.discard"])
         app.buttons["live.discard"].tap()

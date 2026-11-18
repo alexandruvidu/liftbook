@@ -29,8 +29,8 @@ final class WeightUnitUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label ==[c] 'lb'")).firstMatch.exists,
                       "Column header is not in pounds")
 
-        app.textFields["live.exercise.0.set.0.weight"].enter("135")
-        app.textFields["live.exercise.0.set.0.reps"].enter("5")
+        app.buttons["live.exercise.0.set.0.weight"].enter("135")
+        app.buttons["live.exercise.0.set.0.reps"].enter("5")
         app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
         snap("live-pounds-\(appearance)")

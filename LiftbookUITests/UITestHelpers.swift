@@ -28,11 +28,14 @@ extension XCUIApplication {
 extension XCUIElement {
     var hasKeyboardFocus: Bool { (value(forKey: "hasKeyboardFocus") as? Bool) ?? false }
 
-    /// Taps the field, waits until it has keyboard focus (tapping again if a
-    /// scroll swallowed the first tap), then types the text.
+    /// Taps the field, waits until it has focus (tapping again if a scroll
+    /// swallowed the first tap), then types the text, on the app's keypad
+    /// for set fields.
     @MainActor
     func enter(_ text: String) {
         XCTAssertTrue(waitForExistence(timeout: 5), "Field \(self) missing")
+        // Set fields aren't text fields: they're typed on the app's keypad.
+        guard elementType != .button else { return enterOnKeypad(text) }
         for _ in 0..<3 where !hasKeyboardFocus {
             tap()
             let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: self)
@@ -40,6 +43,21 @@ extension XCUIElement {
         }
         XCTAssertTrue(hasKeyboardFocus, "Field \(self) never got keyboard focus")
         typeText(text)
+    }
+
+    /// Focuses a set field and taps the keypad's keys.
+    @MainActor
+    private func enterOnKeypad(_ text: String) {
+        let app = XCUIApplication()
+        for _ in 0..<3 where !isSelected {
+            tap()
+            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isSelected == true"), object: self)
+            if XCTWaiter().wait(for: [focused], timeout: 2) == .completed { break }
+        }
+        XCTAssertTrue(isSelected, "Field \(self) never got the keypad")
+        for character in text {
+            app.buttons[character.isNumber ? "keypad.key.\(character)" : "keypad.separator"].tap()
+        }
     }
 }
 

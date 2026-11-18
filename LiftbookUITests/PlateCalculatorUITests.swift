@@ -42,7 +42,7 @@ final class PlateCalculatorUITests: XCTestCase {
         routine.tap()
         app.buttons["routine.start"].tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
-        app.textFields["live.exercise.0.set.0.weight"].enter("60")
+        app.buttons["live.exercise.0.set.0.weight"].enter("60")
         app.dismissKeyboard()
         let option = app.buttons["Plate Calculator"]
         XCTAssertTrue(app.buttons["live.exercise.0.options"].openMenu(showing: option), "No plate calculator option")

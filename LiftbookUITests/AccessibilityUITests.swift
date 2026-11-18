@@ -40,7 +40,7 @@ final class AccessibilityUITests: XCTestCase {
         app.buttons["routine.row.Upper Body"].tap()
         app.buttons["routine.start"].tap()
         XCTAssertTrue(app.buttons["live.finish"].waitForExistence(timeout: 10), "Live workout did not open")
-        let weight = app.textFields["live.exercise.0.set.0.weight"]
+        let weight = app.buttons["live.exercise.0.set.0.weight"]
         XCTAssertTrue(weight.waitForExistence(timeout: 5))
         XCTAssertEqual(weight.label, "Set 1 weight", "Set fields should say which set they belong to")
         snap("accessibility-live-dark")

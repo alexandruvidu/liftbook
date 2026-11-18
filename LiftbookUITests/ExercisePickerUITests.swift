@@ -24,10 +24,10 @@ final class ExercisePickerUITests: XCTestCase {
         app.buttons["picker.add"].tap()
 
         // Log a set, then removing the exercise asks first
-        let weight = app.textFields["live.exercise.0.set.0.weight"]
+        let weight = app.buttons["live.exercise.0.set.0.weight"]
         XCTAssertTrue(weight.waitForExistence(timeout: 5), "Bench press not added")
         weight.enter("60")
-        app.textFields["live.exercise.0.set.0.reps"].enter("8")
+        app.buttons["live.exercise.0.set.0.reps"].enter("8")
         app.dismissKeyboard()
         app.buttons["live.exercise.0.set.0.check"].tap()
         app.buttons["live.exercise.0.options"].tap()
