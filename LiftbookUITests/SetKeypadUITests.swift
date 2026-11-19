@@ -26,6 +26,10 @@ final class SetKeypadUITests: XCTestCase {
         let reps = app.buttons["live.exercise.0.set.0.reps"]
         XCTAssertTrue(reps.isSelected, "Next didn't move to reps")
         XCTAssertFalse(app.buttons["keypad.separator"].exists, "Reps have no decimal point")
+        // The keypad stays its own size without the separator key.
+        let keypadTop = app.buttons["keypad.key.1"].frame.minY
+        XCTAssertGreaterThan(keypadTop, app.frame.height / 2, "The keypad grew to \(app.frame.height - keypadTop) pt")
+        snap("set-keypad-reps-\(appearance)")
         reps.enter("8")
         XCTAssertEqual(reps.value as? String, "8")
 

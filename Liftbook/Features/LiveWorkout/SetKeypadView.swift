@@ -130,7 +130,11 @@ struct SetKeypadView: View {
                     key(.separator(separator), separator, id: "keypad.separator",
                         label: separator == ":" ? "Colon" : "Decimal point", style: .digit)
                 } else {
+                    // Reps have no separator. A key's height: unsized, the
+                    // empty slot grew the keypad to the whole screen.
                     Color.clear
+                        .frame(height: 50)
+                        .accessibilityHidden(true)
                 }
                 digits(0...0)
                 key(.delete, "Delete", systemImage: "delete.left", id: "keypad.delete", style: .function)
@@ -140,6 +144,8 @@ struct SetKeypadView: View {
             }
         }
         .padding(8)
+        // Never taller than its keys.
+        .fixedSize(horizontal: false, vertical: true)
         .frame(maxWidth: .infinity)
         .background(Color(uiColor: Self.panel).ignoresSafeArea(edges: .bottom))
         .overlay(alignment: .top) { Divider() }
